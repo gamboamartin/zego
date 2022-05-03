@@ -2,6 +2,7 @@
 namespace models;
 use consultas_base;
 use gamboamartin\errores\errores;
+use Throwable;
 
 class modelos{
     public $tabla;
@@ -42,10 +43,16 @@ class modelos{
                 $tabla_base = $tabla_select['tabla_base'];
                 $tabla_renombrada = $tabla_select['tabla_renombrada'];
                 $resultado_columnas = $this->genera_columnas_consulta($tabla_base, $tabla_renombrada);
+                if(errores::$error){
+                    return $this->error->error('Error al generar columnas', $resultado_columnas);
+                }
 
             }
             else {
                 $resultado_columnas = $this->genera_columnas_consulta($key,false);
+                if(errores::$error){
+                    return $this->error->error('Error al generar columnas', $resultado_columnas);
+                }
 
             }
             $columnas .= $columnas == ""?"$resultado_columnas":" , $resultado_columnas";
@@ -55,23 +62,34 @@ class modelos{
     }
 
 
-    public function genera_consulta_base($tabla){
+    public function genera_consulta_base($tabla): array|string
+    {
 
         $columnas = $this->obten_columnas_completas($tabla);
+        if(errores::$error){
+            return $this->error->error('Error al obtener columnas', $columnas);
+        }
         $consulta_base = new consultas_base();
         $tablas = $consulta_base->obten_tablas_completas($tabla);
-        $consulta = "SELECT $columnas FROM $tablas";
-
-
-        return $consulta;
+        if(errores::$error){
+            return $this->error->error('Error al obtener tablas', $tablas);
+        }
+        return "SELECT $columnas FROM $tablas";
     }
 
-    public function genera_columnas_consulta($tabla, $tabla_renombrada){
+    public function genera_columnas_consulta($tabla, $tabla_renombrada): string|array
+    {
         $columnas_parseadas = $this->obten_columnas($tabla);
+        if(errores::$error){
+            return $this->error->error('Error al obtener columnas', $columnas_parseadas);
+        }
         $columnas_sql = "";
 
         $consulta_base = new consultas_base();
         $subconsultas = $consulta_base->subconsultas($tabla);
+        if(errores::$error){
+            return $this->error->error('Error al obtener subquerys', $subconsultas);
+        }
 
         foreach($columnas_parseadas as $columna_parseada){
             if($tabla_renombrada){
@@ -88,9 +106,13 @@ class modelos{
         return $columnas_sql;
     }
 
-    public function obten_columnas($tabla){
+    public function obten_columnas($tabla): array
+    {
         $consulta = "DESCRIBE $tabla";
         $result = $this->ejecuta_consulta($consulta);
+        if(errores::$error){
+            return $this->error->error('Error al ejecutar sql', $result);
+        }
         $columnas = $result['registros'];
         $columnas_parseadas = array();
         foreach($columnas as $columna ){
@@ -113,8 +135,14 @@ class modelos{
         return $ultimo_id;
     }
 
-    public function ejecuta_consulta($consulta){
-       	$result = $this->link->query($consulta);
+    public function ejecuta_consulta($consulta): array
+    {
+        try {
+            $result = $this->link->query($consulta);
+        }
+        catch (Throwable $e){
+            return $this->error->error('Error al ejecutar sql', array($e, $consulta, $this->link->error));
+        }
 
       	$n_registros = $result->num_rows;
 
@@ -130,7 +158,8 @@ class modelos{
 
   	}
 
-	public function filtro_and($tabla, $filtros, $sql = ''){
+	public function filtro_and($tabla, $filtros, $sql = ''): array
+    {
 
         $sentencia = "";
         foreach ($filtros as $key => $value) {
@@ -140,6 +169,9 @@ class modelos{
         }
 
         $consulta = $this->genera_consulta_base($tabla);
+        if(errores::$error){
+            return $this->error->error('Error al generar consulta', $consulta);
+        }
 
         $where = " WHERE $sentencia $sql";
         $consulta = $consulta.$where;

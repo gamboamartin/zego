@@ -1,9 +1,14 @@
 <?php
+
+use gamboamartin\errores\errores;
+
 class conexion{
 	public $link;
 	public $nombre_base_datos;
+    private errores $error;
 	function __construct(){
 	    if (isset($_SESSION['numero_empresa'])) {
+            $this->error = new errores();
             $empresa = new Empresas();
             $empresas = $empresa->empresas;
             $empresa_activa = $empresas[$_SESSION['numero_empresa']];
@@ -26,12 +31,11 @@ class conexion{
 		}
 		$consulta = 'USE '.$this->nombre_base_datos;
 		if(isset($_SESSION['numero_empresa'])) {
-            $this->link->query($consulta);
-            if ($this->link->error) {
-                return array('mensaje' => $this->link->error, 'error' => True);
+            try{
+                $this->link->query($consulta);
             }
-            else {
-                return true;
+            catch (Throwable $e){
+                return $this->error->error('Error al ejecutar sql', $e);
             }
         }
 	}

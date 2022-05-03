@@ -1,5 +1,6 @@
 <?php
 
+use gamboamartin\errores\errores;
 use models\accion;
 use models\elemento_lista;
 
@@ -8,11 +9,18 @@ class templates{
     public $acciones;
     public $campos_lista_cliente;
     public $link;
+    private errores $error;
 
     public function __construct($link){
+        $this->error = new errores();
         $this->link = $link;
         if(isset($_GET['seccion'])) {
-            $this->campos_lista($_GET['seccion']);
+            $r = $this->campos_lista($_GET['seccion']);
+            if(errores::$error){
+                $error = $this->error->error('Error al generar campos', $r);
+                print_r($error);
+                die('Error');
+            }
         }
     }
     public function genera_campos($input, $campo, $valor,$arreglo, $clase_elimina,$link){
@@ -157,6 +165,9 @@ class templates{
 
         $filtro = array('seccion_menu.descripcion' => $tabla, 'elemento_lista.status'=>'1');
         $resultado = $campos->filtro_and('elemento_lista', $filtro);
+        if(errores::$error){
+            return $this->error->error('Error al filtrar info', $resultado);
+        }
 
         $registros = $resultado['registros'];
         $this->campos = array();
