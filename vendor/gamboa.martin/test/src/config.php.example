@@ -1,0 +1,9 @@
+<?php
+namespace gamboamartin\test;
+
+class config{
+    public string $DB_NAME = 'db_name'; //Name database
+    public string $DB_USER = 'user name database'; // User database
+    public string $DB_PASSWORD = 'pass user name'; // Pass database
+    public string $DB_HOST = 'host database'; // Host Database
+}

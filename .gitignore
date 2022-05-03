@@ -1,0 +1,5 @@
+/config/empresas.php
+/tdesyxwd_*
+/zego*
+.idea*
+composer.lock

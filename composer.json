@@ -1,0 +1,7 @@
+{
+    "require": {
+      "gamboa.martin/errores": "dev-main",
+      "gamboa.martin/test": "dev-main",
+        "fpdf/fpdf": "^1.84"
+    }
+}

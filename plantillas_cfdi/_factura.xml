@@ -1,0 +1,16 @@
+<cfdi:Comprobante xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd" LugarExpedicion="|lugar_expedicion|" MetodoPago="|metodo_pago|" TipoDeComprobante="|tipo_comprobante|" Total="|total|" Moneda="|moneda|" |tipo_cambio| SubTotal="|sub_total|" FormaPago="|forma_pago|"  Fecha="|fecha|" Folio="|folio|" Serie="|serie|" Version="3.3" xmlns:cfdi="http://www.sat.gob.mx/cfd/3">
+  <cfdi:Emisor Rfc="|rfc_emisor|" Nombre="|nombre_emisor|" RegimenFiscal="|regimen_fiscal|" />
+  <cfdi:Receptor Rfc="|rfc_receptor|" Nombre="|razon_social_cliente|" UsoCFDI="|uso_cfdi|" />
+  <cfdi:Conceptos>
+    |conceptos|
+  </cfdi:Conceptos>
+  |tag_impuestos_ini| |total_impuestos_retenidos| |tag_total_impuestos_trasladados| |total_impuestos_trasladados|>
+    |tag_retenciones_inicial|
+      |tag_retencion_inicial| |impuesto_retenido| |importe_impuesto_retenido| |tag_retencion_final|
+    |tag_retenciones_final|
+    |tag_traslados_ini|
+        |tag_traslado_ini_ieps| |tag_importe_traslado_ieps||importe_impuesto_trasladado_ieps| |tag_tasa_cuota_traslado_ieps||tasa_cuota_trasladado_ieps| |tag_tipo_factor_traslado_ieps| |tipo_factor_trasladado_ieps| |tag_impuesto_trasladado_ieps||impuesto_trasladado_ieps| |tag_traslado_fin_ieps|
+        |tag_traslado_ini| |tag_importe_traslado||importe_impuesto_trasladado| |tag_tasa_cuota_traslado| |tasa_cuota_trasladado| |tag_tipo_factor_traslado| |tipo_factor_trasladado| |tag_impuesto_trasladado| |impuesto_trasladado| |tag_traslado_fin|
+    |tag_traslados_fin|
+  |tag_impuestos_fin|
+</cfdi:Comprobante>

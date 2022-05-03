@@ -1,0 +1,26 @@
+<cfdi:Comprobante xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd"
+                  LugarExpedicion="|LugarExpedicion|" TipoDeComprobante="|TipoComprobante|" Total="|Total|"
+                  Moneda="|Moneda|" SubTotal="|SubTotal|" FormaPago="|FormaPago|" MetodoPago="|MetodoPago|"
+                  Fecha="|Fecha|" Folio="|Folio|" Serie="|Serie|" Version="3.3"
+                  xmlns:cfdi="http://www.sat.gob.mx/cfd/3" TipoCambio="|TipoCambio|">
+  <cfdi:Emisor Rfc="|RfcEmisor|" Nombre="|NombreEmisor|" RegimenFiscal="|RegimenFiscal|"></cfdi:Emisor>
+  <cfdi:Receptor Rfc="|RfcReceptor|" Nombre="|NombreReceptor|" UsoCFDI="|UsoCFDI|"></cfdi:Receptor>
+  <cfdi:Conceptos>
+    <cfdi:Concepto ClaveProdServ="|ClaveProdServ|" Cantidad="|Cantidad|" ClaveUnidad="|ClaveUnidad|"
+                   Descripcion="|Descripcion|" ValorUnitario="|ValorUnitario|" Importe="|Importe|">
+
+        <cfdi:Impuestos>
+          <cfdi:Traslados>
+            <cfdi:Traslado Base="|Base|" Importe="|ImporteIVA|" Impuesto="|Impuesto|" TasaOCuota="|Tasa|" TipoFactor="|TipoFactor|"/>
+          </cfdi:Traslados>
+        </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+
+  <cfdi:Impuestos TotalImpuestosTrasladados="|ImporteIVA|">
+    <cfdi:Traslados>
+      <cfdi:Traslado Importe="|ImporteIVA|" Impuesto="|Impuesto|" TasaOCuota="|Tasa|" TipoFactor="|TipoFactor|"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+</cfdi:Comprobante>

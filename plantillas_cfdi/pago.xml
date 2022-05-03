@@ -1,0 +1,15 @@
+<cfdi:Comprobante xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/Pagos http://www.sat.gob.mx/sitio_internet/cfd/Pagos/Pagos10.xsd" LugarExpedicion="|LugarExpedicion|" TipoDeComprobante="P" Total="0" Moneda="XXX" SubTotal="0" Fecha="|Fecha|" Folio="|Folio|" Serie="|Serie|" Version="3.3" xmlns:cfdi="http://www.sat.gob.mx/cfd/3" xmlns:pago10="http://www.sat.gob.mx/Pagos">
+  |cdfis_relacionados|
+  <cfdi:Emisor Rfc="|RfcEmisor|" Nombre="|NombreEmisor|" RegimenFiscal="|RegimenFiscal|"></cfdi:Emisor>
+  <cfdi:Receptor Rfc="|RfcReceptor|" Nombre="|NombreReceptor|" UsoCFDI="P01"></cfdi:Receptor>
+  <cfdi:Conceptos>
+    <cfdi:Concepto ClaveProdServ="84111506" Cantidad="1" ClaveUnidad="ACT" Descripcion="Pago" ValorUnitario="0" Importe="0"></cfdi:Concepto>
+  </cfdi:Conceptos>
+  <cfdi:Complemento>
+    <pago10:Pagos Version="1.0">
+      <pago10:Pago FechaPago="|FechaPago|" FormaDePagoP="|FormaDePagoP|" MonedaP="|MonedaP|" Monto="|Monto|" NumOperacion="|NumOperacion|" |RfcEmisorCtaOrd| |CtaOrdenante| |RfcEmisorCtaBen| |CtaBeneficiario|>
+      |Pagos|
+      </pago10:Pago>
+    </pago10:Pagos>
+  </cfdi:Complemento>
+</cfdi:Comprobante>
