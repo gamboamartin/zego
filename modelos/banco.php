@@ -1,5 +1,6 @@
 <?php
-class Banco extends Modelos{
+namespace models;
+class banco extends modelos {
 
 
 }

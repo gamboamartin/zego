@@ -3,3 +3,4 @@
 /zego*
 .idea*
 composer.lock
+/config/database.php

@@ -1,5 +1,10 @@
-<?php 
-class Controlador_Session extends Controlador_Base{
+<?php
+namespace controllers;
+use empresas;
+use models\accion;
+use models\usuario;
+
+class controlador_session extends controlador_base {
     public $empresas;
     public $acciones_permitidas;
 	public function denegado(){
@@ -15,7 +20,7 @@ class Controlador_Session extends Controlador_Base{
         $numero_empresa = $_POST['numero_empresa'];
         $_SESSION['numero_empresa'] = $numero_empresa;
 
-		$modelo_usuario = new Usuario($this->link);
+		$modelo_usuario = new usuario($this->link);
 		$usuario = $_POST['user'];
 		$password = $_POST['password'];
 
@@ -41,13 +46,13 @@ class Controlador_Session extends Controlador_Base{
 
 	}
 	public function login(){
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $this->empresas = $empresa->empresas;
 	}
 	public function inicio(){
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $this->empresas = $empresa->empresas;
-        $accion_modelo = new Accion($this->link);
+        $accion_modelo = new accion($this->link);
         $resultado = $accion_modelo->obten_acciones_iniciales();
 
         $this->acciones_permitidas = $resultado['registros'];

@@ -1,5 +1,5 @@
 <?php
-
-class Metodo_Pago extends Modelos{
+namespace models;
+class metodo_pago extends modelos {
 
 }

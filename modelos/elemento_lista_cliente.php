@@ -1,5 +1,5 @@
 <?php
-
-class Elemento_Lista_Cliente extends Modelos{
+namespace models;
+class elemento_lista_cliente extends modelos {
 
 }

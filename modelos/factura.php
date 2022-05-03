@@ -1,5 +1,5 @@
 <?php
-
+namespace models;
 use gamboamartin\errores\errores;
 
 class factura extends modelos{

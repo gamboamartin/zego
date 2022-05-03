@@ -1,8 +1,11 @@
 <?php
-class Usuario extends Modelos{
+namespace models;
+use conexion;
+
+class usuario extends modelos {
 
     public function valida_usuario_password($usuario, $password){
-        $conexion = new Conexion();
+        $conexion = new conexion();
         $conexion->selecciona_base_datos();
         $link = $conexion->link;
 

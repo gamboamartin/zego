@@ -1,5 +1,6 @@
 <?php
-class Controlador_Accion extends Controlador_Base{
+namespace controllers;
+class controlador_accion extends controlador_base {
 
 
 }

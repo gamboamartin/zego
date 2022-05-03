@@ -1,9 +1,11 @@
 <?php
+namespace models;
+use conexion;
 
-class Seccion_Menu extends Modelos{
+class seccion_menu extends modelos {
 
 	public function obten_submenu_permitido($menu_id){
-                $conexion = new Conexion();
+                $conexion = new conexion();
                 $conexion->selecciona_base_datos();
                 $link = $conexion->link;	
                 

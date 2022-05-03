@@ -1,5 +1,6 @@
 <?php
-class Controlador_Impuesto extends Controlador_Base{
+namespace controllers;
+class controlador_impuesto extends controlador_base {
 
 
 }

@@ -1,4 +1,10 @@
 <?php
+
+use models\accion;
+use models\menu;
+use models\modelos;
+use models\seccion_menu;
+
 class directivas{
 
 
@@ -865,7 +871,7 @@ class directivas{
 
     public function link_menu($seccion_menu_id, $seccion_menu_descripcion,$link){
         $link_seccion_menu_descripcion = strtolower($seccion_menu_descripcion);
-        $modelo_accion = new Accion($link);
+        $modelo_accion = new accion($link);
         $resultado = $modelo_accion->obten_accion_permitida($seccion_menu_id);
 
         if(isset($resultado['error'])) {
@@ -950,7 +956,7 @@ class directivas{
     }
 
 	public function submenu($menu_id,$link){
-		$modelo_seccion_menu = new Seccion_Menu($link);
+		$modelo_seccion_menu = new seccion_menu($link);
 		$resultado = $modelo_seccion_menu->obten_submenu_permitido($menu_id);
 		$menus = $resultado['registros'];
 

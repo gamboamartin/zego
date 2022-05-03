@@ -1,5 +1,6 @@
 <?php
-class anticipo extends Modelos{
+namespace models;
+class anticipo extends modelos {
 
 
 }

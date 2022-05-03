@@ -1,5 +1,21 @@
 <?php
-class Controlador_Factura extends Controlador_Base{
+namespace controllers;
+use empresas;
+use facturas;
+use models\cliente;
+use models\factura;
+use models\factura_relacionada;
+use models\insumo;
+use models\metodo_pago;
+use models\modelos;
+use models\moneda;
+use models\partida_factura;
+use my_pdf;
+use NumeroTexto;
+use SoapClient;
+use SoapFault;
+
+class controlador_factura extends controlador_base {
     public $datos_guardar;
     public $datos_empresa;
     public $cliente_id;
@@ -83,7 +99,7 @@ class Controlador_Factura extends Controlador_Base{
     }
 
     public function cancela_factura(){
-        $modelo_factura = new Factura($this->link);
+        $modelo_factura = new factura($this->link);
 
 
 
@@ -97,7 +113,7 @@ class Controlador_Factura extends Controlador_Base{
 
         /* Ruta del servicio de integracion*/
 
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
 
         $ws = $datos_empresa['ruta_pac'];
@@ -198,8 +214,8 @@ class Controlador_Factura extends Controlador_Base{
         }
         $this->factura_id = $_COOKIE['factura_id'];
 
-        $factura = new Factura($this->link);
-        $partida_factura = new Partida_Factura($this->link);
+        $factura = new factura($this->link);
+        $partida_factura = new partida_factura($this->link);
 
         $factura->elimina_bd('factura',$this->factura_id);
 
@@ -305,7 +321,7 @@ class Controlador_Factura extends Controlador_Base{
     }
 
     public function guarda_cliente(){
-        $cliente_modelo = new Cliente($this->link);
+        $cliente_modelo = new cliente($this->link);
         $resultado = $cliente_modelo->alta_bd($_POST,'cliente');
         echo json_encode($resultado);
         header('Content-Type: application/json');
@@ -329,7 +345,7 @@ class Controlador_Factura extends Controlador_Base{
     public function guarda_factura(){
 
 
-        $factura_modelo = new Factura($this->link);
+        $factura_modelo = new factura($this->link);
 
 
         $datos_guardar = array();
@@ -347,7 +363,7 @@ class Controlador_Factura extends Controlador_Base{
         $datos_guardar['pais_expedicion'] = $datos_empresa['pais'];
 
         $datos_guardar['metodo_pago_id'] = $_COOKIE['cliente_metodo_pago_id'];
-        $metodo_pago_modelo = new Metodo_Pago($this->link);
+        $metodo_pago_modelo = new metodo_pago($this->link);
         $resultado = $metodo_pago_modelo->obten_por_id('metodo_pago',$_COOKIE['cliente_metodo_pago_id']);
         $metodo_pago = $resultado['registros'][0];
         $datos_guardar['metodo_pago_codigo'] = $metodo_pago['metodo_pago_codigo'];
@@ -373,7 +389,7 @@ class Controlador_Factura extends Controlador_Base{
             $cantidad = $partida['cantidad'];
             $insumo_id = $partida['insumo_id'];
             $subtotal_partida = $valor_unitario * $cantidad;
-            $insumo_modelo = new Insumo($this->link);
+            $insumo_modelo = new insumo($this->link);
             $resultado = $insumo_modelo->obten_por_id('insumo',$insumo_id);
             $insumo = $resultado['registros'][0];
             $impuesto_trasladado_factor = $insumo['insumo_factor'];
@@ -421,7 +437,7 @@ class Controlador_Factura extends Controlador_Base{
         $datos_guardar['total'] = $total;
 
         $datos_guardar['moneda_id'] = $_COOKIE['cliente_moneda_id'];
-        $moneda_modelo = new Moneda($this->link);
+        $moneda_modelo = new moneda($this->link);
         $resultado = $moneda_modelo->obten_por_id('moneda',$_COOKIE['cliente_moneda_id']);
         $moneda = $resultado['registros'][0];
         $datos_guardar['moneda_codigo'] = $moneda['moneda_codigo'];
@@ -431,7 +447,7 @@ class Controlador_Factura extends Controlador_Base{
 
 
         $datos_guardar['forma_pago_id'] = $_COOKIE['cliente_forma_pago_id'];
-        $forma_pago_modelo = new Metodo_Pago($this->link);
+        $forma_pago_modelo = new metodo_pago($this->link);
         $resultado = $forma_pago_modelo->obten_por_id('forma_pago',$_COOKIE['cliente_forma_pago_id']);
         $forma_pago = $resultado['registros'][0];
         $datos_guardar['forma_pago_codigo'] = $forma_pago['forma_pago_codigo'];
@@ -452,7 +468,7 @@ class Controlador_Factura extends Controlador_Base{
         $datos_guardar['cliente_id'] = $_COOKIE['cliente_id'];
 
 
-        $cliente_modelo = new Cliente($this->link);
+        $cliente_modelo = new cliente($this->link);
         $datos_actualiza_cliente = array();
         $datos_actualiza_cliente['uso_cfdi_id'] = $_COOKIE['cliente_uso_cfdi_id'];
         $datos_actualiza_cliente['moneda_id'] = $_COOKIE['cliente_moneda_id'];
@@ -470,7 +486,7 @@ class Controlador_Factura extends Controlador_Base{
 
 
         $datos_guardar['uso_cfdi_id'] = $_COOKIE['cliente_uso_cfdi_id'];
-        $uso_cfdi_modelo = new Metodo_Pago($this->link);
+        $uso_cfdi_modelo = new metodo_pago($this->link);
         $resultado = $uso_cfdi_modelo->obten_por_id('uso_cfdi',$_COOKIE['cliente_uso_cfdi_id']);
         $uso_cfdi = $resultado['registros'][0];
         $datos_guardar['uso_cfdi_codigo'] = $uso_cfdi['uso_cfdi_codigo'];
@@ -496,7 +512,7 @@ class Controlador_Factura extends Controlador_Base{
 
         $datos_guardar['factor_retenido'] = $factor_retenido;
 
-        $facturas = new Facturas($this->link);
+        $facturas = new facturas($this->link);
         $folio = $facturas->genera_folio($datos_empresa['sufijo_folio'],'factura',$datos_empresa['folio_inicial']);
 
         $datos_guardar['referencia'] = $folio;
@@ -601,7 +617,7 @@ class Controlador_Factura extends Controlador_Base{
         $tamano_letra_titulo = 9;
 
         $factura_modelo = new Factura($this->link);
-        $pdf = new PDF_HTML();
+        $pdf = new my_pdf();
         $factura_id = $_GET['factura_id'];
         $resultado = $factura_modelo->obten_por_id('factura',$factura_id);
         $factura = $resultado['registros'][0];
@@ -735,7 +751,7 @@ class Controlador_Factura extends Controlador_Base{
         $pdf->Cell(40,5,utf8_decode('Importe:'),1,1,'L');
 
 
-        $partida_gasto_modelo = new Modelos($this->link);
+        $partida_gasto_modelo = new modelos($this->link);
 
         $filtro_partida_gasto = array('folio'=>$factura['factura_folio']);
         $resultado_partida_gasto = $partida_gasto_modelo->filtro_and('partida_informe_gasto',$filtro_partida_gasto);
@@ -801,7 +817,7 @@ class Controlador_Factura extends Controlador_Base{
         $pdf->Cell(30,5,utf8_decode('Importe'),1,1,'C');
 
 
-        $partidas_modelos = new Modelos($this->link);
+        $partidas_modelos = new modelos($this->link);
 
         $filtro_partida = array('folio'=>$factura['factura_folio']);
         $resultado_partida = $partidas_modelos->filtro_and('partida_factura',$filtro_partida);

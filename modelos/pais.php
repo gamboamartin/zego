@@ -1,5 +1,6 @@
 <?php
-class pais extends Modelos{
+namespace models;
+class pais extends modelos {
 
 
 }

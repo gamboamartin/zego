@@ -1,4 +1,5 @@
 <?php
-class Controlador_Menu extends Controlador_Base{
+namespace controllers;
+class controlador_menu extends controlador_base {
 
 }

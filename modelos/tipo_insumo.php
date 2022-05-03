@@ -1,5 +1,6 @@
 <?php
-class Tipo_insumo extends Modelos{
+namespace models;
+class tipo_insumo extends modelos {
 
 
 }

@@ -1,5 +1,6 @@
 <?php
-class Controlador_Aduana extends Controlador_Base{
+namespace controllers;
+class controlador_aduana extends controlador_base {
 
 
 }

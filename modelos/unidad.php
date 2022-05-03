@@ -1,5 +1,5 @@
 <?php
-
-class Unidad extends Modelos {
+namespace models;
+class unidad extends modelos {
 
 }

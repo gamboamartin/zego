@@ -1,5 +1,6 @@
 <?php
-class Moneda extends Modelos{
+namespace models;
+class moneda extends modelos {
 
 
 }

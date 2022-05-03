@@ -1,4 +1,5 @@
 <?php
-class Controlador_Producto_Sat extends Controlador_Base{
+namespace controllers;
+class controlador_producto_sat extends controlador_base {
 
 }

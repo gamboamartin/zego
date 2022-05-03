@@ -1,5 +1,6 @@
 <?php
-class Grupo extends Modelos{
+namespace models;
+class grupo extends modelos {
 
 
 }

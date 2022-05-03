@@ -1,5 +1,5 @@
 <?php
-
-class Patente_Aduanal extends modelo_sobrecargado {
+namespace models;
+class patente_aduanal extends modelo_sobrecargado {
 
 }

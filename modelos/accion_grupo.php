@@ -1,5 +1,5 @@
 <?php
-
-class Accion_Grupo extends Modelos{
+namespace models;
+class accion_grupo extends modelos {
 
 }

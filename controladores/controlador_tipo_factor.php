@@ -1,5 +1,6 @@
 <?php
-class Controlador_Tipo_Factor extends Controlador_Base{
+namespace controllers;
+class controlador_tipo_factor extends controlador_base {
 
 
 }

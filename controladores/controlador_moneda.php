@@ -1,5 +1,6 @@
 <?php
-class Controlador_Moneda extends Controlador_Base{
+namespace controllers;
+class controlador_moneda extends controlador_base {
     public $descripcion_moneda;
     public $moneda_codigo;
     public $moneda_descripcion;

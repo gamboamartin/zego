@@ -1,5 +1,6 @@
 <?php
-class Controlador_Uso_Cfdi extends Controlador_Base{
+namespace controllers;
+class controlador_uso_cfdi extends controlador_base {
 
 
 }

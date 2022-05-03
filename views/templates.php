@@ -1,5 +1,8 @@
 <?php
 
+use models\accion;
+use models\elemento_lista;
+
 class templates{
     public $campos;
     public $acciones;
@@ -150,7 +153,7 @@ class templates{
         return $html;
     }
     public function campos_lista($tabla){
-        $campos = new Elemento_Lista($this->link);
+        $campos = new elemento_lista($this->link);
 
         $filtro = array('seccion_menu.descripcion' => $tabla, 'elemento_lista.status'=>'1');
         $resultado = $campos->filtro_and('elemento_lista', $filtro);
@@ -271,7 +274,7 @@ class templates{
         $this->acciones($tabla);
         $html = "";
 
-        $modelo_accion = new Accion($link);
+        $modelo_accion = new accion($link);
 
 
         $icono = 0;

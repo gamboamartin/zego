@@ -1,6 +1,13 @@
 <?php
 
+
+
 require 'vendor/autoload.php';
+
+use gamboamartin\errores\errores;
+use config\init;
+use models\accion;
+
 
 require_once ('clases/numero_texto.php');
 require_once('config/seguridad.php');
@@ -43,7 +50,16 @@ if($link) {
     $template = new templates($link);
 }
 $name_ctl = 'controlador_'.$seccion;
-$controlador = new $name_ctl($link);
+
+$controlador = (new init())->controller(link:  $link,seccion:  $seguridad->seccion);
+if(errores::$error){
+    $error =  (new errores())->error(mensaje: 'Error al generar controlador', data: $controlador,
+        params: get_defined_vars());
+    print_r($error);exit;
+
+}
+
+//$controlador = new $name_ctl($link);
 
 $controlador->$accion();
 $directivas = new Directivas();

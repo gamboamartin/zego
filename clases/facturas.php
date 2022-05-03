@@ -1,6 +1,17 @@
 <?php
 
 use gamboamartin\errores\errores;
+use models\factura;
+use models\forma_pago;
+use models\impuesto;
+use models\metodo_pago;
+use models\moneda;
+use models\pago_cliente;
+use models\producto_sat;
+use models\regimen_fiscal;
+use models\tipo_comprobante;
+use models\unidad;
+use models\uso_cfdi;
 
 class facturas{
     public $partidas_html;
@@ -63,7 +74,7 @@ class facturas{
         $factura->datos_guardar['uso_cfdi_descripcion'] = $this->datos_uso_cfdi['uso_cfdi_descripcion'];
     }
     public function genera_folio($sufijo, $tabla,$folio_inicial){
-        $modelo = new Factura($this->link);
+        $modelo = new factura($this->link);
         $ultimo_id = $modelo->obten_ultimo_id($tabla);
         $ultimo_folio = $ultimo_id + $folio_inicial;
         $ultimo_folio++;
@@ -144,10 +155,10 @@ class facturas{
         return $datos;
     }
     public function obten_datos_comprobante($xml){
-        $tipo_comprobante_modelo = new Tipo_Comprobante($this->link);
-        $moneda_modelo = new Moneda($this->link);
-        $forma_pago_modelo = new Forma_Pago($this->link);
-        $metodo_pago_modelo = new Metodo_Pago($this->link);
+        $tipo_comprobante_modelo = new tipo_comprobante($this->link);
+        $moneda_modelo = new moneda($this->link);
+        $forma_pago_modelo = new forma_pago($this->link);
+        $metodo_pago_modelo = new metodo_pago($this->link);
 
         $datos_comprobante = array();
         $namespaces = $xml->getDocNamespaces();
@@ -188,7 +199,7 @@ class facturas{
         return $datos_comprobante;
     }
     public function obten_datos_emisor($xml){
-        $regimen_fiscal_modelo = new Regimen_Fiscal($this->link);
+        $regimen_fiscal_modelo = new regimen_fiscal($this->link);
         $datos_emisor = array();
         $namespaces = $xml->getDocNamespaces();
         foreach ($xml->xpath('//cfdi:Comprobante//cfdi:Emisor') as $emisor){  // SECCION EMISOR
@@ -225,7 +236,7 @@ class facturas{
         return $datos_impuestos;
     }
     public function obten_datos_impuestos_retenidos($xml){
-        $impuesto_modelo = new Impuesto($this->link);
+        $impuesto_modelo = new impuesto($this->link);
         $datos_impuestos_retencion = array();
         $namespaces = $xml->getDocNamespaces();
         foreach ($xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Retenciones//cfdi:Retencion') as $impuesto_retencion){
@@ -268,7 +279,7 @@ class facturas{
     }
     public function obten_datos_partidas($xml){
         $producto_sat_modelo = new producto_sat($this->link);
-        $unidad_modelo = new Unidad($this->link);
+        $unidad_modelo = new unidad($this->link);
 
         $datos_partidas = array();
         $namespaces = $xml->getDocNamespaces();
@@ -346,7 +357,7 @@ class facturas{
         return $datos_partidas;
     }
     public function obten_datos_receptor($xml){
-        $uso_cfdi_modelo = new Uso_Cfdi($this->link);
+        $uso_cfdi_modelo = new uso_cfdi($this->link);
         $datos_receptor = array();
         $namespaces = $xml->getDocNamespaces();
         foreach ($xml->xpath('//cfdi:Comprobante//cfdi:Receptor') as $receptor){  // SECCION EMISOR
@@ -534,7 +545,7 @@ class facturas{
             file_put_contents($xml_timbrado, $xmlTimbrado);
             file_put_contents($qr, $codigoQr);
             file_put_contents($sello, $cadenaOriginal);
-            $pago_cliente_modelo = new Pago_Cliente($this->link);
+            $pago_cliente_modelo = new pago_cliente($this->link);
             $filtro_pago_cliente = array('folio'=>$folio);
             $resultado = $pago_cliente_modelo->filtro_and('pago_cliente',$filtro_pago_cliente);
             $registro = $resultado['registros'][0];
@@ -648,7 +659,7 @@ class facturas{
             file_put_contents($xml_timbrado, $xmlTimbrado);
             file_put_contents($qr, $codigoQr);
             file_put_contents($sello, $cadenaOriginal);
-            $factura_modelo = new Factura($this->link);
+            $factura_modelo = new factura($this->link);
             $filtro_factura = array('factura.folio'=>$folio);
             $resultado = $factura_modelo->filtro_and('factura',$filtro_factura);
             $registro = $resultado['registros'][0];

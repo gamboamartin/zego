@@ -1,5 +1,5 @@
 <?php
-
-class Pago_Cliente_Factura extends Modelos{
+namespace models;
+class pago_cliente_factura extends modelos {
 
 }

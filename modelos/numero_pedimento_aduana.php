@@ -1,5 +1,5 @@
 <?php
-
-class Numero_Pedimento_Aduana extends modelo_sobrecargado {
+namespace models;
+class numero_pedimento_aduana extends modelo_sobrecargado {
 
 }

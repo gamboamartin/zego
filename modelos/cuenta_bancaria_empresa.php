@@ -1,5 +1,6 @@
 <?php
-class Cuenta_Bancaria_Empresa extends Modelos{
+namespace models;
+class cuenta_bancaria_empresa extends modelos {
 
 
 }

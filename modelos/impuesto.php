@@ -1,5 +1,5 @@
 <?php
-
-class Impuesto extends Modelos{
+namespace models;
+class impuesto extends modelos {
 
 }

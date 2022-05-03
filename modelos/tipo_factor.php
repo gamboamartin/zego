@@ -1,5 +1,5 @@
 <?php
-
-class Tipo_Factor extends Modelos{
+namespace models;
+class tipo_factor extends modelos {
 
 }

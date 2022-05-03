@@ -1,12 +1,12 @@
 <?php
-
+namespace models;
 use gamboamartin\errores\errores;
 
 class cliente extends modelo_sobrecargado{
 
     public function __construct($link)
     {
-        $this->error = new gamboamartin\errores\errores();
+        $this->error = new errores();
         parent::__construct($link);
     }
 

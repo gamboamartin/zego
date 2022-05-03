@@ -1,5 +1,5 @@
 <?php
-
-class tipo_relacion extends Modelos{
+namespace models;
+class tipo_relacion extends modelos {
 
 }

@@ -1,5 +1,16 @@
 <?php
-class controlador_anticipo extends Controlador_Base{
+namespace controllers;
+use empresas;
+use Fpdf\Fpdf;
+use models\anticipo;
+use models\factura;
+use NumeroTexto;
+use repositorio;
+use SoapClient;
+use SoapFault;
+use xml_cfdi;
+
+class controlador_anticipo extends controlador_base {
     public $anticipos = false;
     public $anticipo = false;
     public $anticipo_id = false;
@@ -13,7 +24,7 @@ class controlador_anticipo extends Controlador_Base{
 
     public function aplica_anticipo_factura(){
         $factura_id = $_GET['factura_id'];
-        $factura_modelo = new Factura($this->link);
+        $factura_modelo = new factura($this->link);
         $r_factura = $factura_modelo->obten_por_id('factura',$factura_id);
 
         $this->factura = $r_factura['registros'][0];
@@ -77,7 +88,7 @@ class controlador_anticipo extends Controlador_Base{
         $r_anticipo = $anticipo_modelo->obten_por_id('anticipo',$this->anticipo_id);
         $this->anticipo = $r_anticipo['registros'][0];
 
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
         $this->anticipo['uso_cfdi_codigo'] = 'P01';
         $this->anticipo['uso_cfdi_descripcion'] = 'Por Definir';
@@ -98,9 +109,9 @@ class controlador_anticipo extends Controlador_Base{
         $this->anticipo_id = $_GET['anticipo_id'];
         $this->genera_datos_anticipo();
 
-        $repositorio = New Repositorio();
+        $repositorio = New repositorio();
 
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
         $ruta_base = $datos_empresa['nombre_base_datos'];
 

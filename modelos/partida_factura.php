@@ -1,5 +1,5 @@
 <?php
-
+namespace models;
 use gamboamartin\errores\errores;
 
 class partida_factura extends modelos {

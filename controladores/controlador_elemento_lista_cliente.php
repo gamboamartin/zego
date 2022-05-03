@@ -1,4 +1,5 @@
 <?php
-class Controlador_Elemento_Lista_Cliente extends Controlador_Base{
+namespace controllers;
+class controlador_elemento_lista_cliente extends controlador_base {
 
 }

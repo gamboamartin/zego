@@ -1,7 +1,15 @@
 {
+  "autoload": {
+    "psr-4": {
+      "config\\": "config/",
+      "tests\\": "tests/"
+
+    }
+  },
     "require": {
       "gamboa.martin/errores": "dev-main",
       "gamboa.martin/test": "dev-main",
-        "fpdf/fpdf": "^1.84"
+        "fpdf/fpdf": "^1.84",
+      "phpunit/phpunit": "^9.5"
     }
 }

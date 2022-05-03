@@ -1,6 +1,8 @@
 <?php
-
+namespace controllers;
+use directivas;
 use gamboamartin\errores\errores;
+use models\modelos;
 
 class controlador_base{
 	public $registros;
@@ -30,7 +32,8 @@ class controlador_base{
             $this->modelo = new modelos($this->link);
         }
         else {
-            $this->modelo = new $modelo($this->link);
+            $name_model = 'models\\'.$modelo;
+            $this->modelo = new $name_model($this->link);
         }
 	    $this->directiva = new directivas();
 

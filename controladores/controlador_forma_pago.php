@@ -1,5 +1,6 @@
 <?php
-class Controlador_Forma_Pago extends Controlador_Base{
+namespace controllers;
+class controlador_forma_pago extends controlador_base {
 
 
 }

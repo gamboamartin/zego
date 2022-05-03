@@ -1,5 +1,6 @@
 <?php
-class Municipio extends modelo_sobrecargado {
+namespace models;
+class municipio extends modelo_sobrecargado {
 
 
 }

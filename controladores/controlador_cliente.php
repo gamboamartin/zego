@@ -1,7 +1,19 @@
 <?php
+namespace controllers;
 
+use empresas;
+use facturas;
 use gamboamartin\errores\errores;
 use Fpdf\Fpdf;
+use models\cliente;
+use models\cuenta_bancaria;
+use models\factura;
+use models\factura_relacionada;
+use models\partida_factura;
+use my_pdf;
+use NumeroTexto;
+use repositorio;
+use SimpleXMLElement;
 
 class controlador_cliente extends controlador_base{
     public $rfc;
@@ -87,7 +99,7 @@ class controlador_cliente extends controlador_base{
 
     public function alta_cuenta_bd(){
         $tabla = 'cuenta_bancaria';
-        $modelo = new Cuenta_Bancaria($this->link);
+        $modelo = new cuenta_bancaria($this->link);
         $resultado = $modelo->alta_bd($_POST, $tabla);
 
         $cliente_id = $_POST['cliente_id'];
@@ -106,11 +118,11 @@ class controlador_cliente extends controlador_base{
         $this->breadcrumbs = $this->directiva->nav_breadcumbs(12, 0, $breadcrumbs);
 
         $this->cliente_id = $_GET['cliente_id'];
-        $cliente = new Cliente($this->link);
+        $cliente = new cliente($this->link);
         $clientes = $cliente->obten_por_id('cliente', $this->cliente_id);
         $this->datos_cliente = $clientes['registros'][0];
 
-        $cuenta_bancaria_modelo = new Cuenta_Bancaria($this->link);
+        $cuenta_bancaria_modelo = new cuenta_bancaria($this->link);
 
         $filtros = array('cliente_id'=>$_GET['cliente_id']);
         $resultado_cuentas_bancarias = $cuenta_bancaria_modelo->filtro_and('cuenta_bancaria',$filtros);
@@ -120,7 +132,7 @@ class controlador_cliente extends controlador_base{
     }
 
     public function captura_masiva(){
-        $cliente_modelo = new Cliente($this->link);
+        $cliente_modelo = new cliente($this->link);
         $resultado = $cliente_modelo->obten_registros_activos('cliente');
         $this->clientes = $resultado['registros'];
     }
@@ -130,7 +142,7 @@ class controlador_cliente extends controlador_base{
         $this->breadcrumbs = $this->directiva->nav_breadcumbs(12, 0, $breadcrumbs);
         $this->cliente_id = $_GET['cliente_id'];
 
-        $cliente = new Cliente($this->link);
+        $cliente = new cliente($this->link);
         $clientes = $cliente->obten_por_id('cliente', $this->cliente_id);
         $this->datos_cliente = $clientes['registros'][0];
 
@@ -143,7 +155,7 @@ class controlador_cliente extends controlador_base{
 
     public function carga_datos_servicio(){
         $this->cliente_id = $_GET['cliente_id'];
-        $cliente = new Cliente($this->link);
+        $cliente = new cliente($this->link);
         $clientes = $cliente->obten_por_id('cliente', $this->cliente_id);
         $this->datos_cliente = $clientes['registros'][0];
     }
@@ -159,7 +171,7 @@ class controlador_cliente extends controlador_base{
     public function descarga_factura_pdf(){
         $factura_id = $_GET['factura_id'];
 
-        $modelo_factura = new Factura($this->link);
+        $modelo_factura = new factura($this->link);
         $resultado = $modelo_factura->obten_por_id('factura',$factura_id);
 
         $rg_upd = array('status_descarga'=>'descargada');
@@ -173,7 +185,7 @@ class controlador_cliente extends controlador_base{
         $pdf = new my_pdf();
         $this->genera_pdf_factura($factura_id, $pdf);
 
-        $empresas = new Empresas();
+        $empresas = new empresas();
         $datos_empresa = $empresas->empresas[$_SESSION['numero_empresa']];
         $referencia_factura = $datos_empresa['referencia_factura'];
 
@@ -1097,7 +1109,7 @@ class controlador_cliente extends controlador_base{
         $this->breadcrumbs = $this->directiva->nav_breadcumbs(12, 0, $breadcrumbs);
         $this->factura_id = $_GET['factura_id'];
 
-        $partida_factura_modelo = new Partida_Factura($this->link);
+        $partida_factura_modelo = new partida_factura($this->link);
         $filtro = array('factura_id'=>$this->factura_id);
         $resultado = $partida_factura_modelo->filtro_and('partida_factura',$filtro);
 
@@ -1158,7 +1170,7 @@ class controlador_cliente extends controlador_base{
 
         if($status_timbre!=='timbrada' || !$existe_xml_sin_timbrar){
 
-            $repositorio = new Repositorio();
+            $repositorio = new repositorio();
 
             $update = $this->init_update(datos_empresa: $datos_empresa,registro: $registro);
             if(errores::$error){
@@ -1456,8 +1468,10 @@ class controlador_cliente extends controlador_base{
                 $partida['partida_factura_valor_unitario'] = number_format(round($partida['partida_factura_valor_unitario'],4),4,'.','');
                 $impuesto_codigo = '"'.$partida['partida_factura_impuesto_codigo'].'"';
                 $tipo_factor_codigo = '"'.$partida['partida_factura_tipo_factor_codigo'].'"';
-                $tasa_cuota = '"'.number_format(round($partida['partida_factura_tasa_cuota'],6),6,'.','').'"';
-
+                $tasa_cuota = '';
+                if(isset($partida['partida_factura_tasa_cuota'])) {
+                    $tasa_cuota = '"' . number_format(round($partida['partida_factura_tasa_cuota'], 6), 6, '.', '') . '"';
+                }
                 $total_impuestos_trasladados = '"'.number_format(round($partida['partida_factura_total_impuestos_trasladados'],4),4,'.','').'"';
 
 
@@ -1737,43 +1751,80 @@ class controlador_cliente extends controlador_base{
 
     private function init_update(array $datos_empresa, array $registro): array
     {
-        if((string)$registro['factura_lugar_expedicion']===''){
-            $update['lugar_expedicion'] = $datos_empresa['cp'];
-        }
-        if($registro['factura_calle_expedicion']==''){
-            $update['calle_expedicion'] = $datos_empresa['calle'];
-        }
-        if($registro['factura_exterior_expedicion']==''){
-            $update['exterior_expedicion'] = $datos_empresa['exterior'];
-        }
-        if($registro['factura_interior_expedicion']==''){
-            $update['interior_expedicion'] = $datos_empresa['interior'];
-        }
-        if($registro['factura_colonia_expedicion']==''){
-            $update['colonia_expedicion'] = $datos_empresa['colonia'];
-        }
-        if($registro['factura_municipio_expedicion']==''){
-            $update['municipio_expedicion'] = $datos_empresa['municipio'];
-        }
-        if($registro['factura_estado_expedicion']==''){
-            $update['estado_expedicion'] = $datos_empresa['estado'];
-        }
-        if($registro['factura_pais_expedicion']==''){
-            $update['pais_expedicion'] = $datos_empresa['pais'];
-        }
 
-        if($registro['factura_nombre_emisor']==''){
-            $update['nombre_emisor'] = $datos_empresa['razon_social'];
+        $update = $this->init_array_update_emisor(registro: $registro);
+        if(errores::$error){
+            return $this->error_->error('Error al asignar datos', $update);
         }
-        if($registro['factura_regimen_fiscal_emisor_codigo']==''){
-            $update['regimen_fiscal_emisor_codigo'] = $datos_empresa['regimen_fiscal'];
-        }
-        if($registro['factura_regimen_fiscal_emisor_descripcion']==''){
-            $update['regimen_fiscal_emisor_descripcion'] = $datos_empresa['regimen_fiscal_descripcion'];
-        }
-
 
         $update['rfc_emisor'] = $datos_empresa['rfc'];
+        return $update;
+    }
+
+    private function init_array_update_emisor(array $registro): array
+    {
+        $update = array();
+
+        $data = $this->keys_init_emisor();
+        if(errores::$error){
+            return $this->error_->error('Error al asignar datos', $data);
+        }
+        $update = $this->asigna_data_update_emisor(data: $data,registro: $registro,update: $update);
+        if(errores::$error){
+            return $this->error_->error('Error al asignar datos', $update);
+        }
+        return $update;
+    }
+
+    private function asigna_data_update_emisor(array $data, array $registro, array $update): array
+    {
+        foreach($data as $campo_upd=>$data_value_upd){
+            $update = $this->init_update_emisor(campo_upd: $campo_upd,data_value_upd: $data_value_upd,
+                registro: $registro,update: $update);
+            if(errores::$error){
+                return $this->error_->error('Error al asignar datos', $update);
+            }
+        }
+        return $update;
+    }
+
+    private function init_update_emisor(string $campo_upd, array $data_value_upd, array $registro, array $update): array
+    {
+        if((string)$registro[$campo_upd]===''){
+            $update = $this->asigna_datos_emisor(data_value_upd: $data_value_upd,update: $update);
+            if(errores::$error){
+                return $this->error_->error('Error al asignar datos', $update);
+            }
+        }
+        return $update;
+    }
+
+    /**
+     * UNIT
+     * @return array
+     */
+    PUBLIC function keys_init_emisor(): array
+    {
+        $data['factura_lugar_expedicion'] = array('lugar_expedicion'=>'cp');
+        $data['factura_calle_expedicion'] = array('calle_expedicion'=>'calle');
+        $data['factura_exterior_expedicion'] = array('exterior_expedicion'=>'exterior');
+        $data['factura_interior_expedicion'] = array('interior_expedicion'=>'interior');
+        $data['factura_colonia_expedicion'] = array('colonia_expedicion'=>'colonia');
+        $data['factura_municipio_expedicion'] = array('municipio_expedicion'=>'municipio');
+        $data['factura_estado_expedicion'] = array('estado_expedicion'=>'estado');
+        $data['factura_pais_expedicion'] = array('pais_expedicion'=>'pais');
+        $data['factura_nombre_emisor'] = array('nombre_emisor'=>'razon_social');
+        $data['factura_regimen_fiscal_emisor_codigo'] = array('regimen_fiscal_emisor_codigo'=>'regimen_fiscal');
+        $data['factura_regimen_fiscal_emisor_descripcion'] = array('regimen_fiscal_emisor_descripcion'=>'regimen_fiscal_descripcion');
+        return $data;
+    }
+
+    private function asigna_datos_emisor(array $data_value_upd, array $update): array
+    {
+        $key_upd = key($data_value_upd);
+        $value_upd = trim($data_value_upd[$key_upd]);
+        $update[$key_upd] = $value_upd;
+
         return $update;
     }
 

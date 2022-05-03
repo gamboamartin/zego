@@ -1,5 +1,6 @@
 <?php
-class Controlador_Insumo extends Controlador_Base{
+namespace controllers;
+class controlador_insumo extends controlador_base {
     public $input;
     public $tablas;
     public $campos_llenables;

@@ -1,5 +1,6 @@
 <?php
-class Controlador_Cuenta_Bancaria extends Controlador_Base{
+namespace controllers;
+class controlador_cuenta_bancaria extends controlador_base {
 
 
 }

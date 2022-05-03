@@ -1,5 +1,6 @@
 <?php
-class Estado extends Modelos{
+namespace models;
+class estado extends modelos {
 
 
 }

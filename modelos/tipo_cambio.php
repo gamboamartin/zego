@@ -1,6 +1,6 @@
 <?php
-
-class Tipo_cambio extends Modelos{
+namespace models;
+class tipo_cambio extends modelos {
     public function tipo_cambio_por_moneda($moneda_id){
         $sql = new consultas_base();
         $consulta = $sql->genera_consulta_base('tipo_cambio');

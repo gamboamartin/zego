@@ -1,5 +1,6 @@
 <?php
-class Tipo_cliente extends Modelos{
+namespace models;
+class tipo_cliente extends modelos {
 
 
 }

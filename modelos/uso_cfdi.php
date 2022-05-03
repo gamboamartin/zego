@@ -1,5 +1,5 @@
 <?php
-
-class Uso_Cfdi extends Modelos{
+namespace models;
+class uso_cfdi extends modelos {
 
 }

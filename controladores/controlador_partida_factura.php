@@ -1,5 +1,6 @@
 <?php
-class Controlador_Partida_Factura extends Controlador_Base{
+namespace controllers;
+class controlador_partida_factura extends controlador_base {
 
 
 }

@@ -1,6 +1,8 @@
 <?php
+namespace models;
+use conexion;
 
-class Accion extends Modelos{
+class accion extends modelos {
     public function obten_acciones_iniciales(){
         $grupo_id = $_SESSION['grupo_id'];
         $consulta = "SELECT 
@@ -87,7 +89,7 @@ class Accion extends Modelos{
 
 	public function valida_permiso($seccion,$accion){
 
-        $conexion = new Conexion();
+        $conexion = new conexion();
         $conexion->selecciona_base_datos();
         $link = $conexion->link;
                 

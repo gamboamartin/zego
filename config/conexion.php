@@ -1,5 +1,5 @@
 <?php
-class Conexion{
+class conexion{
 	public $link;
 	public $nombre_base_datos;
 	function __construct(){

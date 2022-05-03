@@ -1,5 +1,6 @@
 <?php
-class nota_credito extends Modelos{
+namespace models;
+class nota_credito extends modelos {
 
 
 }

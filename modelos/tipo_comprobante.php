@@ -1,5 +1,5 @@
 <?php
-
-class Tipo_Comprobante extends Modelos{
+namespace models;
+class tipo_comprobante extends modelos {
 
 }

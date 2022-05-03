@@ -1,5 +1,6 @@
 <?php
-class Controlador_Grupo extends Controlador_Base{
+namespace controllers;
+class controlador_grupo extends controlador_base {
     public $grupo_descripcion;
     public $menus;
     public $secciones;

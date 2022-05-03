@@ -12,8 +12,8 @@ require_once('consultas_base.php');
 require_once('views/directivas/directivas.php');
 require_once('views/templates.php');
 
-require_once('modelos.php');
-require_once('modelo_sobrecargado.php');
+require_once('modelos/modelos.php');
+require_once('modelos/modelo_sobrecargado.php');
 
 
 $directorio = opendir("modelos");

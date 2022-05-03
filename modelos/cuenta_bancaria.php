@@ -1,5 +1,5 @@
 <?php
-
-class Cuenta_Bancaria extends Modelos{
+namespace models;
+class cuenta_bancaria extends modelos {
 
 }

@@ -1,5 +1,6 @@
 <?php
-class Controlador_Patente_Aduanal extends Controlador_Base{
+namespace controllers;
+class controlador_patente_aduanal extends controlador_base {
     public function lista(){
         $modelo = new Patente_Aduanal();
         $breadcrumbs = array('alta');

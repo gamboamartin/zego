@@ -1,5 +1,6 @@
 <?php
-class controlador_nota_credito extends Controlador_Base{
+namespace controllers;
+class controlador_nota_credito extends controlador_base {
     public $notas_credito = false;
     public $nota_credito = false;
     public $nota_credito_id = false;

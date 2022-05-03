@@ -1,5 +1,5 @@
 <?php
-
-class Aduana extends Modelos{
+namespace models;
+class aduana extends modelos {
 
 }

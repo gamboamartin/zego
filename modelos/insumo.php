@@ -1,5 +1,5 @@
 <?php
-
+namespace models;
 use gamboamartin\errores\errores;
 
 class insumo extends modelos {
