@@ -30,11 +30,10 @@ class repositorio{
 
         }
     }
-    private function crea_directorio($ruta_directorio){
-        if(!file_exists($ruta_directorio)){
-            if(!mkdir($ruta_directorio, 0777)){
-                return false;
-            }
+    private function crea_directorio(string $ruta_directorio): bool
+    {
+        if(!file_exists($ruta_directorio) && !mkdir($ruta_directorio, 0777) && !is_dir($ruta_directorio)) {
+            return false;
         }
         return true;
     }
