@@ -1120,11 +1120,21 @@ class controlador_cliente extends controlador_base{
         		$partida_factura_modelo->modifica_bd(array('factura_id'=>$this->factura_id),'partida_factura',$partida['partida_factura_id']);
         	}
         }
-        $this->genera_pdf_factura_sin_timbrar(factura_id: $this->factura_id);
+        $pdf = $this->genera_pdf_factura_sin_timbrar(factura_id: $this->factura_id);
+        if(errores::$error){
+            $error = $this->error_->error('Error al generar pdf', $pdf);
+            print_r($error);
+            die('Error');
+        }
 
 
         $factura_modelo = new factura($this->link);
         $resultado = $factura_modelo->obten_por_id('factura',$this->factura_id);
+        if(errores::$error){
+            $error = $this->error_->error('Error al obtener registro', $resultado);
+            print_r($error);
+            die('Error');
+        }
         $this->factura = $resultado['registros'][0];
 
 
@@ -1146,6 +1156,10 @@ class controlador_cliente extends controlador_base{
         $empresa = new Empresas();
         $factura = new factura($this->link);
         $resultado = $factura->obten_por_id('factura',$factura_id);
+        if(errores::$error){
+            return $this->error_->error('Error al obtener factura', $resultado);
+        }
+
         $registro = $resultado['registros'][0];
         $folio = $registro['factura_folio'];
         $uuid = $registro['factura_uuid'];
@@ -1290,6 +1304,11 @@ class controlador_cliente extends controlador_base{
             /**
              * RECEPTOR
              */
+
+            if(!isset($registro['factura_cliente_rf']) || trim($registro['factura_cliente_rf'])===''){
+                return $this->error_->error('Error factura_cliente_rf no existe en el registro', $registro);
+            }
+
             $xml = str_replace('|rfc_receptor|',$rfc_receptor,$xml);
             $xml = str_replace('|razon_social_cliente|',$razon_social_cliente,$xml);
             $xml = str_replace('|cliente_cp|',$registro['factura_cliente_cp'],$xml);

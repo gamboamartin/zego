@@ -651,6 +651,11 @@ class consultas_base{
         $this->estructura_bd['factura_relacionada']['columnas_select'] = $this->factura_relacionada_columnas;
     }
 
+    /**
+     * ERROR
+     * @param $tabla
+     * @return false|string
+     */
     public function subconsultas($tabla){
         $consulta = False;
 
@@ -686,7 +691,14 @@ class consultas_base{
 
     }
 
-
+    /**
+     * ERROR
+     * @param $tabla
+     * @param $tabla_enlace
+     * @param $renombrada
+     * @param $obligatorio
+     * @return string
+     */
     private function genera_join($tabla, $tabla_enlace, $renombrada,$obligatorio){
         if($obligatorio){
             $join = 'LEFT';

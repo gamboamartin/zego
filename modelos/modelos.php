@@ -257,7 +257,12 @@ class modelos{
     }
 
 
-
+    /**
+     * ERROR
+     * @param $tabla
+     * @param $tabla_renombrada
+     * @return string|array
+     */
     public function genera_columnas_consulta($tabla, $tabla_renombrada): string|array
     {
         $columnas_parseadas = $this->obten_columnas($tabla);
@@ -379,8 +384,17 @@ class modelos{
         }
     }
 
-    public function obten_columnas($tabla): array
+    /**
+     * ERROR UNIT
+     * @param $tabla
+     * @return array
+     */
+    private function obten_columnas($tabla): array
     {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
         $consulta = "DESCRIBE $tabla";
         $result = $this->ejecuta_consulta($consulta);
         if(errores::$error){
@@ -398,6 +412,11 @@ class modelos{
         return $columnas_parseadas;
     }
 
+    /**
+     * ERROR
+     * @param $tabla
+     * @return array|string
+     */
     public function obten_columnas_completas($tabla){
         $columnas = "";
         $consulta_base = new consultas_base();
@@ -429,9 +448,16 @@ class modelos{
     public function obten_por_id($tabla, $id): array
     {
         $consulta = $this->genera_consulta_base($tabla);
+        if(errores::$error){
+            return $this->error->error('Error al generar consulta', $consulta);
+        }
         $where = " WHERE $tabla".".id = $id ";
         $consulta .= $where;
-        return $this->ejecuta_consulta($consulta);
+        $result = $this->ejecuta_consulta($consulta);
+        if(errores::$error){
+            return $this->error->error('Error al ejecutar consulta', $result);
+        }
+        return $result;
     }
 
     public function obten_registros($tabla, $sql=''){

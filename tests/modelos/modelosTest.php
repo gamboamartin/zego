@@ -89,5 +89,45 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_obten_columnas(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $tabla = '';
+        $resultado = $modelo->obten_columnas($tabla);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $tabla = 'A';
+        $resultado = $modelo->obten_columnas($tabla);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al ejecutar sql',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $tabla = 'factura';
+        $resultado = $modelo->obten_columnas($tabla);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals('id',$resultado[0]);
+        $this->assertEquals('lugar_expedicion',$resultado[1]);
+        $this->assertEquals('sello',$resultado[22]);
+        $this->assertEquals('uuid',$resultado[40]);
+        $this->assertEquals('zica_cliente_id',$resultado[51]);
+        $this->assertEquals('bultos',$resultado[68]);
+        $this->assertEquals('cliente_cp',$resultado[89]);
+        errores::$error = false;
+    }
+
 
 }
