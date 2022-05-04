@@ -108,6 +108,14 @@ if(isset($_SESSION['numero_empresa'])){
                 <?php if($seguridad->menu){ ?>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
+                        <?php
+                        $menu = $directiva->menu($link);
+                        if(errores::$error){
+                            $error = (new errores())->error('Error al generar menu', $menu);
+                            print_r($error);
+                            die('Error');
+                        }
+                        ?>
                     <?php  echo $directiva->menu($link); ?>
                     </ul>
                 </div>

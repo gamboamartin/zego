@@ -433,13 +433,23 @@ class modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param $tabla
      * @return array|string
      */
-    public function obten_columnas_completas($tabla){
+    private function obten_columnas_completas($tabla): array|string
+    {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
         $columnas = "";
         $consulta_base = new consultas_base();
+
+        if(!isset($consulta_base->estructura_bd[$tabla]['columnas_select'])){
+            return $this->error->error('Error no existe columna en estructura', $consulta_base->estructura_bd);
+        }
+
         $tablas_select = $consulta_base->estructura_bd[$tabla]['columnas_select'];
         foreach ($tablas_select as $key=>$tabla_select){
 
@@ -448,7 +458,7 @@ class modelos{
                 $tabla_renombrada = $tabla_select['tabla_renombrada'];
                 $resultado_columnas = $this->genera_columnas_consulta($tabla_base, $tabla_renombrada);
                 if(errores::$error){
-                    return $this->error->error('Error al generar columnas', $resultado_columnas);
+                    return $this->error->error('Error al generar columnas con renombre', $resultado_columnas);
                 }
 
             }
@@ -459,7 +469,7 @@ class modelos{
                 }
 
             }
-            $columnas .= $columnas == ""?"$resultado_columnas":" , $resultado_columnas";
+            $columnas .= $columnas === ""? (string)$resultado_columnas :" , $resultado_columnas";
         }
 
         return $columnas;

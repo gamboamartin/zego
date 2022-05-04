@@ -1126,6 +1126,11 @@ class controlador_cliente extends controlador_base{
         	if((string)$partida['partida_factura_producto_sat_codigo'] === ''){
         		$partida_factura_modelo->modifica_bd(array('factura_id'=>$this->factura_id),'partida_factura',$partida['partida_factura_id']);
         	}
+            if(!isset($partida['partida_factura_obj_imp'])){
+                $error = $this->error_->error('Error no existe obj_imp', $partida);
+                print_r($error);
+                die('Error');
+            }
         }
         $pdf = $this->genera_pdf_factura_sin_timbrar(factura_id: $this->factura_id);
         if(errores::$error){

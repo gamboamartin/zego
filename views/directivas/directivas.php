@@ -317,9 +317,17 @@ class directivas{
         return $html;
     }
 
+    /**
+     * ERROR
+     * @param $link
+     * @return array|string
+     */
     public function menu($link){
         $modelo_menu = new menu($link);
         $registros = $modelo_menu->obten_menu_permitido();
+        if(errores::$error){
+            return $this->error->error('Error al obtener menu permitido', $registros);
+        }
         $menus = $registros['registros'];
         $html = "";
         foreach ($menus as $key => $menu) {

@@ -89,6 +89,8 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+
+
     public function test_genera_columnas_consulta(): void
     {
         errores::$error = false;
@@ -159,6 +161,39 @@ class modelosTest extends test {
         $this->assertEquals('zica_cliente_id',$resultado[51]);
         $this->assertEquals('bultos',$resultado[68]);
         $this->assertEquals('cliente_cp',$resultado[89]);
+        errores::$error = false;
+    }
+
+    public function test_genera_columnas_completas(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $tabla = '';
+
+        $resultado = $modelo->obten_columnas_completas($tabla);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+        $tabla = 'A';
+
+        $resultado = $modelo->obten_columnas_completas($tabla);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error no existe columna en estructura',$resultado['mensaje']);
+
+        errores::$error = false;
+        $tabla = 'partida_factura';
+
+        $resultado = $modelo->obten_columnas_completas($tabla);
+        $this->assertIsString( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('factura.nombre_emisor AS factura_nombre_emisor',$resultado);
         errores::$error = false;
     }
 
