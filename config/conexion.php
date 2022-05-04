@@ -3,10 +3,10 @@
 use gamboamartin\errores\errores;
 
 class conexion{
-	public $link;
-	public $nombre_base_datos;
+	public mysqli|false $link;
+	public string $nombre_base_datos = '';
     private errores $error;
-	function __construct(){
+	public function __construct(){
 	    if (isset($_SESSION['numero_empresa'])) {
             $this->error = new errores();
             $empresa = new empresas();
@@ -16,16 +16,33 @@ class conexion{
             $user = $empresa_activa['user'];
             $pass = $empresa_activa['pass'];
             $this->nombre_base_datos = $empresa_activa['nombre_base_datos'];
-            $this->link = mysqli_connect($host, $user, $pass);
-            mysqli_set_charset($this->link, 'utf8');
-            $sql = "SET sql_mode = '';";
-            $this->link->query($sql);
+            try {
+                $this->link = mysqli_connect($host, $user, $pass);
+                mysqli_set_charset($this->link, 'utf8');
+                $sql = "SET sql_mode = '';";
+                $this->link->query($sql);
+            }
+            catch (Throwable $e){
+                $error = $this->error->error('Error al conectarse', $e);
+                print_r($error);
+                die('Error');
+            }
         }
         else{
             $this->link = false;
         }
 	}
-	public function selecciona_base_datos($nombre_base_datos=false){
+
+    /**
+     * ERROR
+     * @param bool $nombre_base_datos
+     * @return array|void
+     */
+
+	public function selecciona_base_datos(bool|string $nombre_base_datos=false){
+        if($nombre_base_datos===''){
+            $nombre_base_datos = false;
+        }
 		if($nombre_base_datos){
 			$this->nombre_base_datos = $nombre_base_datos;
 		}
