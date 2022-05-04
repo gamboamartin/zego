@@ -1,12 +1,17 @@
 <?php
+
+use gamboamartin\errores\errores;
+
 class repositorio{
     public $directorio_repositorio_base;
     public $directorio_xml_sin_timbrar;
     public $directorio_xml_timbrado;
+    private errores $error;
 
 
 
     public function __construct(){
+        $this->error = new errores();
         if(isset($_SESSION['numero_empresa'])){
 
             $empresa = new Empresas();
@@ -18,22 +23,39 @@ class repositorio{
             $this->directorio_xml_sin_timbrar_completo = $this->directorio_repositorio_base.'/'.$this->directorio_xml_sin_timbrar;
             $this->directorio_xml_timbrado_completo = $this->directorio_repositorio_base.'/'.$this->directorio_xml_timbrado;
 
-            if(!$this->crea_directorio($this->directorio_repositorio_base)){
-                echo 'Error al crear directorio: '.$this->directorio_repositorio_base;
+            $dir = $this->crea_directorio($this->directorio_repositorio_base);
+            if(errores::$error){
+                $error =  $this->error->error('Error al crear directorio', $dir);
+                print_r($error);
+                die('Error');
             }
-            if(!$this->crea_directorio($this->directorio_xml_sin_timbrar_completo)){
-                echo 'Error al crear directorio: '.$this->directorio_xml_sin_timbrar_completo;
+
+            $dir = $this->crea_directorio($this->directorio_xml_sin_timbrar_completo);
+            if(errores::$error){
+                $error =  $this->error->error('Error al crear directorio', $dir);
+                print_r($error);
+                die('Error');
             }
-            if(!$this->crea_directorio($this->directorio_xml_timbrado_completo)){
-                echo 'Error al crear directorio: '.$this->directorio_xml_timbrado_completo;
+            $dir = $this->crea_directorio($this->directorio_xml_timbrado_completo);
+            if(errores::$error){
+                $error =  $this->error->error('Error al crear directorio', $dir);
+                print_r($error);
+                die('Error');
             }
+
 
         }
     }
-    private function crea_directorio(string $ruta_directorio): bool
+
+    /**
+     * ERROR
+     * @param string $ruta_directorio
+     * @return bool|array
+     */
+    private function crea_directorio(string $ruta_directorio): bool|array
     {
-        if(!file_exists($ruta_directorio) && !mkdir($ruta_directorio, 0777) && !is_dir($ruta_directorio)) {
-            return false;
+        if(!file_exists($ruta_directorio) && !mkdir($ruta_directorio) && !is_dir($ruta_directorio)) {
+            return $this->error->error('Error al crear directorio', $ruta_directorio);
         }
         return true;
     }
