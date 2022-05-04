@@ -4,7 +4,13 @@ use gamboamartin\errores\errores;
 
 class insumo extends modelos {
 
-    public function data_insumo(int $insumo_id){
+    /**
+     * ERROR
+     * @param int $insumo_id
+     * @return array
+     */
+    public function data_insumo(int $insumo_id): array
+    {
         $insumo = $this->registro(id:$insumo_id, tabla: 'insumo');
         if(errores::$error){
             return $this->error->error('Error al obtener insumo', $insumo);

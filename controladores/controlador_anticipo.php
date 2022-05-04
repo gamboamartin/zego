@@ -20,7 +20,12 @@ class controlador_anticipo extends controlador_base {
     public $factura = false;
     public function alta_bd(){
         $_POST['status'] = '1';
-        parent::alta_bd();
+        $r = parent::alta_bd();
+        if(errores::$error){
+            $error = $this->error_->error('Error al insertar anticipo', $r);
+            print_r($error);
+            exit;
+        }
     }
 
     public function aplica_anticipo_factura(){

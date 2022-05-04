@@ -177,6 +177,9 @@ class facturas{
 
             $filtro_tipo_comprobante = array('codigo'=>$datos_comprobante['TipoDeComprobante']);
             $resultado = $tipo_comprobante_modelo->filtro_and('tipo_comprobante',$filtro_tipo_comprobante);
+            if(errores::$error){
+                return $this->error->error('Error al obtener tipo de comprobante', $resultado);
+            }
             $registro = $resultado['registros'][0];
             $datos_comprobante['TipoDeComprobanteDescripcion'] = $registro['tipo_comprobante_descripcion'];
 
@@ -566,6 +569,9 @@ class facturas{
                 'sello_sat'=>$SelloSAT,'no_certificado_sat'=>$NoCertificadoSAT,
                 'fecha_timbrado'=>$FechaTimbrado,'rfc_proveedor_timbrado'=>$RfcProvCertif,'status'=>1);
             $resultado_modelo = $pago_cliente_modelo->modifica_bd($registro_update,'pago_cliente',$this->pago_cliente_id);
+            if(errores::$error){
+                return $this->error->error('Error al actualizar pago_cliente', $resultado_modelo);
+            }
             return true;
         }
         else{

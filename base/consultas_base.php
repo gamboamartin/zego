@@ -702,20 +702,23 @@ class consultas_base{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param $tabla
      * @param $tabla_enlace
      * @param $renombrada
-     * @param $obligatorio
-     * @return string
+     * @return string|array
      */
-    private function genera_join($tabla, $tabla_enlace, $renombrada,$obligatorio){
-        if($obligatorio){
-            $join = 'LEFT';
+    private function genera_join($tabla, $tabla_enlace, $renombrada): string|array
+    {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error tabla esta vacia', $tabla);
         }
-        else{
-            $join = 'LEFT';
+        $tabla_enlace = trim($tabla_enlace);
+        if($tabla_enlace === ''){
+            return $this->error->error('Error $tabla_enlace esta vacia', $tabla_enlace);
         }
+        $join = 'LEFT';
         if($renombrada){
             $sql = ' '.$join.' JOIN '.$tabla.' AS '.$renombrada.' ON '.$renombrada.'.id = '.$tabla_enlace.'.'.$renombrada.'_id';
         }
@@ -741,7 +744,7 @@ class consultas_base{
                 $tabla_enlace = $tabla_join['tabla_enlace'];
                 $tabla_renombre = $tabla_join['tabla_renombrada'];
                 $obligatorio = $tabla_join['obligatorio'];
-                $data_join = $this->genera_join($tabla_base, $tabla_enlace,$tabla_renombre,$obligatorio);
+                $data_join = $this->genera_join($tabla_base, $tabla_enlace,$tabla_renombre);
                 if(errores::$error){
                     return $this->error->error('Error al generar join', $data_join);
                 }
@@ -749,7 +752,7 @@ class consultas_base{
             }
             else {
                 if ($tabla_join) {
-                    $data_join = $this->genera_join($key, $tabla_join,false,true);
+                    $data_join = $this->genera_join($key, $tabla_join,false);
                     if(errores::$error){
                         return $this->error->error('Error al generar join', $data_join);
                     }

@@ -144,11 +144,10 @@ class controlador_base{
      */
 
 
-
-
-
-
-
+    /**
+     * ERROR
+     * @return void
+     */
     public function alta_bd(){
         $tabla = $_GET['seccion'];
 
@@ -160,12 +159,12 @@ class controlador_base{
         }
 
         $resultado = $this->modelo->alta_bd($registro, $tabla);
-
-        if($resultado['error']){
-            $mensaje = $resultado['mensaje'];
-            header("Location: ./index.php?seccion=$tabla&accion=alta&mensaje=$mensaje&tipo_mensaje=error");
-            exit;
+        if(errores::$error){
+            $error = $this->error_->error('Error al insertar registro', $resultado);
+            print_r($error);
+            die('Error');
         }
+
 
         header("Location: ./index.php?seccion=$tabla&accion=lista&mensaje=Registro insertado con éxito&tipo_mensaje=exito");
     }

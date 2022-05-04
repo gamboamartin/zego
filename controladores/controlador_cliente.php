@@ -9,6 +9,7 @@ use models\cliente;
 use models\cuenta_bancaria;
 use models\factura;
 use models\factura_relacionada;
+use models\insumo;
 use models\partida_factura;
 use my_pdf;
 use NumeroTexto;
@@ -995,14 +996,13 @@ class controlador_cliente extends controlador_base{
         $modelo_partida = new Partida_Factura($this->link);
         foreach ($partida as $partida_insertar){
             $resultado = $modelo_partida->alta_bd($partida_insertar, 'partida_factura');
-
-            if($resultado['error']){
-                print_r($resultado['mensaje']);
+            if(errores::$error){
                 $this->link->query('ROLLBACK');
-                $mensaje = $resultado['mensaje'];
-                header("Location: ./index.php?seccion=cliente&accion=genera_factura&mensaje=$mensaje&tipo_mensaje=error");
-                exit;
+                $error = $this->error_->error('Error al insertar partida', $resultado);
+                print_r($error);
+                die('Error');
             }
+
         }
         $this->link->query('COMMIT');
         header("Location: ./index.php?seccion=cliente&accion=vista_preliminar_factura&factura_id=$factura_id");
@@ -1036,7 +1036,7 @@ class controlador_cliente extends controlador_base{
     public function obten_datos_unidad(){
 
         $insumo_id = $_GET['insumo_id'];
-        $insumo_modelo = new Insumo($this->link);
+        $insumo_modelo = new insumo($this->link);
         $resultado = $insumo_modelo->obten_por_id('insumo',$insumo_id);
         $insumo = $resultado['registros']['0'];
         $json = json_encode($insumo);
@@ -1124,8 +1124,11 @@ class controlador_cliente extends controlador_base{
 
         foreach ($partidas as $partida) {
         	if((string)$partida['partida_factura_producto_sat_codigo'] === ''){
-        		$partida_factura_modelo->modifica_bd(array('factura_id'=>$this->factura_id),'partida_factura',$partida['partida_factura_id']);
+                $upd['factura_id'] = $this->factura_id;
+                $partida_factura_id = $partida['partida_factura_id'];
+        		$partida_factura_modelo->modifica_bd($upd,'partida_factura',$partida_factura_id);
         	}
+
             if(!isset($partida['partida_factura_obj_imp'])){
                 $error = $this->error_->error('Error no existe obj_imp', $partida);
                 print_r($error);

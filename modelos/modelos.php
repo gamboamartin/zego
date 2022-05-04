@@ -50,6 +50,12 @@ class modelos{
 
     }
 
+    /**
+     *  ERROR
+     * @param $registro
+     * @param $tabla
+     * @return array
+     */
     public function alta_bd($registro, $tabla){
         $campos = "";
         $valores = "";
@@ -101,18 +107,18 @@ class modelos{
         $consulta_insercion = "INSERT INTO ". $tabla." (".$campos.") VALUES (".$valores.")";
 
 
-
-        $this->link->query($consulta_insercion);
-        if($this->link->error){
-            return array('mensaje'=>'Error al insertar '.$this->link->error, 'error'=>True);
+        try {
+            $this->link->query($consulta_insercion);
         }
-        else{
+        catch (Throwable $e){
+            return $this->error->error('Error al insertar registro', $e);
+        }
 
-            $registro_id = $this->link->insert_id;
-            $this->registro_id = (int)$registro_id;
-            return array(
+        $registro_id = $this->link->insert_id;
+        $this->registro_id = (int)$registro_id;
+        return array(
                 'mensaje'=>'Registro insertado con éxito', 'error'=>False, 'registro_id'=>$registro_id);
-        }
+
     }
 
     public function asigna_0_to_vacio(string $campo, array $row): array
@@ -221,6 +227,13 @@ class modelos{
         return $result;
     }
 
+    /**
+     * ERROR
+     * @param $tabla
+     * @param $filtros
+     * @param $sql
+     * @return array
+     */
     public function filtro_and($tabla, $filtros, $sql = ''): array
     {
 
@@ -336,6 +349,13 @@ class modelos{
         return $row;
     }
 
+    /**
+     * ERROR
+     * @param $registro
+     * @param $tabla
+     * @param $id
+     * @return array
+     */
     public function modifica_bd($registro, $tabla, $id){
         $campos = "";
 
@@ -392,16 +412,17 @@ class modelos{
 
         $consulta = "UPDATE ". $tabla." SET ".$campos." $visible $inicio WHERE id = $id";
 
+        try {
+            $this->link->query($consulta);
+        }
+        catch (Throwable $e){
+            return $this->error->error('Error al actualizar', $e);
+        }
 
-        $this->link->query($consulta);
-        if($this->link->error){
-            return array('mensaje'=>$this->link->error, 'error'=>True, 'sql'=>$consulta);
-        }
-        else{
-            $registro_id = $id;
-            return array(
-                'mensaje'=>'Registro modificado con éxito', 'error'=>False, 'registro_id'=>$registro_id);
-        }
+        $registro_id = $id;
+        return array(
+            'mensaje'=>'Registro modificado con éxito', 'error'=>False, 'registro_id'=>$registro_id);
+
     }
 
     /**
