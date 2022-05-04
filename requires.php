@@ -7,7 +7,7 @@ require_once ('clases/calculo.php');
 require_once('config/conexion.php');
 require_once('config/empresas.php');
 
-require_once('consultas_base.php');
+require_once('base/consultas_base.php');
 
 require_once('views/directivas/directivas.php');
 require_once('views/templates.php');

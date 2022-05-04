@@ -1,12 +1,17 @@
 <?php
 
+use gamboamartin\errores\errores;
 use models\accion;
 use models\menu;
 use models\modelos;
 use models\seccion_menu;
 
 class directivas{
+    private errores $error;
 
+    public function __construct(){
+        $this->error = new errores();
+    }
 
     public function breadcrumb($etiqueta, $accion=""){
         $etiqueta = $this->genera_texto_etiqueta($etiqueta);
@@ -321,6 +326,9 @@ class directivas{
             $etiqueta_menu = str_replace('_', ' ', $menu['descripcion']);
 
             $submenu = $this->submenu($menu['id'],$link);
+            if(errores::$error){
+                return $this->error->error('Error al generar submenu', $submenu);
+            }
 
             $html = $html."
 			<li>
@@ -869,10 +877,20 @@ class directivas{
         return $html;
     }
 
+    /**
+     * ERROR
+     * @param $seccion_menu_id
+     * @param $seccion_menu_descripcion
+     * @param $link
+     * @return array|string
+     */
     public function link_menu($seccion_menu_id, $seccion_menu_descripcion,$link){
         $link_seccion_menu_descripcion = strtolower($seccion_menu_descripcion);
         $modelo_accion = new accion($link);
         $resultado = $modelo_accion->obten_accion_permitida($seccion_menu_id);
+        if(errores::$error){
+            return $this->error->error('Error al obtener accion', $resultado);
+        }
 
         if(isset($resultado['error'])) {
             if ($resultado['error'] == 1) {
@@ -955,6 +973,12 @@ class directivas{
         return $html;
     }
 
+    /**
+     * ERROR
+     * @param $menu_id
+     * @param $link
+     * @return array|string
+     */
 	public function submenu($menu_id,$link){
 		$modelo_seccion_menu = new seccion_menu($link);
 		$resultado = $modelo_seccion_menu->obten_submenu_permitido($menu_id);
@@ -967,6 +991,9 @@ class directivas{
 
 			$seccion_menu_descripcion = $menu['descripcion'];
 			$submenu = $this->link_menu($menu['id'],$seccion_menu_descripcion,$link);
+            if(errores::$error){
+                return $this->error->error('Error al generar link de submenu', $submenu);
+            }
 			$html = $html."<li>
                       <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
                         ".ucfirst($etiqueta_menu)."<b class='caret'></b>

@@ -13,6 +13,7 @@ return array(
     'gamboamartin\\errores\\' => array($vendorDir . '/gamboa.martin/errores/src'),
     'controllers\\' => array($vendorDir . '/gamboa.martin/test/src/controllers'),
     'config\\' => array($baseDir . '/config'),
+    'base\\' => array($baseDir . '/base'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src/Prophecy'),

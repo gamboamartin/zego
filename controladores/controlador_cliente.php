@@ -1109,6 +1109,13 @@ class controlador_cliente extends controlador_base{
         $this->breadcrumbs = $this->directiva->nav_breadcumbs(12, 0, $breadcrumbs);
         $this->factura_id = $_GET['factura_id'];
 
+        $init_receptor = (new factura($this->link))->inicializa_data_receptor(factura_id: $this->factura_id);
+        if(errores::$error){
+            $error = $this->error_->error('Error al inicializar receptor', $init_receptor);
+            print_r($error);
+            die('Error');
+        }
+
         $partida_factura_modelo = new partida_factura($this->link);
         $filtro = array('factura_id'=>$this->factura_id);
         $resultado = $partida_factura_modelo->filtro_and('partida_factura',$filtro);

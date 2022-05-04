@@ -35,6 +35,10 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
             'controllers\\' => 12,
             'config\\' => 7,
         ),
+        'b' => 
+        array (
+            'base\\' => 5,
+        ),
         'W' => 
         array (
             'Webmozart\\Assert\\' => 17,
@@ -91,6 +95,10 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         'config\\' => 
         array (
             0 => __DIR__ . '/../..' . '/config',
+        ),
+        'base\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/base',
         ),
         'Webmozart\\Assert\\' => 
         array (

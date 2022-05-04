@@ -3,7 +3,8 @@
     "psr-4": {
       "config\\": "config/",
       "tests\\": "tests/",
-      "models\\": "modelos/"
+      "models\\": "modelos/",
+      "base\\": "base/"
 
     }
   },

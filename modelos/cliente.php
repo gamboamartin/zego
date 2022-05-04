@@ -11,7 +11,13 @@ class cliente extends modelo_sobrecargado{
     }
 
 
-    public function cliente(int $cliente_id){
+    /**
+     * ERROR
+     * @param int $cliente_id
+     * @return array
+     */
+    public function cliente(int $cliente_id): array
+    {
 
         $cliente = (new cliente($this->link))->registro(id:$cliente_id, tabla: 'cliente');
         if(errores::$error){
@@ -21,7 +27,13 @@ class cliente extends modelo_sobrecargado{
 
     }
 
-    public function cp(int $cliente_id){
+    /**
+     * ERROR
+     * @param int $cliente_id
+     * @return array|string
+     */
+    public function cp(int $cliente_id): array|string
+    {
 
         $cliente = (new cliente($this->link))->cliente(cliente_id: $cliente_id);
         if(errores::$error){

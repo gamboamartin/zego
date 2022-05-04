@@ -2,6 +2,7 @@
 namespace controllers;
 use empresas;
 use Fpdf\Fpdf;
+use gamboamartin\errores\errores;
 use models\anticipo;
 use models\factura;
 use NumeroTexto;
@@ -26,6 +27,11 @@ class controlador_anticipo extends controlador_base {
         $factura_id = $_GET['factura_id'];
         $factura_modelo = new factura($this->link);
         $r_factura = $factura_modelo->obten_por_id('factura',$factura_id);
+        if(errores::$error){
+            $error = $this->error_->error('Error al obtener factura', $r_factura);
+            print_r($error);
+            die('Error');
+        }
 
         $this->factura = $r_factura['registros'][0];
 

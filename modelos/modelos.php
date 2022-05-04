@@ -1,6 +1,6 @@
 <?php
 namespace models;
-use consultas_base;
+use base\consultas_base;
 use gamboamartin\errores\errores;
 use Throwable;
 
@@ -292,6 +292,11 @@ class modelos{
         return $columnas_sql;
     }
 
+    /**
+     * ERROR
+     * @param $tabla
+     * @return array|string
+     */
     public function genera_consulta_base($tabla): array|string
     {
 
@@ -445,6 +450,12 @@ class modelos{
         return $columnas;
     }
 
+    /**
+     * ERROR
+     * @param $tabla
+     * @param $id
+     * @return array
+     */
     public function obten_por_id($tabla, $id): array
     {
         $consulta = $this->genera_consulta_base($tabla);
@@ -485,7 +496,14 @@ class modelos{
         return $ultimo_id;
     }
 
-    public function registro(int $id, string $tabla){
+    /**
+     * ERROR
+     * @param int $id
+     * @param string $tabla
+     * @return array
+     */
+    public function registro(int $id, string $tabla): array
+    {
         $result = $this->obten_por_id(tabla: $tabla,id: $id);
         if(errores::$error){
             return $this->error->error('Error al obtener registro', $result);

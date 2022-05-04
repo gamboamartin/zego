@@ -50,9 +50,18 @@ class accion extends modelos {
 
     }
 
-    public function obten_accion_permitida($seccion_menu_id){
+    /**
+     * ERROR
+     * @param $seccion_menu_id
+     * @return array
+     */
+    public function obten_accion_permitida($seccion_menu_id): array
+    {
         $grupo_id = $_SESSION['grupo_id'];
         $consulta = $this->genera_consulta_base('accion_grupo');
+        if(errores::$error){
+            return $this->error->error('Error al generar sql', $consulta);
+        }
         $where = "
              WHERE
                 accion.status = 1 
@@ -61,11 +70,14 @@ class accion extends modelos {
                 AND accion.seccion_menu_id = $seccion_menu_id
                 AND accion.visible = 1 
                 ";
-        $consulta = $consulta.$where;
+        $consulta .= $where;
         $group_by = " GROUP BY accion.id ";
-        $consulta = $consulta.$group_by;
+        $consulta .= $group_by;
 
         $resultado = $this->ejecuta_consulta($consulta);
+        if(errores::$error){
+            return $this->error->error('Error al ejecutar sql', $resultado);
+        }
         return $resultado;
 	}
 

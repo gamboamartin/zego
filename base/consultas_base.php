@@ -1,6 +1,10 @@
 <?php
+namespace base;
+use gamboamartin\errores\errores;
+
 class consultas_base{
     public $link;
+    private errores $error;
 
 
     public $accion_columnas = array('seccion_menu'=>'accion', 'menu'=>'seccion_menu',
@@ -88,6 +92,7 @@ class consultas_base{
 
     public $estructura_bd;
     public function __construct(){
+        $this->error = new errores();
         $this->estructura_bd['anticipo']['columnas_select'] = $this->anticipo_columnas;
         $this->estructura_bd['nota_credito']['columnas_select'] = $this->nota_credito_columnas;
         $this->estructura_bd['pago_cliente']['columnas_select'] = $this->pago_cliente_columnas;
@@ -652,14 +657,19 @@ class consultas_base{
     }
 
     /**
-     * ERROR
-     * @param $tabla
-     * @return false|string
+     * ERROR UNIT
+     * @param string $tabla
+     * @return bool|string|array
      */
-    public function subconsultas($tabla){
-        $consulta = False;
+    public function subconsultas(string $tabla): bool|string|array
+    {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error tabla esta vacia', $tabla);
+        }
+        $consulta = false;
 
-        if($tabla == 'moneda'){
+        if($tabla === 'moneda'){
             $hoy = date('Y-m-d');
             $consulta = "
                           (SELECT 
@@ -670,7 +680,7 @@ class consultas_base{
                             tipo_cambio.moneda_id = moneda.id 
                           AND tipo_cambio.fecha = '$hoy' ) AS tipo_cambio_hoy";
         }
-        if($tabla == 'anticipo'){
+        if($tabla === 'anticipo'){
 
             $total_iva = "(IFNULL((anticipo.monto * anticipo.porcentaje_iva),0))";
             $total = "($total_iva + anticipo.monto)";
@@ -679,7 +689,7 @@ class consultas_base{
             $consulta .= "($total_iva) AS anticipo_monto_iva ";
         }
 
-        if($tabla == 'nota_credito'){
+        if($tabla === 'nota_credito'){
 
             $total_iva = "(IFNULL((nota_credito.monto * nota_credito.porcentaje_iva),0))";
             $total = "($total_iva + nota_credito.monto)";
@@ -714,6 +724,12 @@ class consultas_base{
         }
         return $sql;
     }
+
+    /**
+     * ERROR
+     * @param $tabla
+     * @return array|string
+     */
     public function obten_tablas_completas($tabla){
 
         $tablas = $tabla.' AS '.$tabla;
@@ -725,11 +741,19 @@ class consultas_base{
                 $tabla_enlace = $tabla_join['tabla_enlace'];
                 $tabla_renombre = $tabla_join['tabla_renombrada'];
                 $obligatorio = $tabla_join['obligatorio'];
-                $tablas = $tablas . $this->genera_join($tabla_base, $tabla_enlace,$tabla_renombre,$obligatorio);
+                $data_join = $this->genera_join($tabla_base, $tabla_enlace,$tabla_renombre,$obligatorio);
+                if(errores::$error){
+                    return $this->error->error('Error al generar join', $data_join);
+                }
+                $tablas = $tablas . $data_join;
             }
             else {
                 if ($tabla_join) {
-                    $tablas = $tablas . $this->genera_join($key, $tabla_join,false,true);
+                    $data_join = $this->genera_join($key, $tabla_join,false,true);
+                    if(errores::$error){
+                        return $this->error->error('Error al generar join', $data_join);
+                    }
+                    $tablas = $tablas . $data_join;
                 }
             }
         }
