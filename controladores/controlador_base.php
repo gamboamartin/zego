@@ -61,10 +61,45 @@ class controlador_base{
         }
     }
 
+    public function activa_bd(): void
+    {
+        $registro_id = $_GET['registro_id'];
+        $registro = $this->modelo->activa_bd(SECCION, $registro_id);
+        if(errores::$error){
+            $error = $this->error_->error('Error al activar', $registro);
+            print_r($error);
+            die('Error');
+        }
+        $this->resultado($registro);
+    }
+
+    public function alta(){
+        $breadcrumbs = array('lista');
+        $this->breadcrumbs = $this->directiva->nav_breadcumbs(8, 2, $breadcrumbs);
+    }
+
+    public function modifica_bd(){
+        $tabla = $_GET['seccion'];
+        $this->registro_id = $_GET['registro_id'];
+        $resultado = $this->modelo->modifica_bd($_POST, $tabla, $this->registro_id);
+
+        if($resultado['error']){
+            $mensaje = $resultado['mensaje'];
+            header("Location: ./index.php?seccion=$tabla&accion=modifica&mensaje=$mensaje&tipo_mensaje=error&registro_id=$this->registro_id");
+            exit;
+        }
+        header("Location: ./index.php?seccion=$tabla&accion=lista&mensaje=Registro modificado con éxito&tipo_mensaje=exito");
+    }
+
+    public function obten_dato_registro(){
+        $resultado = $this->modelo->obten_por_id($this->tabla, $this->registro_id);
+        $this->registro = $resultado['registros'][0];
+        echo $this->registro[$this->tabla.'_'.$this->campo];
+    }
 
     public function option_selected(){
 
-	    if($this->selected){
+        if($this->selected){
 
             $dato_arreglo = explode('_id',$this->campo_filtro);
             $tabla_hija = $dato_arreglo[0];
@@ -84,7 +119,7 @@ class controlador_base{
 
 
         }
-	    else {
+        else {
             $resultado = $this->modelo->filtro_and($this->tabla,
                 array($this->tabla . "." . $this->campo_filtro => $this->valor_filtro, $this->tabla . '.status' => '1'));
             $this->registros = $resultado['registros'];
@@ -93,16 +128,26 @@ class controlador_base{
 
     }
 
-    public function activa_bd(){
-        $registro_id = $_GET['registro_id'];
-        $registro = $this->modelo->activa_bd(SECCION, $registro_id);
-        $this->resultado($registro);
+    public function resultado($registro){
+        echo $registro['mensaje'];
+        if($registro['error']){
+            http_response_code(404);
+        }
+        else{
+            http_response_code(200);
+        }
     }
 
-    public function alta(){
-		$breadcrumbs = array('lista');
-		$this->breadcrumbs = $this->directiva->nav_breadcumbs(8, 2, $breadcrumbs);
-	}
+
+    /**
+     * ALFABETICO
+     */
+
+
+
+
+
+
 
     public function alta_bd(){
         $tabla = $_GET['seccion'];
@@ -184,34 +229,11 @@ class controlador_base{
         $this->registro = $resultado['registros'][0];
     }
 
-    public function modifica_bd(){
-        $tabla = $_GET['seccion'];
-        $this->registro_id = $_GET['registro_id'];
-        $resultado = $this->modelo->modifica_bd($_POST, $tabla, $this->registro_id);
 
-        if($resultado['error']){
-            $mensaje = $resultado['mensaje'];
-            header("Location: ./index.php?seccion=$tabla&accion=modifica&mensaje=$mensaje&tipo_mensaje=error&registro_id=$this->registro_id");
-            exit;
-        }
-        header("Location: ./index.php?seccion=$tabla&accion=lista&mensaje=Registro modificado con éxito&tipo_mensaje=exito");
-    }
 
-    public function obten_dato_registro(){
-        $resultado = $this->modelo->obten_por_id($this->tabla, $this->registro_id);
-        $this->registro = $resultado['registros'][0];
-        echo $this->registro[$this->tabla.'_'.$this->campo];
-    }
 
-	public function resultado($registro){
-        echo $registro['mensaje'];
-        if($registro['error']){
-            http_response_code(404);
-        }
-        else{
-            http_response_code(200);
-        }
-    }
+
+
 
 
 }

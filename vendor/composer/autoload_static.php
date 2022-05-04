@@ -72,7 +72,8 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         ),
         'models\\' => 
         array (
-            0 => __DIR__ . '/..' . '/gamboa.martin/test/src/models',
+            0 => __DIR__ . '/../..' . '/modelos',
+            1 => __DIR__ . '/..' . '/gamboa.martin/test/src/models',
         ),
         'gamboamartin\\test\\' => 
         array (

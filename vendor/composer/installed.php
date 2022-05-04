@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '29cd3416ddad69cf6ec6f5ef9ebffcd8877e97f1',
+        'reference' => '9262a87db3971e6935e595f3d209425a48027499',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '29cd3416ddad69cf6ec6f5ef9ebffcd8877e97f1',
+            'reference' => '9262a87db3971e6935e595f3d209425a48027499',
             'dev_requirement' => false,
         ),
         'doctrine/instantiator' => array(
@@ -56,7 +56,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => 'd4d8f59d138acad69412b42261af6e244c2f80ea',
+            'reference' => '5016de6348b1568943e338b2e89a3f00a1ecf20f',
             'dev_requirement' => false,
         ),
         'myclabs/deep-copy' => array(

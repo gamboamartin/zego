@@ -1,11 +1,18 @@
 <?php
 namespace models;
 use conexion;
+use gamboamartin\errores\errores;
 
 class accion extends modelos {
-    public function obten_acciones_iniciales(){
+    /**
+     * ERROR
+     * @return array
+     */
+    public function obten_acciones_iniciales(): array
+    {
         $grupo_id = $_SESSION['grupo_id'];
-        $consulta = "SELECT 
+        $consulta = /** @lang MySQL */
+            "SELECT 
                       seccion_menu.descripcion AS seccion_menu_descripcion,
                       accion.descripcion AS accion_descripcion,
                       accion.icono as accion_icono
@@ -15,6 +22,9 @@ class accion extends modelos {
                       WHERE accion_grupo.grupo_id = $grupo_id AND accion.inicio = 1";
 
         $resultado = $this->ejecuta_consulta($consulta);
+        if(errores::$error){
+            return $this->error->error('Error al ejecutar consulta', $resultado);
+        }
 
         return $resultado;
     }

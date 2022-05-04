@@ -1,6 +1,7 @@
 <?php
 namespace controllers;
 use empresas;
+use gamboamartin\errores\errores;
 use models\accion;
 use models\usuario;
 
@@ -54,9 +55,13 @@ class controlador_session extends controlador_base {
         $this->empresas = $empresa->empresas;
         $accion_modelo = new accion($this->link);
         $resultado = $accion_modelo->obten_acciones_iniciales();
+        if(errores::$error){
+            $error = $this->error_->error('Error al obtener acciones', $resultado);
+            print_r($error);
+            die('Error');
+        }
 
         $this->acciones_permitidas = $resultado['registros'];
-
 
 	}	
 

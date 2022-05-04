@@ -9,7 +9,7 @@ class conexion{
 	function __construct(){
 	    if (isset($_SESSION['numero_empresa'])) {
             $this->error = new errores();
-            $empresa = new Empresas();
+            $empresa = new empresas();
             $empresas = $empresa->empresas;
             $empresa_activa = $empresas[$_SESSION['numero_empresa']];
             $host = $empresa_activa['host'];
