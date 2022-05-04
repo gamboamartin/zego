@@ -258,13 +258,26 @@ class modelos{
 
 
     /**
-     * ERROR
-     * @param $tabla
-     * @param $tabla_renombrada
+     * ERROR UNIT
+     * @param string $tabla
+     * @param string|bool $tabla_renombrada
      * @return string|array
      */
-    public function genera_columnas_consulta($tabla, $tabla_renombrada): string|array
+    private function genera_columnas_consulta(string $tabla, string|bool|null $tabla_renombrada): string|array
     {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
+        if(is_string($tabla_renombrada)){
+            $tabla_renombrada = trim($tabla_renombrada);
+            if($tabla_renombrada === ''){
+                $tabla_renombrada = false;
+            }
+        }
+        if(is_null($tabla_renombrada)){
+            $tabla_renombrada = false;
+        }
         $columnas_parseadas = $this->obten_columnas($tabla);
         if(errores::$error){
             return $this->error->error('Error al obtener columnas', $columnas_parseadas);
@@ -277,17 +290,19 @@ class modelos{
             return $this->error->error('Error al obtener subquerys', $subconsultas);
         }
 
+        if(is_string($tabla_renombrada) && $tabla_renombrada!==''){
+            $tabla_nombre = $tabla_renombrada;
+        }
+        else{
+            $tabla_nombre = $tabla;
+        }
+
         foreach($columnas_parseadas as $columna_parseada){
-            if($tabla_renombrada){
-                $tabla_nombre = $tabla_renombrada;
-            }
-            else{
-                $tabla_nombre = $tabla;
-            }
-            $columnas_sql .= $columnas_sql == ""?"$tabla_nombre.$columna_parseada AS $tabla_nombre"."_$columna_parseada":",$tabla_nombre.$columna_parseada AS $tabla_nombre"."_$columna_parseada";
+
+            $columnas_sql .= $columnas_sql === ""?"$tabla_nombre.$columna_parseada AS $tabla_nombre"."_$columna_parseada":",$tabla_nombre.$columna_parseada AS $tabla_nombre"."_$columna_parseada";
         }
         if($subconsultas){
-            $columnas_sql = $columnas_sql.",".$subconsultas;
+            $columnas_sql .= "," . $subconsultas;
         }
         return $columnas_sql;
     }

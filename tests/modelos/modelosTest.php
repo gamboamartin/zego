@@ -89,6 +89,39 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_genera_columnas_consulta(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $tabla = '';
+        $tabla_renombrada = '';
+        $resultado = $modelo->genera_columnas_consulta($tabla, $tabla_renombrada);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+        $tabla = 'a';
+        $tabla_renombrada = '';
+        $resultado = $modelo->genera_columnas_consulta($tabla, $tabla_renombrada);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al obtener columnas',$resultado['mensaje']);
+
+        errores::$error = false;
+        $tabla = 'factura';
+        $tabla_renombrada = '';
+        $resultado = $modelo->genera_columnas_consulta($tabla, $tabla_renombrada);
+        $this->assertIsString( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('factura_id,factura.lugar_expedicion AS factura_lugar_ex',$resultado);
+        errores::$error = false;
+    }
+
     public function test_obten_columnas(): void
     {
         errores::$error = false;
