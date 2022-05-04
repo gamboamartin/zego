@@ -508,6 +508,9 @@ class modelos{
         if(errores::$error){
             return $this->error->error('Error al obtener registro', $result);
         }
+        if(count($result['registros']) === 0){
+            return $this->error->error('Error no existe registro', $result);
+        }
 
         return $result['registros'][0];
     }
