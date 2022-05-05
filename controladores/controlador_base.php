@@ -82,6 +82,10 @@ class controlador_base{
         }
     }
 
+    /**
+     * ERROR
+     * @return void
+     */
     public function alta(){
         $breadcrumbs = array('lista');
         $this->breadcrumbs = $this->directiva->nav_breadcumbs(8, 2, $breadcrumbs);

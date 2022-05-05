@@ -232,6 +232,8 @@ class consultas_base{
             'producto_sat_id'=>array(
                 'tipo'=>'autocomplete','columnas'=>array('producto_sat_codigo','producto_sat_descripcion'),'cols'=>12,'requerido'=>'required',
                 'tabla_foranea'=>'producto_sat','vista'=>array('alta','modifica')),
+            'obj_imp'=>array('tipo'=>'text','cols'=>12,'requerido'=>true,
+                'vista'=>array('alta','modifica')),
             'grupo_insumo_id'=>array(
                 'tipo'=>'select','cols'=>6,'requerido'=>'required',
                 'tabla_foranea'=>'grupo_insumo','vista'=>array('alta','modifica'),'externa'=>true),

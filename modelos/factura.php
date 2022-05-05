@@ -116,6 +116,11 @@ class factura extends modelos{
         return $registro;
     }
 
+    /**
+     * ERROR
+     * @param int $factura_id
+     * @return array
+     */
     public function inicializa_data_receptor(int $factura_id): array
     {
         $upd = array();

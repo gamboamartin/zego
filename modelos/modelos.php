@@ -501,13 +501,17 @@ class modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param $tabla
      * @param $id
      * @return array
      */
     public function obten_por_id($tabla, $id): array
     {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
         $consulta = $this->genera_consulta_base($tabla);
         if(errores::$error){
             return $this->error->error('Error al generar consulta', $consulta);

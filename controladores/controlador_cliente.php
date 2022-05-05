@@ -1107,6 +1107,11 @@ class controlador_cliente extends controlador_base{
         
         $breadcrumbs = array('lista','alta');
         $this->breadcrumbs = $this->directiva->nav_breadcumbs(12, 0, $breadcrumbs);
+        if(errores::$error){
+            $error = $this->error_->error('Error al GENERAR BREADS', $this->breadcrumbs);
+            print_r($error);
+            die('Error');
+        }
         $this->factura_id = $_GET['factura_id'];
 
         $init_receptor = (new factura($this->link))->inicializa_data_receptor(factura_id: $this->factura_id);

@@ -232,5 +232,40 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_obten_por_id(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        //$modelo = new liberator($modelo);
+
+
+        $tabla = '';
+        $id = -1;
+        $resultado = $modelo->obten_por_id($tabla, $id);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $tabla = 'a';
+        $id = -1;
+        $resultado = $modelo->obten_por_id($tabla, $id);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al generar consulta',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $tabla = 'cliente';
+        $id = -1;
+        $resultado = $modelo->obten_por_id($tabla, $id);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+
+        errores::$error = false;
+    }
+
 
 }
