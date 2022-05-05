@@ -34,8 +34,16 @@ class directivas{
         return "<a class='breadcrumb-item' href='$link'>$etiqueta</a>";
     }
 
+    /**
+     * ERROR
+     * @param $etiqueta
+     * @return array|string
+     */
     public function breadcrumb_active($etiqueta){
         $etiqueta = $this->genera_texto_etiqueta($etiqueta);
+        if(errores::$error){
+            return $this->error->error('Error al generar texto', $etiqueta);
+        }
         return "<span class='breadcrumb-item active'>$etiqueta</span>";
     }
 
@@ -47,9 +55,15 @@ class directivas{
         foreach ($breadcrumbs as $key => $value) {
             $link = strtolower($value);
             $etiqueta = $this->genera_texto_etiqueta($link);
+            if(errores::$error){
+                return $this->error->error('Error al generar ETIQUETA', $etiqueta);
+            }
             $html = $html.$this->breadcrumb($etiqueta, $link).' / ';
         }
         $html = $html.$this->breadcrumb_active($active);
+        if(errores::$error){
+            return $this->error->error('Error al generar bradcrumb', $html);
+        }
         return $html;
     }
 

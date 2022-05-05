@@ -204,5 +204,40 @@ class partida_facturaTest extends test {
         errores::$error = false;
     }
 
+    public function test_valida_obj(): void
+    {
+        errores::$error = false;
+
+        $modelo = new partida_factura($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $insumo = array();
+        $resultado = $modelo->valida_obj($insumo);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error no existe insumo_id en insumo',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $insumo = array();
+        $insumo['insumo_id'] = 1;
+        $resultado = $modelo->valida_obj($insumo);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error el insumo no tiene un insumo_obj_imp',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $insumo = array();
+        $insumo['insumo_id'] = 1;
+        $insumo['insumo_obj_imp'] = 'a';
+        $resultado = $modelo->valida_obj($insumo);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
 
 }

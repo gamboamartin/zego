@@ -117,17 +117,23 @@ class partida_factura extends modelos {
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param array $insumo
      * @return bool|array
      */
     private function valida_obj(array $insumo): bool|array
     {
+        if(!isset($insumo['insumo_id'])){
+            return $this->error->error(mensaje: 'Error no existe insumo_id en insumo', data: $insumo);
+        }
+        $insumo_id = $insumo['insumo_id'];
         if(!isset($insumo['insumo_obj_imp'])){
-            return $this->error->error('Error el insumo no tiene un obj valido', $insumo);
+            return $this->error->error(mensaje: 'Error el insumo no tiene un insumo_obj_imp', data: $insumo,
+                seccion_header: 'insumo',accion_header: 'modifica', registro_id: $insumo_id);
         }
         if(trim($insumo['insumo_obj_imp'])===''){
-            return $this->error->error('Error el insumo tiene vacio un obj', $insumo);
+            return $this->error->error(mensaje: 'Error el insumo tiene vacio insumo_obj_imp',data:  $insumo,
+                seccion_header: 'insumo', accion_header: 'modifica',registro_id: $insumo_id);
         }
         return true;
     }
