@@ -733,7 +733,8 @@ class consultas_base{
      * @param $tabla
      * @return array|string
      */
-    public function obten_tablas_completas($tabla){
+    public function obten_tablas_completas($tabla): array|string
+    {
 
         $tablas = $tabla.' AS '.$tabla;
         $tablas_join = $this->estructura_bd[$tabla]['columnas_select'];
@@ -748,16 +749,14 @@ class consultas_base{
                 if(errores::$error){
                     return $this->error->error('Error al generar join', $data_join);
                 }
-                $tablas = $tablas . $data_join;
+                $tablas .= $data_join;
             }
-            else {
-                if ($tabla_join) {
-                    $data_join = $this->genera_join($key, $tabla_join,false);
-                    if(errores::$error){
-                        return $this->error->error('Error al generar join', $data_join);
-                    }
-                    $tablas = $tablas . $data_join;
+            else if ($tabla_join) {
+                $data_join = $this->genera_join($key, $tabla_join,false);
+                if(errores::$error){
+                    return $this->error->error('Error al generar join', $data_join);
                 }
+                $tablas .= $data_join;
             }
         }
         return $tablas;

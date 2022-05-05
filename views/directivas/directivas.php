@@ -13,8 +13,17 @@ class directivas{
         $this->error = new errores();
     }
 
+    /**
+     * ERROR
+     * @param $etiqueta
+     * @param $accion
+     * @return array|string
+     */
     public function breadcrumb($etiqueta, $accion=""){
         $etiqueta = $this->genera_texto_etiqueta($etiqueta);
+        if(errores::$error){
+            return $this->error->error('Error al generar etiqueta', $etiqueta);
+        }
         $etiqueta = str_replace('_', ' ', $etiqueta);
         if($accion == ""){
             $link = "#";
@@ -32,6 +41,9 @@ class directivas{
 
     public function breadcrumbs($breadcrumbs, $active){
         $html = $this->breadcrumb(SECCION). " / ";
+        if(errores::$error){
+            return $this->error->error('Error al generar breadcrums', $html);
+        }
         foreach ($breadcrumbs as $key => $value) {
             $link = strtolower($value);
             $etiqueta = $this->genera_texto_etiqueta($link);
@@ -248,6 +260,11 @@ class directivas{
         return $html;
     }
 
+    /**
+     * ERROR
+     * @param $texto
+     * @return string
+     */
     private function genera_texto_etiqueta($texto){
         $campo_capitalize = ucfirst($texto);
         $campo_capitalize = str_replace('_', ' ', $campo_capitalize);
@@ -354,6 +371,9 @@ class directivas{
 
     public function nav_breadcumbs($cols, $offset, $breadcrumbs){
         $breadcrumbs = $this->breadcrumbs($breadcrumbs, ACCION);
+        if(errores::$error){
+            return $this->error->error('Error al generar breadcrumbs', $breadcrumbs);
+        }
         $html = "<nav class='breadcrumb  col-md-$cols col-md-offset-$offset'>
   			$breadcrumbs
 			</nav>";

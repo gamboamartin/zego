@@ -1115,6 +1115,12 @@ class controlador_cliente extends controlador_base{
             print_r($error);
             die('Error');
         }
+        $init_partidas = (new partida_factura($this->link))->init_obj_partidas(factura_id: $this->factura_id);
+        if(errores::$error){
+            $error = $this->error_->error('Error al inicializar partidas', $init_partidas);
+            print_r($error);
+            die('Error');
+        }
 
         $partida_factura_modelo = new partida_factura($this->link);
         $filtro = array('factura_id'=>$this->factura_id);

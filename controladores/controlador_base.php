@@ -61,6 +61,10 @@ class controlador_base{
         }
     }
 
+    /**
+     *  ERROR
+     * @return void
+     */
     public function activa_bd(): void
     {
         $registro_id = $_GET['registro_id'];
@@ -70,12 +74,22 @@ class controlador_base{
             print_r($error);
             die('Error');
         }
-        $this->resultado($registro);
+        $r = $this->resultado($registro);
+        if(errores::$error){
+            $error = $this->error_->error('Error al retornar resultado', $r);
+            print_r($error);
+            die('Error');
+        }
     }
 
     public function alta(){
         $breadcrumbs = array('lista');
         $this->breadcrumbs = $this->directiva->nav_breadcumbs(8, 2, $breadcrumbs);
+        if(errores::$error){
+            $error = $this->error_->error('Error al generar navs', $this->breadcrumbs);
+            print_r($error);
+            die('Error');
+        }
     }
 
     public function modifica_bd(){
@@ -128,6 +142,11 @@ class controlador_base{
 
     }
 
+    /**
+     * ERROR
+     * @param $registro
+     * @return void
+     */
     public function resultado($registro){
         echo $registro['mensaje'];
         if($registro['error']){
