@@ -4,7 +4,6 @@ namespace controllers;
 use empresas;
 use facturas;
 use gamboamartin\errores\errores;
-use Fpdf\Fpdf;
 use models\cliente;
 use models\cuenta_bancaria;
 use models\factura;
@@ -15,6 +14,7 @@ use my_pdf;
 use NumeroTexto;
 use repositorio;
 use SimpleXMLElement;
+use SoapClient;
 
 class controlador_cliente extends controlador_base{
     public $rfc;
@@ -332,16 +332,22 @@ class controlador_cliente extends controlador_base{
 
     }
 
+    /**
+     * @throws \SoapFault
+     */
     private function genera_pdf_factura($factura_id, $pdf){
 
 
 
-        $factura_modelo = new Factura($this->link);
+        $factura_modelo = new factura($this->link);
 
-        $partida_modelos = new Partida_Factura($this->link);
+        $partida_modelos = new partida_factura($this->link);
         $filtro_partidas = array('factura_id'=>$factura_id);
 
         $resultado = $partida_modelos->filtro_and('partida_factura',$filtro_partidas);
+        if(errores::$error){
+            return $this->error_->error('Error al obtener factura', $resultado);
+        }
         $partidas = $resultado['registros'];
 
         $resultado = $factura_modelo->obten_por_id('factura',$factura_id);

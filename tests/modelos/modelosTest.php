@@ -89,6 +89,54 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_filtro_and(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        //$modelo = new liberator($modelo);
+
+        $tabla = '';
+        $filtros = array();
+        $resultado = $modelo->filtro_and($tabla, $filtros);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $tabla = 'insumo';
+        $filtros = array();
+        $resultado = $modelo->filtro_and($tabla, $filtros);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error el $filtros esta vacio',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $tabla = 'insumo';
+        $filtros = array();
+        $filtros['a'] = 'x';
+        $resultado = $modelo->filtro_and($tabla, $filtros);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al ejecutar consulta',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $tabla = 'insumo';
+        $filtros = array();
+        $filtros['insumo.id'] = '1';
+        $resultado = $modelo->filtro_and($tabla, $filtros);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+
+        errores::$error = false;
+    }
+
 
 
     public function test_genera_columnas_consulta(): void
@@ -273,7 +321,7 @@ class modelosTest extends test {
 
         $modelo = new modelos($this->link);
         //$modelo = new liberator($modelo);
-        
+
         $tabla = '';
         $id = -1;
         $resultado = $modelo->registro($id, $tabla);

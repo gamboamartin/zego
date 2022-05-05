@@ -228,20 +228,26 @@ class modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param $tabla
      * @param $filtros
-     * @param $sql
+     * @param string $sql
      * @return array
      */
-    public function filtro_and($tabla, $filtros, $sql = ''): array
+    public function filtro_and($tabla, $filtros, string $sql = ''): array
     {
-
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
+        if(count($filtros) === 0){
+            return $this->error->error('Error el $filtros esta vacio', $filtros);
+        }
         $sentencia = "";
         foreach ($filtros as $key => $value) {
             $key = addslashes($key);
             $value = addslashes($value);
-            $sentencia .= $sentencia == ""?"$key = '$value'":" AND $key = '$value'";
+            $sentencia .= $sentencia === ""?"$key = '$value'":" AND $key = '$value'";
         }
 
         $consulta = $this->genera_consulta_base($tabla);
@@ -250,10 +256,13 @@ class modelos{
         }
 
         $where = " WHERE $sentencia $sql";
-        $consulta = $consulta.$where;
+        $consulta .= $where;
 
 
         $result = $this->ejecuta_consulta($consulta);
+        if(errores::$error){
+            return $this->error->error('Error al ejecutar consulta', $result);
+        }
         return $result;
     }
 
