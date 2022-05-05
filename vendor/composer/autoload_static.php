@@ -98,7 +98,8 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         ),
         'controllers\\' => 
         array (
-            0 => __DIR__ . '/..' . '/gamboa.martin/test/src/controllers',
+            0 => __DIR__ . '/../..' . '/controladores',
+            1 => __DIR__ . '/..' . '/gamboa.martin/test/src/controllers',
         ),
         'config\\' => 
         array (

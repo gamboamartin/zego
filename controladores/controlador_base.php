@@ -28,6 +28,10 @@ class controlador_base{
 	public function __construct($link){
         $this->error_ = new errores();
 	    $this->link = $link;
+        if(!defined('SECCION')){
+            $error = $this->error_->error('Error no esta definida la SECCION', false);
+            print_r($error);exit;
+        }
 	    $modelo = SECCION;
 	    if($modelo === 'session'){
             $this->modelo = new modelos($this->link);

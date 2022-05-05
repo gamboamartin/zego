@@ -1,53 +1,50 @@
 <?php
 namespace tests\base;
 
+use controllers\controlador_cliente;
 use gamboamartin\errores\errores;
 use gamboamartin\test\liberator;
 use gamboamartin\test\test;
 use models\modelos;
 
 
-class modelosTest extends test {
+class controlador_clienteTest extends test {
     public errores $errores;
     private string $tipo_conexion = 'MYSQLI';
     public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         parent::__construct(name: $name, data: $data, dataName: $dataName, tipo_conexion: $this->tipo_conexion);
         $this->errores = new errores();
+        if(!defined('SECCION')){
+            define('SECCION', 'cliente');
+        }
     }
 
-    public function test_activa_bd(): void
+    public function test_asigna_datos_emisor(): void
     {
         errores::$error = false;
 
-        $modelo = new modelos($this->link);
-        //$modelo = new liberator($modelo);
 
+        $ctl = new controlador_cliente($this->link);
+        $ctl = new liberator($ctl);
 
-        $tabla = '';
-        $id = -1;
-        $resultado = $modelo->activa_bd($tabla, $id);
+        $data_value_upd = array();
+        $update = array();
+        $resultado = $ctl->asigna_datos_emisor($data_value_upd, $update);
+
         $this->assertIsArray( $resultado);
         $this->assertTrue(errores::$error);
-        $this->assertStringContainsStringIgnoringCase('Error la tabla no puede venir vacia',$resultado['mensaje']);
+        $this->assertStringContainsStringIgnoringCase('Error no existe $data_value_upd[$key_upd]',$resultado['mensaje']);
 
         errores::$error = false;
-
-        $tabla = 'xxx';
-        $id = -1;
-        $resultado = $modelo->activa_bd($tabla, $id);
-        $this->assertIsArray( $resultado);
-        $this->assertTrue(errores::$error);
-        $this->assertStringContainsStringIgnoringCase('Error al ejecutar sql',$resultado['mensaje']);
-
-        errores::$error = false;
-
-        $tabla = 'factura';
-        $id = -1;
-        $resultado = $modelo->activa_bd($tabla, $id);
+        $data_value_upd = array();
+        $update = array();
+        $data_value_upd['x'] = 1;
+        $resultado = $ctl->asigna_datos_emisor($data_value_upd, $update);
         $this->assertIsArray( $resultado);
         $this->assertNotTrue(errores::$error);
-        $this->assertEquals('Registro activado con éxito',$resultado['mensaje']);
+        $this->assertEquals('1',$resultado['x']);
+
         errores::$error = false;
     }
 

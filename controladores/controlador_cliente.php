@@ -1140,11 +1140,6 @@ class controlador_cliente extends controlador_base{
         		$partida_factura_modelo->modifica_bd($upd,'partida_factura',$partida_factura_id);
         	}
 
-            if(!isset($partida['partida_factura_obj_imp'])){
-                $error = $this->error_->error('Error no existe obj_imp', $partida);
-                print_r($error);
-                die('Error');
-            }
         }
         $pdf = $this->genera_pdf_factura_sin_timbrar(factura_id: $this->factura_id);
         if(errores::$error){
@@ -1218,7 +1213,10 @@ class controlador_cliente extends controlador_base{
             }
 
             if(count($update)>0){
-                $factura->modifica_bd($update,'factura',$factura_id);
+                $r_upd = $factura->modifica_bd($update,'factura',$factura_id);
+                if(errores::$error){
+                    return $this->error_->error('Error al modificar factura', $r_upd);
+                }
             }
             $resultado = $factura->obten_por_id('factura',$factura_id);
             $registro = $resultado['registros'][0];
@@ -1332,7 +1330,9 @@ class controlador_cliente extends controlador_base{
              */
 
             if(!isset($registro['factura_cliente_rf']) || trim($registro['factura_cliente_rf'])===''){
-                return $this->error_->error('Error factura_cliente_rf no existe en el registro', $registro);
+                if($registro['factura_status_factura']!=='timbrada') {
+                    return $this->error_->error('Error factura_cliente_rf no existe en el registro', $registro);
+                }
             }
 
             $xml = str_replace('|rfc_receptor|',$rfc_receptor,$xml);
@@ -1794,6 +1794,12 @@ class controlador_cliente extends controlador_base{
         $this->numero_texto = $numero_text->to_word($this->datos_comprobante['Total'],$this->datos_comprobante['Moneda']);
     }
 
+    /**
+     * ERROR
+     * @param array $datos_empresa
+     * @param array $registro
+     * @return array
+     */
     private function init_update(array $datos_empresa, array $registro): array
     {
 
@@ -1806,6 +1812,11 @@ class controlador_cliente extends controlador_base{
         return $update;
     }
 
+    /**
+     * ERROR
+     * @param array $registro
+     * @return array
+     */
     private function init_array_update_emisor(array $registro): array
     {
         $update = array();
@@ -1821,6 +1832,13 @@ class controlador_cliente extends controlador_base{
         return $update;
     }
 
+    /**
+     * ERROR
+     * @param array $data
+     * @param array $registro
+     * @param array $update
+     * @return array
+     */
     private function asigna_data_update_emisor(array $data, array $registro, array $update): array
     {
         foreach($data as $campo_upd=>$data_value_upd){
@@ -1833,6 +1851,14 @@ class controlador_cliente extends controlador_base{
         return $update;
     }
 
+    /**
+     * ERROR
+     * @param string $campo_upd
+     * @param array $data_value_upd
+     * @param array $registro
+     * @param array $update
+     * @return array
+     */
     private function init_update_emisor(string $campo_upd, array $data_value_upd, array $registro, array $update): array
     {
         if((string)$registro[$campo_upd]===''){
@@ -1845,7 +1871,7 @@ class controlador_cliente extends controlador_base{
     }
 
     /**
-     * UNIT
+     * UNIT ERROR
      * @return array
      */
     PUBLIC function keys_init_emisor(): array
@@ -1864,9 +1890,18 @@ class controlador_cliente extends controlador_base{
         return $data;
     }
 
+    /**
+     * ERROR UNIT
+     * @param array $data_value_upd
+     * @param array $update
+     * @return array
+     */
     private function asigna_datos_emisor(array $data_value_upd, array $update): array
     {
         $key_upd = key($data_value_upd);
+        if(!isset($data_value_upd[$key_upd])){
+            return $this->error_->error('Error no existe $data_value_upd[$key_upd]', $data_value_upd);
+        }
         $value_upd = trim($data_value_upd[$key_upd]);
         $update[$key_upd] = $value_upd;
 

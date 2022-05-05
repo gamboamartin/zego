@@ -12,7 +12,7 @@ return array(
     'models\\' => array($baseDir . '/modelos', $vendorDir . '/gamboa.martin/test/src/models'),
     'gamboamartin\\test\\' => array($vendorDir . '/gamboa.martin/errores/tests', $vendorDir . '/gamboa.martin/test/src'),
     'gamboamartin\\errores\\' => array($vendorDir . '/gamboa.martin/errores/src'),
-    'controllers\\' => array($vendorDir . '/gamboa.martin/test/src/controllers'),
+    'controllers\\' => array($baseDir . '/controladores', $vendorDir . '/gamboa.martin/test/src/controllers'),
     'config\\' => array($baseDir . '/config'),
     'base\\' => array($baseDir . '/base'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
