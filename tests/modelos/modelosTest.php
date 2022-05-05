@@ -197,5 +197,40 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_genera_consulta_base(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $tabla = '';
+
+        $resultado = $modelo->genera_consulta_base($tabla);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $tabla = 'a';
+
+        $resultado = $modelo->genera_consulta_base($tabla);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al obtener columnas',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $tabla = 'factura';
+
+        $resultado = $modelo->genera_consulta_base($tabla);
+        $this->assertIsString( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('zica_entidad_id AS cliente_zica_entidad_id,',$resultado);
+        errores::$error = false;
+    }
+
 
 }

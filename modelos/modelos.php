@@ -321,12 +321,16 @@ class modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param $tabla
      * @return array|string
      */
-    public function genera_consulta_base($tabla): array|string
+    protected function genera_consulta_base($tabla): array|string
     {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
 
         $columnas = $this->obten_columnas_completas($tabla);
         if(errores::$error){
