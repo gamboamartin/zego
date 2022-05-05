@@ -1,9 +1,12 @@
 <?php
+
+use models\accion;
+
 require 'vendor/autoload.php';
 require_once('config/seguridad.php');
 require_once('requires.php');
 
-$conexion = new Conexion();
+$conexion = new conexion();
 $conexion->selecciona_base_datos();
 $link = $conexion->link;
 
@@ -28,7 +31,7 @@ if(!$permiso){
 
 $directiva = new Directivas();
 $template = new templates($link);
-$name_ctl = 'controlador_'.$seccion;
+$name_ctl = 'controllers\\controlador_'.$seccion;
 $controlador = new $name_ctl($link);
 
 $controlador->$accion();

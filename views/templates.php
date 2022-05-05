@@ -1,5 +1,6 @@
 <?php
 
+use base\consultas_base;
 use gamboamartin\errores\errores;
 use models\accion;
 use models\elemento_lista;
@@ -61,8 +62,9 @@ class templates{
             elseif ($input['tipo'] == 'autocomplete') {
                 $tabla_foranea = $input['tabla_foranea'];
                 if($valor != ''){
+                    $name_model = 'models\\'.$tabla_foranea;
                     $id = $valor;
-                    $modelo = new $tabla_foranea($link);
+                    $modelo = new $name_model($link);
                     $resultado = $modelo->obten_por_id($tabla_foranea,$id);
                     $registro = $resultado['registros'][0];
                     $valor = $registro[$tabla_foranea.'_codigo'];

@@ -1,5 +1,7 @@
 <?php
 namespace models;
+use base\consultas_base;
+
 class modelo_sobrecargado extends modelos {
     public function obten_registros($tabla, $sql = ''): array
     {

@@ -44,6 +44,23 @@ if($link) {
     }
 }
 
+if(isset($_SESSION['seccion_header']) && $_SESSION['seccion_header']!==''){
+    ob_clean();
+    $seccion_header = $_SESSION['seccion_header'];
+    unset($_SESSION['seccion_header']);
+    if(isset($_SESSION['accion_header']) && $_SESSION['accion_header']!==''){
+        $accion_header = $_SESSION['accion_header'];
+        $registro_id = $_SESSION['registro_id_header'];
+        unset($_SESSION['accion_header']);
+        $header = "Location: index.php?seccion=$seccion_header&accion=$accion_header&registro_id=$registro_id&session_id=".SESSION_ID;
+        unset($_SESSION['seccion_header'], $_SESSION['accion_header'], $_SESSION['registro_id_header']);
+        header($header);
+        exit;
+    }
+}
+
+
+
 
 $directiva = new Directivas();
 if($link) {
