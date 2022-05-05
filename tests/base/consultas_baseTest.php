@@ -67,6 +67,39 @@ class consultas_baseTest extends test {
         errores::$error = false;
     }
 
+    public function test_obten_tablas_completas(): void
+    {
+        errores::$error = false;
+
+        $cb = new consultas_base();
+        //$cb = new liberator($cb);
+
+
+        $tabla = '';
+
+        $resultado = $cb->obten_tablas_completas($tabla);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+        $tabla = 'a';
+
+        $resultado = $cb->obten_tablas_completas($tabla);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error no existe tabla en estructura',$resultado['mensaje']);
+
+        errores::$error = false;
+        $tabla = 'insumo';
+
+        $resultado = $cb->obten_tablas_completas($tabla);
+        $this->assertIsString( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('AS tipo_insumo ON tipo_insumo.id = insumo.tipo_insumo_id ',$resultado);
+        errores::$error = false;
+    }
+
     public function test_subconsultas(): void
     {
         errores::$error = false;

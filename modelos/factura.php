@@ -23,6 +23,11 @@ class factura extends modelos{
         return $r_alta;
     }
 
+    /**
+     * ERROR
+     * @param array $registro
+     * @return array
+     */
     private function init_registro_receptor(array $registro): array
     {
         $registro = $this->cp_receptor(registro: $registro);
@@ -40,6 +45,11 @@ class factura extends modelos{
         return $registro;
     }
 
+    /**
+     * ERROR
+     * @param array $registro
+     * @return array
+     */
     private function regimen_fiscal_receptor(array $registro): array
     {
         if(isset($registro['cliente_id'])){
@@ -61,6 +71,12 @@ class factura extends modelos{
         return $r_factura_relacionada['registros'];
     }
 
+    /**
+     * ERROR
+     * @param int $cliente_id
+     * @param array $registro
+     * @return array
+     */
     private function aplica_reg_fis_cte(int $cliente_id, array $registro): array
     {
 
@@ -82,6 +98,12 @@ class factura extends modelos{
         return $registro;
     }
 
+    /**
+     * ERROR
+     * @param int $regimen_fiscal_id
+     * @param array $registro
+     * @return array
+     */
     private function asigna_regimen_fiscal_rec(int $regimen_fiscal_id, array $registro): array
     {
 

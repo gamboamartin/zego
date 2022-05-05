@@ -729,12 +729,19 @@ class consultas_base{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param $tabla
      * @return array|string
      */
-    public function obten_tablas_completas($tabla): array|string
+    public function obten_tablas_completas(string $tabla): array|string
     {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
+        if(!isset($this->estructura_bd[$tabla]['columnas_select'])){
+            return $this->error->error('Error no existe tabla en estructura', $this->estructura_bd);
+        }
 
         $tablas = $tabla.' AS '.$tabla;
         $tablas_join = $this->estructura_bd[$tabla]['columnas_select'];
