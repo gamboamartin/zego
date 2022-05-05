@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'views\\' => array($baseDir . '/views'),
     'tests\\' => array($baseDir . '/tests'),
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src'),
     'models\\' => array($baseDir . '/modelos', $vendorDir . '/gamboa.martin/test/src/models'),

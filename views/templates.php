@@ -1,9 +1,10 @@
 <?php
-
+namespace views;
 use base\consultas_base;
 use gamboamartin\errores\errores;
 use models\accion;
 use models\elemento_lista;
+use views\directivas\directivas;
 
 class templates{
     public $campos;
@@ -25,7 +26,7 @@ class templates{
         }
     }
     public function genera_campos($input, $campo, $valor,$arreglo, $clase_elimina,$link){
-        $directiva = new Directivas();
+        $directiva = new directivas();
         $cols = $input['cols'];
         $required = '';
         $pattern = false;

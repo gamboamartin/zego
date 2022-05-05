@@ -1,5 +1,5 @@
 <?php
-
+namespace views\directivas;
 use gamboamartin\errores\errores;
 use models\accion;
 use models\menu;
@@ -284,15 +284,16 @@ class directivas{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param $texto
      * @return string
      */
-    private function genera_texto_etiqueta($texto){
+    PUBLIC function genera_texto_etiqueta($texto): string
+    {
+        $texto = trim($texto);
         $campo_capitalize = ucfirst($texto);
         $campo_capitalize = str_replace('_', ' ', $campo_capitalize);
-        $campo_capitalize = ucwords($campo_capitalize);
-        return $campo_capitalize;
+        return ucwords($campo_capitalize);
     }
 
     public function head_lista(){
