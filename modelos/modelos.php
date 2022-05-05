@@ -551,13 +551,17 @@ class modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param int $id
      * @param string $tabla
      * @return array
      */
     public function registro(int $id, string $tabla): array
     {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
         $result = $this->obten_por_id(tabla: $tabla,id: $id);
         if(errores::$error){
             return $this->error->error('Error al obtener registro', $result);

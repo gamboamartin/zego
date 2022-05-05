@@ -4,7 +4,8 @@
       "config\\": "config/",
       "tests\\": "tests/",
       "models\\": "modelos/",
-      "base\\": "base/"
+      "base\\": "base/",
+      "views\\": "views/"
 
     }
   },

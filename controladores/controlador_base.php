@@ -1,8 +1,9 @@
 <?php
 namespace controllers;
-use directivas;
 use gamboamartin\errores\errores;
 use models\modelos;
+use views\directivas\directivas;
+
 
 class controlador_base{
 	public $registros;

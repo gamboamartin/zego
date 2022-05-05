@@ -7,6 +7,8 @@ require 'vendor/autoload.php';
 use gamboamartin\errores\errores;
 use config\init;
 use models\accion;
+use views\directivas\directivas;
+use views\templates;
 
 
 require_once ('clases/numero_texto.php');
@@ -62,7 +64,7 @@ if(isset($_SESSION['seccion_header']) && $_SESSION['seccion_header']!==''){
 
 
 
-$directiva = new Directivas();
+$directiva = new directivas();
 if($link) {
     $template = new templates($link);
 }
@@ -79,9 +81,9 @@ if(errores::$error){
 //$controlador = new $name_ctl($link);
 
 $controlador->$accion();
-$directivas = new Directivas();
+$directivas = new directivas();
 
-$empresa = new Empresas();
+$empresa = new empresas();
 
 $nombre_empresa = '';
 if(isset($_SESSION['numero_empresa'])){
