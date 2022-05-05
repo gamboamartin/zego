@@ -2,6 +2,7 @@
 namespace controllers;
 use empresas;
 use facturas;
+use gamboamartin\errores\errores;
 use models\cliente;
 use models\factura;
 use models\factura_relacionada;
@@ -883,6 +884,11 @@ class controlador_factura extends controlador_base {
         $breadcrumbs = array('alta');
         $this->breadcrumbs = $this->directiva->nav_breadcumbs(12, 0, $breadcrumbs);
         $resultado = $factura_modelo->obten_registros(tabla: $_GET['seccion'], limit:' LIMIT 300 ' );
+        if(errores::$error){
+            $error = $this->error_->error('Error al obtener registros', $resultado);
+            print_r($error);
+            die('Error');
+        }
         $this->registros = $resultado['registros'];
         if(isset($resultado['mensaje'])) {
             $this->mensaje = $resultado['mensaje'];

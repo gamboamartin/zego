@@ -14,18 +14,19 @@ class directivas{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param $etiqueta
-     * @param $accion
+     * @param string $accion
      * @return array|string
      */
-    public function breadcrumb($etiqueta, $accion=""){
-        $etiqueta = $this->genera_texto_etiqueta($etiqueta);
+    protected function breadcrumb($etiqueta, string $accion=""): array|string
+    {
+        $etiqueta = $this->genera_texto_etiqueta(texto: $etiqueta);
         if(errores::$error){
             return $this->error->error('Error al generar etiqueta', $etiqueta);
         }
         $etiqueta = str_replace('_', ' ', $etiqueta);
-        if($accion == ""){
+        if($accion === ""){
             $link = "#";
         }
         else{
@@ -285,10 +286,10 @@ class directivas{
 
     /**
      * ERROR UNIT
-     * @param $texto
+     * @param string $texto
      * @return string
      */
-    PUBLIC function genera_texto_etiqueta($texto): string
+    PUBLIC function genera_texto_etiqueta(string $texto): string
     {
         $texto = trim($texto);
         $campo_capitalize = ucfirst($texto);

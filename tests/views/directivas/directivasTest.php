@@ -16,6 +16,32 @@ class directivasTest extends test {
         $this->errores = new errores();
     }
 
+    public function test_breadcrumb(): void
+    {
+        errores::$error = false;
+
+        $dir = new directivas();
+        $dir = new liberator($dir);
+
+
+        $etiqueta = '';
+
+        $resultado = $dir->breadcrumb($etiqueta);
+        $this->assertIsString( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals("<a class='breadcrumb-item' href='#'></a>",$resultado);
+
+        errores::$error = false;
+
+        $etiqueta = 'a';
+
+        $resultado = $dir->breadcrumb($etiqueta);
+        $this->assertIsString( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals("<a class='breadcrumb-item' href='#'>A</a>",$resultado);
+        errores::$error = false;
+    }
+
     public function test_genera_texto_etiqueta(): void
     {
         errores::$error = false;

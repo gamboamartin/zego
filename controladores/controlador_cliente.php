@@ -15,6 +15,7 @@ use NumeroTexto;
 use repositorio;
 use SimpleXMLElement;
 use SoapClient;
+use SoapFault;
 
 class controlador_cliente extends controlador_base{
     public $rfc;
@@ -333,7 +334,7 @@ class controlador_cliente extends controlador_base{
     }
 
     /**
-     * @throws \SoapFault
+     * @throws SoapFault
      */
     private function genera_pdf_factura($factura_id, $pdf){
 

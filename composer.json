@@ -14,6 +14,8 @@
       "gamboa.martin/errores": "dev-main",
       "gamboa.martin/test": "dev-main",
         "fpdf/fpdf": "^1.84",
-      "phpunit/phpunit": "^9.5"
+      "phpunit/phpunit": "^9.5",
+      "ext-mysqli": "*",
+      "ext-soap": "*"
     }
 }

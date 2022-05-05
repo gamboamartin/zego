@@ -1,9 +1,9 @@
 <?php
 
-use gamboamartin\errores\errores;
+
+use models\partida_factura;
 
 require 'vendor/autoload.php';
-require_once ('clases/fpdf/html2pdf.php');
 require_once ('clases/numero_texto.php');
 require_once('config/seguridad.php');
 require_once('requires.php');
@@ -20,6 +20,8 @@ $empresas = new empresas();
 $empresas_data = $empresas->empresas;
 
 foreach ($empresas_data as $empresa){
+
+
 
     $host = $empresa['host'];
     $user = $empresa['user'];

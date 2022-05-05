@@ -352,5 +352,37 @@ class modelosTest extends test {
 
     }
 
+    public function test_registros_puros(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        //$modelo = new liberator($modelo);
+
+        $tabla = '';
+        $resultado = $modelo->registros_puros($tabla, '');
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $tabla = 'a';
+        $resultado = $modelo->registros_puros($tabla, '');
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al obtener registros',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $tabla = 'insumo';
+        $resultado = $modelo->registros_puros($tabla,'');
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
 
 }

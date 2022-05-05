@@ -199,9 +199,19 @@ class factura extends modelos{
         return $resultado;
     }
 
+    /**
+     * ERROR
+     * @param $tabla
+     * @param $sql
+     * @param $limit
+     * @return array
+     */
     public function obten_registros($tabla, $sql = '', $limit = ''): array
     {
 	    $consulta_base = $this->genera_consulta_base($tabla);
+        if(errores::$error){
+            return $this->error->error('Error al generar sql', $consulta_base);
+        }
 	    $order = ' ORDER BY factura.fecha DESC ';
 	    $consulta_base .= $order . ' ' . $limit;
 
@@ -218,6 +228,11 @@ class factura extends modelos{
         return $result;
 	}
 
+    /**
+     * ERROR
+     * @param array $result
+     * @return array
+     */
     private function clean_rows_numeric(array $result): array
     {
         $keys_numeric = array('factura_total');
@@ -228,6 +243,12 @@ class factura extends modelos{
         return $result;
     }
 
+    /**
+     * ERROR
+     * @param array $keys_numeric
+     * @param array $result
+     * @return array
+     */
     private function clean_result_numeric(array $keys_numeric, array $result): array
     {
         foreach ($result['registros'] as $indice=>$factura){
@@ -240,6 +261,14 @@ class factura extends modelos{
         return $result;
     }
 
+    /**
+     * ERROR
+     * @param array $factura
+     * @param int $indice
+     * @param array $keys_numeric
+     * @param array $result
+     * @return array
+     */
     private function clean_for_key_numeric(array $factura, int $indice, array $keys_numeric, array $result): array
     {
         foreach($keys_numeric as $campo){
@@ -251,6 +280,14 @@ class factura extends modelos{
         return $result;
     }
 
+    /**
+     * ERROR
+     * @param string $campo
+     * @param array $factura
+     * @param int $indice
+     * @param array $result
+     * @return array
+     */
     private function asigna_numeric_limpio(string $campo, array $factura, int $indice, array $result): array
     {
         $campo = trim($campo);
@@ -266,6 +303,14 @@ class factura extends modelos{
         return $result;
     }
 
+    /**
+     * ERROR
+     * @param string $campo
+     * @param array $factura
+     * @param int $indice
+     * @param array $result
+     * @return array
+     */
     private function result_rows_numeric(string $campo, array $factura, int $indice, array $result): array
     {
         $campo = trim($campo);

@@ -353,6 +353,12 @@ class modelos{
         return "SELECT $columnas FROM $tablas";
     }
 
+    /**
+     * ERROR
+     * @param string $campo
+     * @param array $row
+     * @return array
+     */
     public function limpia_campo_row_inexistente(string $campo, array $row): array
     {
         $campo = trim($campo);
@@ -580,6 +586,31 @@ class modelos{
         }
 
         return $result['registros'][0];
+    }
+
+    /**
+     * ERROR UNIT
+     * @param string $tabla
+     * @param string $where
+     * @return array
+     */
+    public function registros_puros(string $tabla, string $where): array
+    {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
+        $sql_where = '';
+        $where = trim($where);
+        if($where!==''){
+            $sql_where = 'WHERE '.$sql_where;
+        }
+        $sql = "SELECT *FROM $tabla $sql_where";
+        $result = $this->ejecuta_consulta($sql);
+        if(errores::$error){
+            return $this->error->error('Error al obtener registros', $result);
+        }
+        return $result;
     }
 
     public function sumatoria($campo_suma, $tabla, $campo_filtro, $valor): array

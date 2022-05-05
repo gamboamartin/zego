@@ -12,7 +12,7 @@ class cliente extends modelo_sobrecargado{
 
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param int $cliente_id
      * @return array
      */
