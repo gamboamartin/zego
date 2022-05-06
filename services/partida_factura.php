@@ -42,13 +42,15 @@ foreach ($empresas_data as $empresa){
     $host = $empresa['host'];
     $user = $empresa['user'];
     $pass = $empresa['pass'];
-
-
     $nombre_base_datos = $empresa['nombre_base_datos'];
-    $link_local = mysqli_connect($host, $user, $pass);
 
-    $consulta = "USE ".$nombre_base_datos;
-    $link_local->query($consulta);
+
+    $link_local = (new conexion())->conecta($host, $nombre_base_datos, $pass, $user);
+    if(errores::$error){
+        $error = (new errores())->error('Error al conectar local', $link_local);
+        print_r($error);
+        die('Error');
+    }exit;
 
     if(!$link_local->error){
 

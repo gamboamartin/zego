@@ -4,7 +4,7 @@ use gamboamartin\errores\errores;
 
 class regimen_fiscal extends modelos {
     /**
-     * ERROR
+     * ERROR UNIT
      * @param int $regimen_fiscal_id
      * @return array
      */

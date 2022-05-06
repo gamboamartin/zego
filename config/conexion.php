@@ -1,7 +1,8 @@
 <?php
-
-use config\empresas;
+namespace config;
 use gamboamartin\errores\errores;
+use mysqli;
+use Throwable;
 
 class conexion{
 	public mysqli|false $link;
