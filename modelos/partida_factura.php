@@ -1,6 +1,7 @@
 <?php
 namespace models;
 use gamboamartin\errores\errores;
+use stdClass;
 
 class partida_factura extends modelos {
 
@@ -75,6 +76,29 @@ class partida_factura extends modelos {
         return true;
     }
 
+    public function elimina_partida_vacia(array $keys, array $partida): stdClass|array
+    {
+        $data = array();
+        $del = false;
+        $existe_valor = $this->existe_algun_valor(keys: $keys,registro:  $partida);
+        if(errores::$error){
+            return $this->error->error('Error al validar si existe valor', $existe_valor);
+        }
+
+        if(!$existe_valor){
+            $elimina = $this->elimina_bd('partida_factura', $partida['partida_factura_id']);
+            if(errores::$error){
+                return $this->error->error('Error al eliminar partida', $elimina);
+            }
+            $data['partida_factura_id'] = $partida['partida_factura_id'];
+            $del = true;
+        }
+        $data_r = new stdClass();
+        $data_r->data = $data;
+        $data_r->del = $del;
+        return $data_r;
+    }
+
     /**
      * ERROR
      * @param int $factura_id
@@ -89,6 +113,7 @@ class partida_factura extends modelos {
         }
         return $r_partida['registros'];
     }
+
 
     /**
      * ERROR

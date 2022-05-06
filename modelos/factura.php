@@ -1,6 +1,7 @@
 <?php
 namespace models;
 use gamboamartin\errores\errores;
+use gamboamartin\validacion\validacion;
 
 class factura extends modelos{
 
@@ -158,7 +159,7 @@ class factura extends modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param array $registro
      * @return array
      */
@@ -175,12 +176,18 @@ class factura extends modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param array $registro
      * @return array
      */
     private function asigna_cp_receptor(array $registro): array
     {
+        $keys = array('cliente_id');
+        $valida = (new validacion())->valida_existencia_keys($keys, $registro);
+        if(errores::$error){
+            return $this->error->error('Error al al validar registro', $valida);
+        }
+
         $cliente_id = $registro['cliente_id'];
         $cp = (new cliente($this->link))->cp($cliente_id);
         if(errores::$error){

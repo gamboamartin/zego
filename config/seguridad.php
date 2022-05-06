@@ -11,7 +11,7 @@ else{
 
 session_start();
 
-class Seguridad{
+class seguridad{
     public $seccion;
     public $accion;
     public $menu;

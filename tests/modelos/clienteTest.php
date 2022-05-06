@@ -45,5 +45,30 @@ class clienteTest extends test {
         errores::$error = false;
     }
 
+    public function test_cp(): void
+    {
+        errores::$error = false;
+
+        $modelo = new cliente($this->link);
+        //$modelo = new liberator($modelo);
+
+
+        $cliente_id = '-1';
+
+        $resultado = $modelo->cp($cliente_id);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al obtener cliente',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $cliente_id = '1';
+
+        $resultado = $modelo->cp($cliente_id);
+        $this->assertIsString( $resultado);
+        $this->assertNotTrue(errores::$error);
+
+    }
+
 
 }

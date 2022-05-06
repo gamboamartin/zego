@@ -1,5 +1,6 @@
 <?php
 
+use config\empresas;
 use gamboamartin\errores\errores;
 
 class repositorio{
@@ -14,7 +15,7 @@ class repositorio{
         $this->error = new errores();
         if(isset($_SESSION['numero_empresa'])){
 
-            $empresa = new Empresas();
+            $empresa = new empresas();
             $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
             $this->directorio_repositorio_base = $datos_empresa['nombre_base_datos'];
             $this->directorio_xml_sin_timbrar = "xml_sin_timbrar";

@@ -217,6 +217,34 @@ class modelos{
         }
     }
 
+    protected function existe_algun_valor(array $keys, array $registro): bool|array
+    {
+        $existe_valor = false;
+        foreach ($keys as $key){
+            $existe_valor = $this->existe_valor(key: $key,registro:  $registro);
+            if(errores::$error){
+                return $this->error->error('Error al validar si existe valor', $existe_valor);
+            }
+            if($existe_valor){
+                break;
+            }
+        }
+        return $existe_valor;
+    }
+
+    private function existe_valor(string $key, array $registro): bool
+    {
+        $existe = false;
+        if(isset($registro[$key])){
+            $value = trim($registro[$key]);
+            if($value !==''){
+                $existe = true;
+            }
+
+        }
+        return $existe;
+    }
+
     public function filtra_campos_base($valor, $tabla){
         $valor = addslashes($valor);
         $consultas_base = new consultas_base();

@@ -1,5 +1,6 @@
 <?php
 
+use config\empresas;
 use gamboamartin\errores\errores;
 
 class conexion{
@@ -32,6 +33,25 @@ class conexion{
             $this->link = false;
         }
 	}
+
+    public function conecta(string $host, string $name_bd, string $pass, string $user){
+        try {
+            $link = mysqli_connect($host, $user, $pass);
+            mysqli_set_charset($this->link, 'utf8');
+            $sql = "SET sql_mode = '';";
+            $link->query($sql);
+
+            $consulta = 'USE '.$name_bd;
+            $this->link->query($consulta);
+
+        }
+        catch (Throwable $e){
+            $error = $this->error->error('Error al conectarse', $e);
+            print_r($error);
+            die('Error');
+        }
+        return $link;
+    }
 
     /**
      * ERROR

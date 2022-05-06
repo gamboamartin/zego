@@ -36,11 +36,12 @@ class directivas{
     }
 
     /**
-     * ERROR
-     * @param $etiqueta
+     * ERROR UNIT
+     * @param string $etiqueta
      * @return array|string
      */
-    public function breadcrumb_active($etiqueta){
+    private function breadcrumb_active(string $etiqueta): array|string
+    {
         $etiqueta = $this->genera_texto_etiqueta($etiqueta);
         if(errores::$error){
             return $this->error->error('Error al generar texto', $etiqueta);
@@ -49,12 +50,16 @@ class directivas{
     }
 
     /**
-     * ERROR
-     * @param $breadcrumbs
-     * @param $active
+     * ERROR UNIT
+     * @param array $breadcrumbs
+     * @param string $active
      * @return array|string
      */
-    public function breadcrumbs($breadcrumbs, $active){
+    private function breadcrumbs(array $breadcrumbs,string $active): array|string
+    {
+        if(!defined('SECCION')){
+            return $this->error->error('Error SECCION no esta definida', '');
+        }
         $html = $this->breadcrumb(SECCION). " / ";
         if(errores::$error){
             return $this->error->error('Error al generar breadcrumbs', $html);
@@ -65,15 +70,17 @@ class directivas{
             if(errores::$error){
                 return $this->error->error('Error al generar ETIQUETA', $etiqueta);
             }
-            $html .= $this->breadcrumb($etiqueta, $link) . ' / ';
+            $html_b = $this->breadcrumb($etiqueta, $link) . ' / ';
             if(errores::$error){
-                return $this->error->error('Error al generar breadcrumb', $html);
+                return $this->error->error('Error al generar breadcrumb', $html_b);
             }
+            $html.=$html_b;
         }
-        $html .= $this->breadcrumb_active($active);
+        $html_b = $this->breadcrumb_active($active);
         if(errores::$error){
-            return $this->error->error('Error al generar breadcrumb', $html);
+            return $this->error->error('Error al generar breadcrumb', $html_b);
         }
+        $html.=$html_b;
         return $html;
     }
 
@@ -395,21 +402,24 @@ class directivas{
     }
 
     /**
-     * ERROR
-     * @param $cols
-     * @param $offset
-     * @param $breadcrumbs
+     * ERROR UNIT
+     * @param int $cols
+     * @param int $offset
+     * @param array $breadcrumbs
      * @return array|string
      */
-    public function nav_breadcumbs($cols, $offset, $breadcrumbs){
-        $breadcrumbs = $this->breadcrumbs($breadcrumbs, ACCION);
-        if(errores::$error){
-            return $this->error->error('Error al generar breadcrumbs', $breadcrumbs);
+    public function nav_breadcumbs(int $cols, int $offset, array $breadcrumbs): array|string
+    {
+        if(!defined('ACCION')){
+            return $this->error->error('Error ACCION no esta definida', '');
         }
-        $html = "<nav class='breadcrumb  col-md-$cols col-md-offset-$offset'>
-  			$breadcrumbs
+        $breadcrumbs_r = $this->breadcrumbs($breadcrumbs, ACCION);
+        if(errores::$error){
+            return $this->error->error('Error al generar breadcrumbs', $breadcrumbs_r);
+        }
+        return "<nav class='breadcrumb  col-md-$cols col-md-offset-$offset'>
+  			$breadcrumbs_r
 			</nav>";
-        return $html;
     }
 
     public function nav_breadcumbs_modifica($cols, $offset, $breadcrumbs){

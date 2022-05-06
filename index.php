@@ -4,6 +4,7 @@
 
 require 'vendor/autoload.php';
 
+use config\empresas;
 use gamboamartin\errores\errores;
 use config\init;
 use models\accion;

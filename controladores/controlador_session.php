@@ -1,6 +1,6 @@
 <?php
 namespace controllers;
-use empresas;
+use config\empresas;
 use gamboamartin\errores\errores;
 use models\accion;
 use models\usuario;
