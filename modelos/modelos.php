@@ -2,6 +2,7 @@
 namespace models;
 use base\consultas_base;
 use gamboamartin\errores\errores;
+use gamboamartin\validacion\validacion;
 use Throwable;
 
 class modelos{
@@ -609,6 +610,48 @@ class modelos{
         $result = $this->ejecuta_consulta($sql);
         if(errores::$error){
             return $this->error->error('Error al obtener registros', $result);
+        }
+        return $result;
+    }
+
+    /**
+     * ERROR UNIT
+     * @param string $campo
+     * @param string $fecha_final
+     * @param string $fecha_inicial
+     * @param string $tabla
+     * @param string $tipo_val
+     * @return array
+     */
+    public function rows_entre_fechas(string $campo, string $fecha_final, string $fecha_inicial, string $tabla,
+                                      string $tipo_val): array
+    {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error(mensaje: 'Error la tabla esta vacia',data:  $tabla, params: get_defined_vars());
+        }
+        $fechas['fecha_inicial'] = $fecha_inicial;
+        $fechas['fecha_final'] = $fecha_final;
+        $valida = (new validacion())->valida_rango_fecha(fechas: $fechas,tipo_val: $tipo_val);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al validar fechas', data: $valida, params: get_defined_vars());
+        }
+        $campo = trim($campo);
+        if($campo === ''){
+            return $this->error->error(mensaje: 'Error el $campo esta vacia',data:  $campo, params: get_defined_vars());
+        }
+
+        $sql = $this->genera_consulta_base(tabla: $tabla);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener sql_base', data: $sql, params: get_defined_vars());
+        }
+
+        $where = "WHERE $campo BETWEEN '$fecha_inicial' AND '$fecha_final'";
+
+        $sql .= " $where ";
+        $result = $this->ejecuta_consulta($sql);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registros',data:  $result, params: get_defined_vars());
         }
         return $result;
     }

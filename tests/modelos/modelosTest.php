@@ -384,5 +384,88 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_rows_entre_fechas(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        //$modelo = new liberator($modelo);
+
+        $campo = '';
+        $fecha_final = '';
+        $fecha_inicial = '';
+        $tabla = '';
+        $tipo_val = '';
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $campo = '';
+        $fecha_final = '';
+        $fecha_inicial = '';
+        $tabla = 'factura';
+        $tipo_val = '';
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al validar fechas',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $campo = '';
+        $fecha_final = '';
+        $fecha_inicial = '2020-01-01';
+        $tabla = 'factura';
+        $tipo_val = '';
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al validar fechas',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $campo = '';
+        $fecha_final = '2020-01-01';
+        $fecha_inicial = '2020-01-01';
+        $tabla = 'factura';
+        $tipo_val = '';
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al validar fechas',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $campo = '';
+        $fecha_final = '2020-01-01';
+        $fecha_inicial = '2020-01-01';
+        $tabla = 'factura';
+        $tipo_val = 'fecha';
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error el $campo esta vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $campo = 'factura.fecha_timbrado';
+        $fecha_final = '2022-02-05';
+        $fecha_inicial = '2022-02-04';
+        $tabla = 'factura';
+        $tipo_val = 'fecha';
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
 
 }

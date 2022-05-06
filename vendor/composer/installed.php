@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'b992332305e5aca9831801cdc5bb32c7c5480b41',
+        'reference' => '500103b7a0c7f57c6c38f473ace64043fafd1a00',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'b992332305e5aca9831801cdc5bb32c7c5480b41',
+            'reference' => '500103b7a0c7f57c6c38f473ace64043fafd1a00',
             'dev_requirement' => false,
         ),
         'doctrine/instantiator' => array(
@@ -35,6 +35,17 @@
             'install_path' => __DIR__ . '/../fpdf/fpdf',
             'aliases' => array(),
             'reference' => '4d6fe08d3d200ccdb259dba84cfb363ed68230bc',
+            'dev_requirement' => false,
+        ),
+        'gamboa.martin/calculo' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../gamboa.martin/calculo',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '8efd4b8cc712211966c1807f5f36759831a7f7aa',
             'dev_requirement' => false,
         ),
         'gamboa.martin/errores' => array(
@@ -57,6 +68,17 @@
                 0 => '9999999-dev',
             ),
             'reference' => '5016de6348b1568943e338b2e89a3f00a1ecf20f',
+            'dev_requirement' => false,
+        ),
+        'gamboa.martin/validacion' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../gamboa.martin/validacion',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '1c61d35953fa2c10ae39b10d9b4f9d1156d44fb6',
             'dev_requirement' => false,
         ),
         'myclabs/deep-copy' => array(
