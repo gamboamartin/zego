@@ -18,7 +18,7 @@ class insumo extends modelos {
         return $insumo;
     }
 
-    public function modifica_bd($registro, $tabla, $id){
+    public function modifica_bd($registro, $tabla, $id):array{
         $campos = "";
 
 

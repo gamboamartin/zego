@@ -307,6 +307,22 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_modifica_bd(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        //$modelo = new liberator($modelo);
+
+        $id = 1;
+        $tabla = 'factura';
+        $registro = array();
+        $registro['status'] = 1;
+        $resultado = $modelo->modifica_bd($registro, $tabla, $id);
+        $this->assertIsArray( $resultado);
+        errores::$error = false;
+    }
+
     public function test_obten_por_id(): void
     {
         errores::$error = false;

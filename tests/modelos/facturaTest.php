@@ -124,6 +124,33 @@ class facturaTest extends test {
         errores::$error = false;
     }
 
+    public function test_regimen_fiscal_receptor(): void
+    {
+        errores::$error = false;
+
+        $modelo = new factura($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $registro = array();
+
+        $resultado = $modelo->regimen_fiscal_receptor($registro);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEmpty($resultado);
+
+        errores::$error = false;
+
+        $registro = array();
+        $registro['cliente_id'] = 1;
+
+        $resultado = $modelo->regimen_fiscal_receptor($registro);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertNotEmpty($resultado);
+        errores::$error = false;
+    }
+
 
 
 }

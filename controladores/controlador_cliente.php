@@ -1,7 +1,7 @@
 <?php
 namespace controllers;
 
-use empresas;
+use config\empresas;
 use facturas;
 use gamboamartin\errores\errores;
 use models\cliente;
@@ -451,7 +451,7 @@ class controlador_cliente extends controlador_base{
         $y = $pdf->GetY()+10;
         $pdf->SetY($y);
 
-        $empresa = new Empresas();
+        $empresa = new empresas();
 
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
 

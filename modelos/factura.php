@@ -47,7 +47,7 @@ class factura extends modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param array $registro
      * @return array
      */

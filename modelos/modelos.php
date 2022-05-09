@@ -404,13 +404,21 @@ class modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param $registro
      * @param $tabla
      * @param $id
      * @return array
      */
-    public function modifica_bd($registro, $tabla, $id){
+    public function modifica_bd($registro, $tabla, $id): array
+    {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error tabla esta vacia', $tabla);
+        }
+        if(count($registro) === 0){
+            return $this->error->error('Error el registro esta vacio', $registro);
+        }
         $campos = "";
 
         $campos_no_insertables = array();
@@ -420,28 +428,23 @@ class modelos{
 
         $existe_status = false;
         foreach ($registro as $campo => $value) {
-            if($campo == 'status'){
+            if($campo === 'status'){
                 $existe_status = true;
             }
             $campo = addslashes($campo);
             $value = addslashes($value);
-            if(!in_array($campo,$campos_no_insertables)) {
-                $campos .= $campos == "" ? "$campo = '$value'" : ", $campo = '$value'";
+            if(!in_array($campo, $campos_no_insertables, true)) {
+                $campos .= $campos === "" ? "$campo = '$value'" : ", $campo = '$value'";
             }
         }
         if(!$existe_status){
-            $campos = $campos." , status = '0' ";
+            $campos .= " , status = '0' ";
         }
 
         $visible = "";
-        if($tabla == 'accion'){
-            if(array_key_exists('visible', $registro)){
-                if($registro['visible']==1){
-                    $visible = " , visible = '1' ";
-                }
-                else{
-                    $visible = " , visible = '0' ";
-                }
+        if($tabla === 'accion'){
+            if(array_key_exists('visible', $registro) && (int)$registro['visible'] === 1) {
+                $visible = " , visible = '1' ";
             }
             else{
                 $visible = " , visible = '0' ";
@@ -450,9 +453,9 @@ class modelos{
 
 
         $inicio = "";
-        if($tabla == 'accion'){
+        if($tabla === 'accion'){
             if(array_key_exists('inicio', $registro)){
-                if($registro['inicio']==1){
+                if((int)$registro['inicio']===1){
                     $inicio = " , inicio = '1' ";
                 }
                 else{

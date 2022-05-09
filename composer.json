@@ -18,6 +18,7 @@
         "fpdf/fpdf": "^1.84",
       "phpunit/phpunit": "^9.5",
       "ext-mysqli": "*",
-      "ext-soap": "*"
+      "ext-soap": "*",
+      "ext-simplexml": "*"
     }
 }
