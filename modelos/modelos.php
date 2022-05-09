@@ -217,6 +217,12 @@ class modelos{
         }
     }
 
+    /**
+     * ERROR UNIT
+     * @param array $keys
+     * @param array $registro
+     * @return bool|array
+     */
     protected function existe_algun_valor(array $keys, array $registro): bool|array
     {
         $existe_valor = false;

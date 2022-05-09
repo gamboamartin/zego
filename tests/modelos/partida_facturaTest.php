@@ -17,6 +17,37 @@ class partida_facturaTest extends test {
         $this->errores = new errores();
     }
 
+    public function test_actualiza_obj_diferente(): void
+    {
+        errores::$error = false;
+
+        $modelo = new partida_factura($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $insumo = array();
+        $partida = array();
+        $partida_factura_id = 1;
+        $resultado = $modelo->actualiza_obj_diferente($insumo, $partida, $partida_factura_id);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al validar si es diferente el obj imp',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+
+        $insumo = array();
+        $partida = array();
+        $partida_factura_id = 1;
+        $insumo['insumo_obj_imp'] = '2';
+        $resultado = $modelo->actualiza_obj_diferente($insumo, $partida, $partida_factura_id);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
     public function test_compare_obj_imp(): void
     {
         errores::$error = false;

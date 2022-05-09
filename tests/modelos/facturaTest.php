@@ -124,6 +124,22 @@ class facturaTest extends test {
         errores::$error = false;
     }
 
+    public function test_inicializa_data_receptor(): void
+    {
+        errores::$error = false;
+
+        $modelo = new factura($this->link);
+        //$modelo = new liberator($modelo);
+
+
+        $factura_id = 1;
+
+        $resultado = $modelo->inicializa_data_receptor($factura_id);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
     public function test_init_registro_receptor(): void
     {
         errores::$error = false;

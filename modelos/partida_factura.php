@@ -164,7 +164,7 @@ class partida_factura extends modelos {
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param array $insumo
      * @param array $partida
      * @param int $partida_factura_id

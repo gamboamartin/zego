@@ -89,6 +89,45 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_existe_algun_valor(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        $modelo = new liberator($modelo);
+
+        $registro = array();
+        $keys = array();
+        $resultado = $modelo->existe_algun_valor($keys, $registro);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertNotTrue($resultado);
+
+        errores::$error = false;
+
+
+        $registro = array();
+        $keys = array();
+        $keys[] = 'a';
+        $resultado = $modelo->existe_algun_valor($keys, $registro);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertNotTrue($resultado);
+
+        errores::$error = false;
+
+
+        $registro = array();
+        $keys = array();
+        $keys[] = 'a';
+        $registro['a'] ='a';
+        $resultado = $modelo->existe_algun_valor($keys, $registro);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
     public function test_existe_valor(): void
     {
         errores::$error = false;

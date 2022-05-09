@@ -78,7 +78,7 @@ foreach ($empresas_data as $empresa){
         }
 
 
-        $ayer = (new gamboamartin\calculo\calculo())->obten_fecha_resta(fecha: $hoy, n_dias: 1,
+        $ayer = (new gamboamartin\calculo\calculo())->obten_fecha_resta(fecha: $hoy, n_dias: 2,
             tipo_val:'fecha_hora_min_sec_esp' );
 
         if(errores::$error){
@@ -86,6 +86,8 @@ foreach ($empresas_data as $empresa){
             print_r($error);
             die('Error');
         }
+
+        var_dump($ayer);
 
         $partida_factura_modelo = new partida_factura($link_thecloud);
 
