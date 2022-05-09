@@ -232,6 +232,12 @@ class modelos{
         return $existe_valor;
     }
 
+    /**
+     * ERROR UNIT
+     * @param string $key
+     * @param array $registro
+     * @return bool
+     */
     private function existe_valor(string $key, array $registro): bool
     {
         $existe = false;
@@ -647,12 +653,13 @@ class modelos{
      * @param string $campo
      * @param string $fecha_final
      * @param string $fecha_inicial
+     * @param string $filtro_sql
      * @param string $tabla
      * @param string $tipo_val
      * @return array
      */
-    public function rows_entre_fechas(string $campo, string $fecha_final, string $fecha_inicial, string $tabla,
-                                      string $tipo_val): array
+    public function rows_entre_fechas(string $campo, string $fecha_final, string $fecha_inicial, string $filtro_sql,
+                                      int $limit_sql, string $tabla, string $tipo_val): array
     {
         $tabla = trim($tabla);
         if($tabla === ''){
@@ -674,7 +681,18 @@ class modelos{
             return $this->error->error(mensaje: 'Error al obtener sql_base', data: $sql, params: get_defined_vars());
         }
 
-        $where = "WHERE $campo BETWEEN '$fecha_inicial' AND '$fecha_final'";
+        $and = '';
+        $filtro_sql = trim($filtro_sql);
+        if($filtro_sql!==''){
+            $and = 'AND';
+        }
+
+        $limit = '';
+        if($limit_sql>0){
+            $limit = ' LIMIT '.$limit_sql;
+        }
+
+        $where = "WHERE ($campo BETWEEN '$fecha_inicial' AND '$fecha_final') $and $filtro_sql $limit";
 
         $sql .= " $where ";
         $result = $this->ejecuta_consulta($sql);

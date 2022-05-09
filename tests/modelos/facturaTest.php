@@ -16,6 +16,33 @@ class facturaTest extends test {
         $this->errores = new errores();
     }
 
+    public function test_aplica_reg_fis_cte(): void
+    {
+        errores::$error = false;
+
+        $modelo = new factura($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $registro = array();
+        $cliente_id = -1;
+        $resultado = $modelo->aplica_reg_fis_cte($cliente_id, $registro);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al al obtener cliente',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $registro = array();
+        $cliente_id = 1;
+        $resultado = $modelo->aplica_reg_fis_cte($cliente_id, $registro);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error no existe regimen fiscal en cliente',$resultado['mensaje']);
+        errores::$error = false;
+    }
+
     public function test_asigna_regimen_fiscal_rec(): void
     {
         errores::$error = false;

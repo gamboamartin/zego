@@ -65,29 +65,39 @@ foreach ($empresas_data as $empresa){
         die('Error');
     }
 
-    exit;
-
-    if(!$link_local->error){
-
-        mysqli_set_charset($link_local, "utf8");
-        $sql = "SET sql_mode = '';";
-        $link_local->query($sql);
+    if(!$link_thecloud->error){
 
         $tabla = 'partida_factura';
         $hoy = date('Y-m-d 00:00:00');
-        $tres_dias = (new gamboamartin\calculo\calculo())->obten_fecha_resta(fecha: $hoy, n_dias: 2,
+        $tres_dias = (new gamboamartin\calculo\calculo())->obten_fecha_resta(fecha: $hoy, n_dias: 30,
             tipo_val:'fecha_hora_min_sec_esp' );
+        if(errores::$error){
+            $error = (new errores())->error('Error al obtener dias', $tres_dias);
+            print_r($error);
+            die('Error');
+        }
+
+
         $ayer = (new gamboamartin\calculo\calculo())->obten_fecha_resta(fecha: $hoy, n_dias: 1,
             tipo_val:'fecha_hora_min_sec_esp' );
 
-        $partida_factura_modelo = new partida_factura($link_local);
+        if(errores::$error){
+            $error = (new errores())->error('Error al obtener dias', $ayer);
+            print_r($error);
+            die('Error');
+        }
+
+        $partida_factura_modelo = new partida_factura($link_thecloud);
 
         $campo = 'partida_factura.fecha_alta';
         $fecha_final = $ayer;
         $fecha_inicial = $tres_dias;
         $tipo_val = 'fecha_hora_min_sec_esp';
+        $filtro_sql = 'partida_factura.insumo_id IS NULL';
+        $limit_sql = 100;
         $r_partidas = $partida_factura_modelo->rows_entre_fechas(campo:$campo, fecha_final: $fecha_final,
-            fecha_inicial: $fecha_inicial, tabla: $tabla, tipo_val: $tipo_val);
+            fecha_inicial: $fecha_inicial, filtro_sql: $filtro_sql, limit_sql: $limit_sql, tabla: $tabla,
+            tipo_val: $tipo_val);
 
         if(errores::$error){
             $error = (new errores())->error('Error al obtener partidas', $r_partidas);
@@ -95,9 +105,14 @@ foreach ($empresas_data as $empresa){
             die('Error');
         }
 
+        var_dump($r_partidas);
+
+
         $partidas = $r_partidas['registros'];
         $keys = array();
         $keys[] = 'partida_factura_insumo_id';
+
+        $contador = 0;
         foreach($partidas as $partida){
             $del = $partida_factura_modelo->elimina_partida_vacia(keys: $keys, partida: $partida);
             if(errores::$error){
@@ -108,6 +123,12 @@ foreach ($empresas_data as $empresa){
             if($del->del){
                 print_r($del);
                 echo "<br><br>";
+            }
+            if($del->del){
+                $contador++;
+            }
+            if($contador >=10){
+                break;
             }
         }
         

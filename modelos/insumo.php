@@ -5,7 +5,7 @@ use gamboamartin\errores\errores;
 class insumo extends modelos {
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param int $insumo_id
      * @return array
      */

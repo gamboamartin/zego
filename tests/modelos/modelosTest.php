@@ -89,6 +89,33 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_existe_valor(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        $modelo = new liberator($modelo);
+
+        $key = '';
+        $registro = array();
+        $resultado = $modelo->existe_valor($key, $registro);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertNotTrue($resultado);
+
+        errores::$error = false;
+
+
+        $key = 'a';
+        $registro = array();
+        $registro['a'] = '1';
+        $resultado = $modelo->existe_valor($key, $registro);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
     public function test_filtro_and(): void
     {
         errores::$error = false;
@@ -396,7 +423,7 @@ class modelosTest extends test {
         $fecha_inicial = '';
         $tabla = '';
         $tipo_val = '';
-        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial,'',-1, $tabla, $tipo_val);
         $this->assertIsArray( $resultado);
         $this->assertTrue(errores::$error);
         $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
@@ -409,7 +436,7 @@ class modelosTest extends test {
         $fecha_inicial = '';
         $tabla = 'factura';
         $tipo_val = '';
-        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial,'',-1, $tabla, $tipo_val);
         $this->assertIsArray( $resultado);
         $this->assertTrue(errores::$error);
         $this->assertStringContainsStringIgnoringCase('Error al validar fechas',$resultado['mensaje']);
@@ -422,7 +449,7 @@ class modelosTest extends test {
         $fecha_inicial = '2020-01-01';
         $tabla = 'factura';
         $tipo_val = '';
-        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial,'',-1, $tabla, $tipo_val);
         $this->assertIsArray( $resultado);
         $this->assertTrue(errores::$error);
         $this->assertStringContainsStringIgnoringCase('Error al validar fechas',$resultado['mensaje']);
@@ -435,7 +462,7 @@ class modelosTest extends test {
         $fecha_inicial = '2020-01-01';
         $tabla = 'factura';
         $tipo_val = '';
-        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial,'',-1, $tabla, $tipo_val);
         $this->assertIsArray( $resultado);
         $this->assertTrue(errores::$error);
         $this->assertStringContainsStringIgnoringCase('Error al validar fechas',$resultado['mensaje']);
@@ -448,7 +475,7 @@ class modelosTest extends test {
         $fecha_inicial = '2020-01-01';
         $tabla = 'factura';
         $tipo_val = 'fecha';
-        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial,'',-1, $tabla, $tipo_val);
         $this->assertIsArray( $resultado);
         $this->assertTrue(errores::$error);
         $this->assertStringContainsStringIgnoringCase('Error el $campo esta vacia',$resultado['mensaje']);
@@ -461,7 +488,7 @@ class modelosTest extends test {
         $fecha_inicial = '2022-02-04';
         $tabla = 'factura';
         $tipo_val = 'fecha';
-        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial, $tabla, $tipo_val);
+        $resultado = $modelo->rows_entre_fechas($campo, $fecha_final, $fecha_inicial,'',-1, $tabla, $tipo_val);
         $this->assertIsArray( $resultado);
         $this->assertNotTrue(errores::$error);
         errores::$error = false;
