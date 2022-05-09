@@ -1,6 +1,6 @@
 <?php
 namespace models;
-use conexion;
+use config\conexion;
 use gamboamartin\errores\errores;
 
 class accion extends modelos {
@@ -82,7 +82,7 @@ class accion extends modelos {
 	}
 
 	public function cuenta_acciones(){
-        $conexion = new Conexion();
+        $conexion = new conexion();
         $conexion->selecciona_base_datos();
         $link = $conexion->link;
 

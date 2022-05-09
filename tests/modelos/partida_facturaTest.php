@@ -264,5 +264,21 @@ class partida_facturaTest extends test {
         errores::$error = false;
     }
 
+    public function test_upd_imp_obj(): void
+    {
+        errores::$error = false;
+
+        $modelo = new partida_factura($this->link);
+        //$modelo = new liberator($modelo);
+
+
+        $obj_imp = -1;
+        $partida_factura_id = 1;
+        $resultado = $modelo->upd_imp_obj($obj_imp, $partida_factura_id);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
 
 }

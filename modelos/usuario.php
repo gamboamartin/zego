@@ -1,6 +1,6 @@
 <?php
 namespace models;
-use conexion;
+use config\conexion;
 
 class usuario extends modelos {
 

@@ -214,12 +214,12 @@ class partida_factura extends modelos {
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param string $obj_imp
      * @param int $partida_factura_id
      * @return array
      */
-    private function upd_imp_obj(string $obj_imp, int $partida_factura_id ): array
+    PUBLIC function upd_imp_obj(string $obj_imp, int $partida_factura_id ): array
     {
         $part_fact_upd['obj_imp'] = $obj_imp;
         $r_part_fact = $this->modifica_bd(registro: $part_fact_upd, tabla: 'partida_factura', id:$partida_factura_id);

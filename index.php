@@ -4,6 +4,7 @@
 
 require 'vendor/autoload.php';
 
+use config\conexion;
 use config\empresas;
 use gamboamartin\errores\errores;
 use config\init;
@@ -18,7 +19,7 @@ require_once('requires.php');
 
 $repositorio = new Repositorio();
 
-$conexion = new Conexion();
+$conexion = new conexion();
 $conexion->selecciona_base_datos();
 $link = $conexion->link;
 

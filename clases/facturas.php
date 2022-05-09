@@ -1,5 +1,6 @@
 <?php
 
+use config\empresas;
 use gamboamartin\errores\errores;
 use models\factura;
 use models\forma_pago;
