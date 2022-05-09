@@ -23,7 +23,7 @@ class servicesTest extends test {
 
         $srv = new services();
 
-        //$srv = new liberator($srv);
+        $srv = new liberator($srv);
 
         $path = '';
         $resultado = $srv->genera_file_lock($path);

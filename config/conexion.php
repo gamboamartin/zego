@@ -8,16 +8,24 @@ class conexion{
 	public mysqli|false $link;
 	public string $nombre_base_datos = '';
     private errores $error;
-	public function __construct(){
+	public function __construct(string $host = '', string $name_bd = '', string $pass = '', string $user = ''){
 	    if (isset($_SESSION['numero_empresa'])) {
             $this->error = new errores();
             $empresa = new empresas();
             $empresas = $empresa->empresas;
             $empresa_activa = $empresas[$_SESSION['numero_empresa']];
-            $host = $empresa_activa['host'];
-            $user = $empresa_activa['user'];
-            $pass = $empresa_activa['pass'];
-            $this->nombre_base_datos = $empresa_activa['nombre_base_datos'];
+
+            if($host==='') {
+
+                $host = $empresa_activa['host'];
+                $user = $empresa_activa['user'];
+                $pass = $empresa_activa['pass'];
+                $this->nombre_base_datos = $empresa_activa['nombre_base_datos'];
+            }
+            else{
+                $this->nombre_base_datos = $name_bd;
+            }
+
             try {
                 $this->link = mysqli_connect($host, $user, $pass);
                 mysqli_set_charset($this->link, 'utf8');

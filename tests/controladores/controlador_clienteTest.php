@@ -127,7 +127,7 @@ class controlador_clienteTest extends test {
 
 
         $ctl = new controlador_cliente($this->link);
-        //$ctl = new liberator($ctl);
+        $ctl = new liberator($ctl);
 
         $update = array();
         $data_value_upd = array();
