@@ -12,25 +12,27 @@ const PATH_BASE = '/var/www/html/zego/';
 
 require PATH_BASE.'vendor/autoload.php';
 
-
 use config\conexion;
 use gamboamartin\errores\errores;
 use models\partida_factura;
 use gamboamartin\calculo\calculo;
 use config\empresas;
+use services\services;
 
 $file_lock = __FILE__.'.lock';
 
-if(file_exists($file_lock)){
-    echo 'El servicio esta en proceso';
-    exit;
-}
-file_put_contents($file_lock, '');
-if(!file_exists($file_lock)){
-    $error = (new errores())->error('Error al crear archivo lock', $file_lock);
+$servicio_corriendo = (new services())->verifica_servicio(path: $file_lock);
+if(errores::$error){
+    $error = (new errores())->error('Error al verificar servicio', $servicio_corriendo);
     print_r($error);
     die('Error');
 }
+
+if($servicio_corriendo){
+    echo 'El servicio esta corriendo '.$file_lock;
+    exit;
+}
+
 
 $calculo = new calculo();
 

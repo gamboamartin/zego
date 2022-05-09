@@ -21,6 +21,10 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         array (
             'tests\\' => 6,
         ),
+        's' => 
+        array (
+            'services\\' => 9,
+        ),
         'p' => 
         array (
             'phpDocumentor\\Reflection\\' => 25,
@@ -77,6 +81,10 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         'tests\\' => 
         array (
             0 => __DIR__ . '/../..' . '/tests',
+        ),
+        'services\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/services',
         ),
         'phpDocumentor\\Reflection\\' => 
         array (

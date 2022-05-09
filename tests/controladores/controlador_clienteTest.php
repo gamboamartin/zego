@@ -121,6 +121,49 @@ class controlador_clienteTest extends test {
         errores::$error = false;
     }
 
+    public function test_init_update_emisor(): void
+    {
+        errores::$error = false;
+
+
+        $ctl = new controlador_cliente($this->link);
+        //$ctl = new liberator($ctl);
+
+        $update = array();
+        $data_value_upd = array();
+        $registro = array();
+        $campo_upd = '';
+        $resultado = $ctl->init_update_emisor($campo_upd, $data_value_upd, $registro, $update);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error $campo_upd esta vacio',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $update = array();
+        $data_value_upd = array();
+        $registro = array();
+        $campo_upd = 'a';
+        $resultado = $ctl->init_update_emisor($campo_upd, $data_value_upd, $registro, $update);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al validar $registro',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $update = array();
+        $data_value_upd = array();
+        $registro = array();
+        $campo_upd = 'a';
+        $registro['a'] = 'zx';
+        $resultado = $ctl->init_update_emisor($campo_upd, $data_value_upd, $registro, $update);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
     public function test_obten_columnas(): void
     {
         errores::$error = false;

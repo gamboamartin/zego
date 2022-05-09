@@ -162,6 +162,35 @@ class partida_facturaTest extends test {
         errores::$error = false;
     }
 
+    public function test_obj_upd_partida(): void
+    {
+        errores::$error = false;
+
+        $modelo = new partida_factura($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $partida_factura_id = 1;
+        $partida = array();
+
+        $resultado = $modelo->obj_upd_partida($partida, $partida_factura_id);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al validar partida',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $partida_factura_id = 1;
+        $partida = array();
+        $partida['insumo_id'] = 1;
+
+        $resultado = $modelo->obj_upd_partida($partida, $partida_factura_id);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al validar objeto de imp',$resultado['mensaje']);
+        errores::$error = false;
+    }
+
     public function test_obten_columnas(): void
     {
         errores::$error = false;

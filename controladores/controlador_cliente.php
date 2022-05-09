@@ -4,6 +4,7 @@ namespace controllers;
 use config\empresas;
 use facturas;
 use gamboamartin\errores\errores;
+use gamboamartin\validacion\validacion;
 use models\cliente;
 use models\cuenta_bancaria;
 use models\factura;
@@ -1137,6 +1138,11 @@ class controlador_cliente extends controlador_base{
         $partida_factura_modelo = new partida_factura($this->link);
         $filtro = array('factura_id'=>$this->factura_id);
         $resultado = $partida_factura_modelo->filtro_and('partida_factura',$filtro);
+        if(errores::$error){
+            $error = $this->error_->error('Error al obtener partidas', $resultado);
+            print_r($error);
+            die('Error');
+        }
 
         $partidas = $resultado['registros'];
 
@@ -1144,7 +1150,12 @@ class controlador_cliente extends controlador_base{
         	if((string)$partida['partida_factura_producto_sat_codigo'] === ''){
                 $upd['factura_id'] = $this->factura_id;
                 $partida_factura_id = $partida['partida_factura_id'];
-        		$partida_factura_modelo->modifica_bd($upd,'partida_factura',$partida_factura_id);
+        		$r_pf = $partida_factura_modelo->modifica_bd($upd,'partida_factura',$partida_factura_id);
+                if(errores::$error){
+                    $error = $this->error_->error('Error al modificar partidas', $r_pf);
+                    print_r($error);
+                    die('Error');
+                }
         	}
 
         }
@@ -1859,7 +1870,7 @@ class controlador_cliente extends controlador_base{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param string $campo_upd
      * @param array $data_value_upd
      * @param array $registro
@@ -1868,6 +1879,16 @@ class controlador_cliente extends controlador_base{
      */
     private function init_update_emisor(string $campo_upd, array $data_value_upd, array $registro, array $update): array
     {
+        $campo_upd = trim($campo_upd);
+        if($campo_upd === ''){
+            return $this->error_->error('Error $campo_upd esta vacio', $campo_upd);
+        }
+        $keys = array($campo_upd);
+        $valida = (new validacion())->valida_existencia_keys($keys, $registro);
+        if(errores::$error){
+            return $this->error_->error('Error al validar $registro', $valida);
+        }
+
         if((string)$registro[$campo_upd]===''){
             $update = $this->asigna_datos_emisor(data_value_upd: $data_value_upd,update: $update);
             if(errores::$error){

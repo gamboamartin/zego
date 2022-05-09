@@ -1,6 +1,7 @@
 <?php
 namespace models;
 use gamboamartin\errores\errores;
+use gamboamartin\validacion\validacion;
 use stdClass;
 
 class partida_factura extends modelos {
@@ -116,13 +117,19 @@ class partida_factura extends modelos {
 
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param array $partida
      * @param int $partida_factura_id
      * @return bool|array
      */
     private function obj_upd_partida(array $partida, int $partida_factura_id): bool|array
     {
+        $keys = array('insumo_id');
+        $valida = (new validacion())->valida_existencia_keys(keys: $keys, registro: $partida);
+        if(errores::$error){
+            return $this->error->error('Error al validar partida', $valida);
+        }
+
         $insumo_id = $partida['insumo_id'];
         $insumo = (new insumo($this->link))->data_insumo(insumo_id: $insumo_id);
         if(errores::$error){
