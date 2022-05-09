@@ -100,7 +100,7 @@ class partida_factura extends modelos {
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param int $factura_id
      * @return array
      */

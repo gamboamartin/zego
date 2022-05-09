@@ -35,21 +35,47 @@ class conexion{
         }
 	}
 
-    public function conecta(string $host, string $name_bd, string $pass, string $user){
+    /**
+     * ERROR UNIT
+     * @param string $host
+     * @param string $name_bd
+     * @param string $pass
+     * @param string $user
+     * @return bool|array|mysqli
+     */
+    public function conecta(string $host, string $name_bd, string $pass, string $user): bool|array|mysqli
+    {
+        $this->error = new errores();
+
+        $host = trim($host);
+        if($host === ''){
+            return $this->error->error('Error el host esta vacio', $host);
+        }
+        $name_bd = trim($name_bd);
+        if($name_bd === ''){
+            return $this->error->error('Error el $name_bd esta vacio', $name_bd);
+        }
+        $pass = trim($pass);
+        if($pass === ''){
+            return $this->error->error('Error el $pass esta vacio', $pass);
+        }
+        $user = trim($user);
+        if($user === ''){
+            return $this->error->error('Error el $user esta vacio', $user);
+        }
+
         try {
             $link = mysqli_connect($host, $user, $pass);
-            mysqli_set_charset($this->link, 'utf8');
+            mysqli_set_charset($link, 'utf8');
             $sql = "SET sql_mode = '';";
             $link->query($sql);
 
             $consulta = 'USE '.$name_bd;
-            $this->link->query($consulta);
+            $link->query($consulta);
 
         }
         catch (Throwable $e){
-            $error = $this->error->error('Error al conectarse', $e);
-            print_r($error);
-            die('Error');
+            return $this->error->error('Error al conectarse', $e);
         }
         return $link;
     }

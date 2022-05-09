@@ -13,6 +13,7 @@ const PATH_BASE = '/var/www/html/zego/';
 require PATH_BASE.'vendor/autoload.php';
 
 
+use config\conexion;
 use gamboamartin\errores\errores;
 use models\partida_factura;
 use gamboamartin\calculo\calculo;
@@ -50,7 +51,21 @@ foreach ($empresas_data as $empresa){
         $error = (new errores())->error('Error al conectar local', $link_local);
         print_r($error);
         die('Error');
-    }exit;
+    }
+
+    $host_r = $empresa['remote_host'];
+    $user_r = $empresa['remote_user'];
+    $pass_r = $empresa['remote_pass'];
+    $nombre_base_datos_r = $empresa['remote_nombre_base_datos'];
+
+    $link_thecloud = (new conexion())->conecta($host, $nombre_base_datos, $pass, $user);
+    if(errores::$error){
+        $error = (new errores())->error('Error al conectar thecloud', $link_thecloud);
+        print_r($error);
+        die('Error');
+    }
+
+    exit;
 
     if(!$link_local->error){
 

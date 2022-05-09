@@ -16,6 +16,33 @@ class facturaTest extends test {
         $this->errores = new errores();
     }
 
+    public function test_asigna_regimen_fiscal_rec(): void
+    {
+        errores::$error = false;
+
+        $modelo = new factura($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $registro = array();
+        $regimen_fiscal_id = -1;
+        $resultado = $modelo->asigna_regimen_fiscal_rec($regimen_fiscal_id, $registro);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al al obtener regimen_fiscal',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $registro = array();
+        $regimen_fiscal_id = 1;
+        $resultado = $modelo->asigna_regimen_fiscal_rec($regimen_fiscal_id, $registro);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals('601',$resultado['cliente_rf']);
+        errores::$error = false;
+    }
+
     public function test_asigna_cp_receptor(): void
     {
         errores::$error = false;

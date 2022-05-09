@@ -100,7 +100,7 @@ class factura extends modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param int $regimen_fiscal_id
      * @param array $registro
      * @return array

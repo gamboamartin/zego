@@ -204,6 +204,31 @@ class partida_facturaTest extends test {
         errores::$error = false;
     }
 
+    public function test_partidas(): void
+    {
+        errores::$error = false;
+
+        $modelo = new partida_factura($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $factura_id = -1;
+        $resultado = $modelo->partidas($factura_id);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEmpty($resultado);
+
+        errores::$error = false;
+
+
+        $factura_id = 1;
+        $resultado = $modelo->partidas($factura_id);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertNotEmpty($resultado);
+        errores::$error = false;
+    }
+
     public function test_valida_obj(): void
     {
         errores::$error = false;
