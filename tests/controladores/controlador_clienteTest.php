@@ -106,7 +106,41 @@ class controlador_clienteTest extends test {
 
 
 
+    public function test_init_array_update_emisor(): void
+    {
+        errores::$error = false;
 
+
+        $ctl = new controlador_cliente($this->link);
+        //$ctl = new liberator($ctl);
+
+        $registro = array();
+        $resultado = $ctl->init_array_update_emisor($registro);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al asignar datos',$resultado['mensaje']);
+
+        errores::$error = false;
+
+
+        $registro = array();
+        $registro['factura_lugar_expedicion'] = '1';
+        $registro['factura_calle_expedicion'] = '1';
+        $registro['factura_exterior_expedicion'] = '1';
+        $registro['factura_interior_expedicion'] = ' ';
+        $registro['factura_colonia_expedicion'] = '1';
+        $registro['factura_municipio_expedicion'] = '1';
+        $registro['factura_estado_expedicion'] = '1';
+        $registro['factura_pais_expedicion'] = '1';
+        $registro['factura_nombre_emisor'] = '1';
+        $registro['factura_regimen_fiscal_emisor_codigo'] = '1';
+        $registro['factura_regimen_fiscal_emisor_descripcion'] = '1';
+        $resultado = $ctl->init_array_update_emisor($registro);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+
+        errores::$error = false;
+    }
 
 
     public function test_init_update_emisor(): void

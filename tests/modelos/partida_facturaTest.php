@@ -144,6 +144,34 @@ class partida_facturaTest extends test {
         errores::$error = false;
     }
 
+    public function test_elimina_partida_vacia(): void
+    {
+        errores::$error = false;
+
+        $modelo = new partida_factura($this->link);
+        //$modelo = new liberator($modelo);
+
+
+        $keys = array();
+        $partida = array();
+
+        $resultado = $modelo->elimina_partida_vacia($keys, $partida);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al validar partida',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $keys = array();
+        $partida = array();
+        $partida['partida_factura_id'] = 1;
+
+        $resultado = $modelo->elimina_partida_vacia($keys, $partida);
+        $this->assertIsObject( $resultado);
+        $this->assertNotTrue(errores::$error);
+
+        errores::$error = false;
+    }
 
 
     public function test_genera_columnas_consulta(): void
@@ -176,6 +204,23 @@ class partida_facturaTest extends test {
         $this->assertIsString( $resultado);
         $this->assertNotTrue(errores::$error);
         $this->assertStringContainsStringIgnoringCase('factura_id,factura.lugar_expedicion AS factura_lugar_ex',$resultado);
+        errores::$error = false;
+    }
+
+    public function test_init_obj_partidas(): void
+    {
+        errores::$error = false;
+
+        $modelo = new partida_factura($this->link);
+        //$modelo = new liberator($modelo);
+
+
+        $factura_id = 1;
+
+        $resultado = $modelo->init_obj_partidas($factura_id);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
         errores::$error = false;
     }
 

@@ -32,7 +32,7 @@ class partida_factura extends modelos {
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param int $factura_id
      * @return array|bool
      */
@@ -77,6 +77,12 @@ class partida_factura extends modelos {
         return true;
     }
 
+    /**
+     * ERROR UNIT
+     * @param array $keys
+     * @param array $partida
+     * @return stdClass|array
+     */
     public function elimina_partida_vacia(array $keys, array $partida): stdClass|array
     {
         $data = array();
@@ -87,6 +93,12 @@ class partida_factura extends modelos {
         }
 
         if(!$existe_valor){
+            $keys_val = array('partida_factura_id');
+            $valida = (new validacion())->valida_existencia_keys($keys_val, $partida);
+            if(errores::$error){
+                return $this->error->error('Error al validar partida', $valida);
+            }
+
             $elimina = $this->elimina_bd('partida_factura', $partida['partida_factura_id']);
             if(errores::$error){
                 return $this->error->error('Error al eliminar partida', $elimina);

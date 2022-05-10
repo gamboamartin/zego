@@ -1831,11 +1831,11 @@ class controlador_cliente extends controlador_base{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param array $registro
      * @return array
      */
-    private function init_array_update_emisor(array $registro): array
+    PUBLIC function init_array_update_emisor(array $registro): array
     {
         $update = array();
 
