@@ -370,6 +370,32 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_limpia_campo_row_inexistente(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $campo = '';
+        $row = array();
+        $resultado = $modelo->limpia_campo_row_inexistente($campo, $row);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error campo esta vacio',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $campo = 'a';
+        $row = array();
+        $resultado = $modelo->limpia_campo_row_inexistente($campo, $row);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals('',$resultado['a']);
+        errores::$error = false;
+    }
+
     public function test_modifica_bd(): void
     {
         errores::$error = false;

@@ -408,14 +408,17 @@ class modelos{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param string $campo
      * @param array $row
      * @return array
      */
-    public function limpia_campo_row_inexistente(string $campo, array $row): array
+    protected function limpia_campo_row_inexistente(string $campo, array $row): array
     {
         $campo = trim($campo);
+        if($campo === ''){
+            return $this->error->error('Error campo esta vacio', $campo);
+        }
         if(!isset($row[$campo])){
             $row[$campo] = '';
         }
