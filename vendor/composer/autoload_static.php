@@ -128,9 +128,9 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
             0 => __DIR__ . '/..' . '/gamboa.martin/calculo/tests',
             1 => __DIR__ . '/..' . '/gamboa.martin/errores/tests',
             2 => __DIR__ . '/..' . '/gamboa.martin/plugins/tests',
-            3 => __DIR__ . '/..' . '/gamboa.martin/test/src',
-            4 => __DIR__ . '/..' . '/gamboa.martin/validacion/tests',
-            5 => __DIR__ . '/..' . '/gamboa.martin/services/tests',
+            3 => __DIR__ . '/..' . '/gamboa.martin/services/tests',
+            4 => __DIR__ . '/..' . '/gamboa.martin/test/src',
+            5 => __DIR__ . '/..' . '/gamboa.martin/validacion/tests',
         ),
         'gamboamartin\\services\\' => 
         array (
@@ -158,8 +158,8 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
             0 => __DIR__ . '/../..' . '/config',
             1 => __DIR__ . '/..' . '/gamboa.martin/calculo/config',
             2 => __DIR__ . '/..' . '/gamboa.martin/plugins/config',
-            3 => __DIR__ . '/..' . '/gamboa.martin/validacion/config',
-            4 => __DIR__ . '/..' . '/gamboa.martin/services/config',
+            3 => __DIR__ . '/..' . '/gamboa.martin/services/config',
+            4 => __DIR__ . '/..' . '/gamboa.martin/validacion/config',
         ),
         'base\\' => 
         array (

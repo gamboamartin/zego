@@ -335,15 +335,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/services.git",
-                "reference": "fcea9799004076b6423ebf799c85f4f275d869d4"
+                "reference": "60c4e0a6b121ff5e7f2daa86c5623ab57999f5a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/services/zipball/fcea9799004076b6423ebf799c85f4f275d869d4",
-                "reference": "fcea9799004076b6423ebf799c85f4f275d869d4",
+                "url": "https://api.github.com/repos/gamboamartin/services/zipball/60c4e0a6b121ff5e7f2daa86c5623ab57999f5a6",
+                "reference": "60c4e0a6b121ff5e7f2daa86c5623ab57999f5a6",
                 "shasum": ""
             },
             "require": {
+                "ext-mysqli": "*",
                 "gamboa.martin/errores": "dev-main",
                 "gamboa.martin/test": "dev-main",
                 "php": " >=8.1"
@@ -351,7 +352,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-10T16:45:30+00:00",
+            "time": "2022-05-10T17:04:01+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",

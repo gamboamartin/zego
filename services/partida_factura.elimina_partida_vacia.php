@@ -46,7 +46,7 @@ foreach ($empresas_data as $empresa){
     $nombre_base_datos_r = $empresa['remote_nombre_base_datos'];
 
     $link_thecloud = (new services)->conecta_mysqli(host: $host_r,
-        nombre_base_datos_r:  $nombre_base_datos_r, pass: $pass_r,user:  $user_r);
+        nombre_base_datos:  $nombre_base_datos_r, pass: $pass_r,user:  $user_r);
     if(errores::$error){
         $error = (new errores())->error('Error al conectar remoto', $link_thecloud);
         print_r($error);
@@ -99,27 +99,15 @@ foreach ($empresas_data as $empresa){
     $keys = array();
     $keys[] = 'partida_factura_insumo_id';
 
-    $contador = 0;
-    foreach($partidas as $partida){
-        $del = $partida_factura_modelo->elimina_partida_vacia(keys: $keys, partida: $partida);
-        if(errores::$error){
-            $error = (new errores())->error('Error al limpiar', $del);
-            print_r($error);
-            die('Error');
-        }
 
-        if($del->del){
-            print_r($del);
-            echo "<br><br>";
-        }
-        if($del->del){
-            $contador++;
-        }
-        if($contador >=$limit_sql){
-            break;
-        }
+    $dels = $partida_factura_modelo->elimina_partidas_vacias(keys: $keys,partidas:  $partidas);
+    if(errores::$error){
+        $error = (new errores())->error('Error al limpiar', $dels);
+        print_r($error);
+        die('Error');
     }
-        
+    var_dump($dels);
+
 
 }
 

@@ -17,6 +17,36 @@ class servicesTest extends test {
         $this->errores = new errores();
     }
 
+    public function test_conecta_mysqli(): void
+    {
+        errores::$error = false;
+
+        $srv = new services();
+
+        //$srv = new liberator($srv);
+
+        $host = '';
+        $nombre_base_datos_r = '';
+        $pass = '';
+        $user = '';
+        $resultado = $srv->conecta_mysqli($host, $nombre_base_datos_r, $pass, $user);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al validar datos',$resultado['mensaje']);
+        errores::$error = false;
+
+        $host = 'a';
+        $nombre_base_datos_r = 'b';
+        $pass = 'c';
+        $user = 'd';
+        $resultado = $srv->conecta_mysqli($host, $nombre_base_datos_r, $pass, $user);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error al conectarse',$resultado['mensaje']);
+        errores::$error = false;
+
+    }
+
     public function test_genera_file_lock(): void
     {
         errores::$error = false;

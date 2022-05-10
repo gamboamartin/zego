@@ -12,24 +12,34 @@ class services{
     }
 
     /**
-     * DOC ERROR
+     * DOC ERROR UNIT
      * Crea un link de mysql con mysqli
      * @param string $host ruta de servidor
-     * @param string $nombre_base_datos_r nombre de database
+     * @param string $nombre_base_datos Nombre de la base de datos
      * @param string $pass password user
      * @param string $user user mysql
      * @return bool|array|mysqli
      */
-    public function conecta_mysqli(string $host, string $nombre_base_datos_r, string $pass,
+    public function conecta_mysqli(string $host, string $nombre_base_datos, string $pass,
                                    string $user): bool|array|mysqli
     {
+        $host = trim($host);
+        $nombre_base_datos = trim($nombre_base_datos);
+        $pass = trim($pass);
+        $user = trim($user);
+
+        $valida = $this->valida_conexion(host: $host,nombre_base_datos:  $nombre_base_datos,pass:  $pass,user:  $user);
+        if(errores::$error){
+            return $this->error->error('Error al validar datos', $valida);
+        }
+
         try {
             $link = mysqli_connect($host, $user, $pass);
             mysqli_set_charset($link, 'utf8');
             $sql = "SET sql_mode = '';";
             $link->query($sql);
 
-            $consulta = 'USE '.$nombre_base_datos_r;
+            $consulta = 'USE '.$nombre_base_datos;
             $link->query($consulta);
             return $link;
 
@@ -122,6 +132,12 @@ class services{
         return $data;
     }
 
+    /**
+     * DOC ERROR
+     * Genera el nombre de file para info de un servicio para poder identificar a que hora se ejecuto
+     * @param string $file_base
+     * @return string
+     */
     private function name_file_lock(string $file_base): string
     {
         return $file_base.'.'.date('Y-m-d.H:i:s');
@@ -138,6 +154,36 @@ class services{
         $data->path_lock = $path_lock;
         $data->path_info = $path_info;
         return $data;
+    }
+
+    /**
+     *  DOC ERROR
+     *  Verifica los datos necesarios para conectarse a una base de datos mysql
+     * @param string $host Ruta servidor
+     * @param string $nombre_base_datos nombre de base de datos
+     * @param string $pass password de base de datos
+     * @param string $user usuario de base de datos
+     * @return bool|array bool true si todo es correcto
+     */
+    private function valida_conexion(string $host, string $nombre_base_datos, string $pass, string $user): bool|array
+    {
+        $host = trim($host);
+        if($host === ''){
+            return $this->error->error('Error el host esta vacio', $host);
+        }
+        $nombre_base_datos = trim($nombre_base_datos);
+        if($nombre_base_datos === ''){
+            return $this->error->error('Error el $nombre_base_datos esta vacio', $nombre_base_datos);
+        }
+        $pass = trim($pass);
+        if($pass === ''){
+            return $this->error->error('Error el $pass esta vacio', $pass);
+        }
+        $user = trim($user);
+        if($user === ''){
+            return $this->error->error('Error el $pass esta vacio', $user);
+        }
+        return true;
     }
 
     /**

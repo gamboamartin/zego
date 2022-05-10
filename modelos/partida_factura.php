@@ -31,6 +31,21 @@ class partida_factura extends modelos {
         return $r_alta_bd;
     }
 
+    public function elimina_partidas_vacias(array $keys, array $partidas): array
+    {
+        $dels = array();
+        foreach($partidas as $partida){
+            $del = $this->elimina_partida_vacia(keys: $keys, partida: $partida);
+            if(errores::$error){
+                return $this->error->error('Error al limpiar', $del);
+            }
+            if($del->del){
+                $dels[] = $del->del;
+            }
+        }
+        return $dels;
+    }
+
     /**
      * ERROR UNIT
      * @param int $factura_id
@@ -83,7 +98,7 @@ class partida_factura extends modelos {
      * @param array $partida
      * @return stdClass|array
      */
-    public function elimina_partida_vacia(array $keys, array $partida): stdClass|array
+    private function elimina_partida_vacia(array $keys, array $partida): stdClass|array
     {
         $data = array();
         $del = false;
