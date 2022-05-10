@@ -13,10 +13,11 @@ const PATH_BASE = '/var/www/html/zego/';
 require PATH_BASE.'vendor/autoload.php';
 
 use gamboamartin\errores\errores;
+use gamboamartin\services\services;
 use models\partida_factura;
 use gamboamartin\calculo\calculo;
 use config\empresas;
-use services\services;
+
 
 
 $data_service = (new services())->verifica_servicio(path: __FILE__);

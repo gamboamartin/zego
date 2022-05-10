@@ -17,6 +17,7 @@
       "gamboa.martin/test": "dev-main",
       "gamboa.martin/validacion": "dev-main",
       "gamboa.martin/plugins": "dev-main",
+      "gamboa.martin/services": "dev-main",
         "fpdf/fpdf": "^1.84",
       "phpunit/phpunit": "^9.5",
       "ext-mysqli": "*",

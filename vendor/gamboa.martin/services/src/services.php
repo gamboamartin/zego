@@ -1,5 +1,5 @@
 <?php
-namespace services;
+namespace gamboamartin\services;
 use gamboamartin\errores\errores;
 use mysqli;
 use stdClass;

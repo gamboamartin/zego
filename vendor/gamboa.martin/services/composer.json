@@ -1,0 +1,27 @@
+{
+    "name": "gamboa.martin/services",
+    "description": "Automatizacion de servicios",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "gamboamartin\\services\\": "src/",
+            "gamboamartin\\test\\": "tests/",
+            "config\\": "config/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Martin Gamboa",
+            "email": "gamboa.martin@gmail.com"
+        }
+    ],
+    "require": {
+        "php": " >=8.1",
+        "gamboa.martin/errores": "dev-main",
+        "gamboa.martin/test": "dev-main"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
