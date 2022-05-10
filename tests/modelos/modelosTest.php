@@ -51,6 +51,32 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_asigna_0_to_vacio(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $campo = '';
+        $row = array();
+        $resultado = $modelo->asigna_0_to_vacio($campo, $row);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error campo esta vacio',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $campo = 'a';
+        $row = array();
+        $resultado = $modelo->asigna_0_to_vacio($campo, $row);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals(0,$resultado['a']);
+        errores::$error = false;
+    }
+
 
     public function test_ejecuta_consulta(): void
     {

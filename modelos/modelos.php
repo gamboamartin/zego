@@ -122,9 +122,18 @@ class modelos{
 
     }
 
-    public function asigna_0_to_vacio(string $campo, array $row): array
+    /**
+     * ERROR UNIT
+     * @param string $campo
+     * @param array $row
+     * @return array
+     */
+    private function asigna_0_to_vacio(string $campo, array $row): array
     {
         $campo = trim($campo);
+        if($campo === ''){
+            return $this->error->error('Error campo esta vacio', $campo);
+        }
         $row = $this->limpia_campo_row_inexistente(campo: $campo, row: $row);
         if(errores::$error){
             return $this->error->error('Error al limpiar registro', $row,get_defined_vars());
