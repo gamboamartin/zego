@@ -1851,7 +1851,7 @@ class controlador_cliente extends controlador_base{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param array $data
      * @param array $registro
      * @param array $update
@@ -1860,6 +1860,9 @@ class controlador_cliente extends controlador_base{
     private function asigna_data_update_emisor(array $data, array $registro, array $update): array
     {
         foreach($data as $campo_upd=>$data_value_upd){
+            if(!is_array($data_value_upd)){
+                return $this->error_->error('Error al $data_value_upd debe ser un array', $data_value_upd);
+            }
             $update = $this->init_update_emisor(campo_upd: $campo_upd,data_value_upd: $data_value_upd,
                 registro: $registro,update: $update);
             if(errores::$error){

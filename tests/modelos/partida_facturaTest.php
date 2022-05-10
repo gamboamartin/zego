@@ -48,6 +48,23 @@ class partida_facturaTest extends test {
         errores::$error = false;
     }
 
+    public function test_actualiza_partidas_obj(): void
+    {
+        errores::$error = false;
+
+        $modelo = new partida_factura($this->link);
+        $modelo = new liberator($modelo);
+
+
+        $partidas = array();
+
+        $resultado = $modelo->actualiza_partidas_obj($partidas);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
     public function test_compare_obj_imp(): void
     {
         errores::$error = false;

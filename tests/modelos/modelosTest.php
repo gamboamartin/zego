@@ -89,6 +89,30 @@ class modelosTest extends test {
         errores::$error = false;
     }
 
+    public function test_elimina_bd(): void
+    {
+        errores::$error = false;
+
+        $modelo = new modelos($this->link);
+        //$modelo = new liberator($modelo);
+
+        $tabla = '';
+        $id = 1;
+        $resultado = $modelo->elimina_bd($tabla, $id);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error la tabla no puede venir vacia',$resultado['mensaje']);
+
+        errores::$error = false;
+
+        $tabla = 'partida_factura';
+        $id = 1;
+        $resultado = $modelo->elimina_bd($tabla, $id);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
     public function test_existe_algun_valor(): void
     {
         errores::$error = false;

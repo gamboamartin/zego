@@ -59,7 +59,7 @@ class partida_factura extends modelos {
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param array $partidas
      * @return bool|array
      */

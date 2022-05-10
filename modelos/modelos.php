@@ -189,19 +189,32 @@ class modelos{
 
     }
 
-    public function elimina_bd($tabla, $id){
+    /**
+     * ERROR UNIT
+     * @param string $tabla
+     * @param int $id
+     * @return array
+     */
+    public function elimina_bd(string $tabla, int $id): array
+    {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla no puede venir vacia', $tabla);
+        }
 
         $consulta = "DELETE FROM ".$tabla. " WHERE id = ".$id;
 
-        $this->link->query($consulta);
-        if($this->link->error){
-            return array('mensaje'=>'Error al eliminar', 'error'=>True);
+        try {
+            $this->link->query($consulta);
         }
-        else{
-            $registro_id = $this->link->insert_id;
-            return array(
-                'mensaje'=>'Registro eliminado con éxito', 'error'=>False, 'registro_id'=>$registro_id);
+        catch (Throwable $e){
+            return $this->error->error('Error al eliminar', $e);
+
         }
+        $registro_id = $this->link->insert_id;
+        return array(
+            'mensaje'=>'Registro eliminado con éxito', 'error'=>false, 'registro_id'=>$registro_id);
+
     }
 
     public function elimina_con_filtro_and($tabla, $filtro){
