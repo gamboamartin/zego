@@ -73,7 +73,7 @@ foreach ($empresas_data as $empresa){
         }
 
 
-        $ayer = (new gamboamartin\calculo\calculo())->obten_fecha_resta(fecha: $hoy, n_dias: 3,
+        $ayer = (new gamboamartin\calculo\calculo())->obten_fecha_resta(fecha: $hoy, n_dias: 1,
             tipo_val:'fecha_hora_min_sec_esp' );
 
         if(errores::$error){
