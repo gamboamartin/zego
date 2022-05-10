@@ -1813,14 +1813,19 @@ class controlador_cliente extends controlador_base{
     }
 
     /**
-     * ERROR
+     * ERROR UNIT
      * @param array $datos_empresa
      * @param array $registro
      * @return array
      */
     private function init_update(array $datos_empresa, array $registro): array
     {
-
+        if(!isset($registro['factura_interior_expedicion']) ||$registro['factura_interior_expedicion'] === '' ){
+            $registro['factura_interior_expedicion'] = ' ';
+        }
+        if(!isset($datos_empresa['rfc']) ||$datos_empresa['rfc'] === '' ){
+            return $this->error_->error('Error no existe rfc en $datos_empresa', $datos_empresa);
+        }
         $update = $this->init_array_update_emisor(registro: $registro);
         if(errores::$error){
             return $this->error_->error('Error al asignar datos', $update);

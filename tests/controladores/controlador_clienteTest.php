@@ -142,6 +142,33 @@ class controlador_clienteTest extends test {
         errores::$error = false;
     }
 
+    public function test_init_update(): void
+    {
+        errores::$error = false;
+
+
+        $ctl = new controlador_cliente($this->link);
+        $ctl = new liberator($ctl);
+
+        $registro = array();
+        $datos_empresa = array();
+        $registro['factura_lugar_expedicion'] = 'a';
+        $registro['factura_calle_expedicion'] = 'a';
+        $registro['factura_exterior_expedicion'] = 'a';
+        $registro['factura_colonia_expedicion'] = 'a';
+        $registro['factura_municipio_expedicion'] = 'a';
+        $registro['factura_estado_expedicion'] = 'a';
+        $registro['factura_pais_expedicion'] = 'a';
+        $registro['factura_nombre_emisor'] = 'a';
+        $registro['factura_regimen_fiscal_emisor_codigo'] = 'a';
+        $registro['factura_regimen_fiscal_emisor_descripcion'] = 'a';
+        $datos_empresa['rfc'] = 'z';
+        $resultado = $ctl->init_update($datos_empresa, $registro);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
 
     public function test_init_update_emisor(): void
     {
