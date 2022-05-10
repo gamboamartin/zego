@@ -1,8 +1,9 @@
 <?php
 namespace services;
 use gamboamartin\errores\errores;
-use gamboamartin\plugins\files;
+use mysqli;
 use stdClass;
+use Throwable;
 
 class services{
     private errores $error;
@@ -10,6 +11,42 @@ class services{
         $this->error = new errores();
     }
 
+    /**
+     * DOC ERROR
+     * Crea un link de mysql con mysqli
+     * @param string $host ruta de servidor
+     * @param string $nombre_base_datos_r nombre de database
+     * @param string $pass password user
+     * @param string $user user mysql
+     * @return bool|array|mysqli
+     */
+    public function conecta_mysqli(string $host, string $nombre_base_datos_r, string $pass,
+                                   string $user): bool|array|mysqli
+    {
+        try {
+            $link = mysqli_connect($host, $user, $pass);
+            mysqli_set_charset($link, 'utf8');
+            $sql = "SET sql_mode = '';";
+            $link->query($sql);
+
+            $consulta = 'USE '.$nombre_base_datos_r;
+            $link->query($consulta);
+            return $link;
+
+        }
+        catch (Throwable $e){
+            return $this->error->error('Error al conectarse', $e);
+        }
+    }
+
+    /**
+     * DOC ERROR
+     * Genera los archivos necesarios para el bloqueo de un servicio
+     * @param stdClass $name_files nombre de los archivos name_files->path_info, name_files->path_lock
+     * name_files->path_info = path con fecha para informacion
+     * name_files->path_lock = path de bloqueo de servicio
+     * @return bool|array bool true si se generaron los archivos, array si hay error
+     */
     private function crea_files(stdClass $name_files): bool|array
     {
         $servicio_corriendo = false;
@@ -144,8 +181,6 @@ class services{
 
         return true;
     }
-
-
 
 
     public function verifica_servicio(string $path): stdClass|array
