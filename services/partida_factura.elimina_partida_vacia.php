@@ -91,7 +91,7 @@ foreach ($empresas_data as $empresa){
         $fecha_inicial = $tres_dias;
         $tipo_val = 'fecha_hora_min_sec_esp';
         $filtro_sql = 'partida_factura.insumo_id IS NULL';
-        $limit_sql = 20;
+        $limit_sql = 100;
         $r_partidas = $partida_factura_modelo->rows_entre_fechas(campo:$campo, fecha_final: $fecha_final,
             fecha_inicial: $fecha_inicial, filtro_sql: $filtro_sql, limit_sql: $limit_sql, tabla: $tabla,
             tipo_val: $tipo_val);
