@@ -31,6 +31,37 @@ class calculo{
     }
 
     /**
+     * DOC
+     * Obtiene las fechas restando el dia de hoy hasta el numero de dias y el formato dependiendo del tipo
+     * @param int $n_dias_1 numero de dias a restar a partir de hoy
+     * @param int $n_dias_2 numero de dias a restar a partir de hoy
+     * @param string $tipo_val Formato de salida de date fecha = Y-m-d, fecha_hora_min_sec_esp = Y-m-d H:i:s
+     *                          fecha_hora_min_sec_t = Y-m-dTH:i:s
+     * @return array|stdClass
+     */
+    public function rangos_fechas(int $n_dias_1, int $n_dias_2, string $tipo_val): array|stdClass
+    {
+        $hoy = date($this->formats_fecha[$tipo_val]);
+        $fecha_1 = $this->obten_fecha_resta(fecha: $hoy, n_dias: $n_dias_1,
+            tipo_val:$tipo_val );
+        if(errores::$error){
+            return $this->error->error('Error al obtener dias', $fecha_1);
+        }
+
+        $fecha_2 = $this->obten_fecha_resta(fecha: $hoy, n_dias: $n_dias_2,
+            tipo_val:$tipo_val );
+        if(errores::$error){
+            return $this->error->error('Error al obtener dias', $fecha_2);
+        }
+        $data = new stdClass();
+        $data->fecha_1 = $fecha_1;
+        $data->fecha_2 = $fecha_2;
+        $data->hoy = $hoy;
+
+        return $data;
+    }
+
+    /**
      * FULL
      * Funcion el tiempo actual en microsegundos
      *

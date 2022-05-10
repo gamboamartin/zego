@@ -55,31 +55,21 @@ foreach ($empresas_data as $empresa){
 
 
     $tabla = 'partida_factura';
-    $hoy = date('Y-m-d 00:00:00');
-    $tres_dias = (new gamboamartin\calculo\calculo())->obten_fecha_resta(fecha: $hoy, n_dias: 30,
-        tipo_val:'fecha_hora_min_sec_esp' );
+
+    $fechas = (new calculo())->rangos_fechas(n_dias_1:30, n_dias_2: 1, tipo_val: 'fecha_hora_min_sec_esp');
     if(errores::$error){
-        $error = (new errores())->error('Error al obtener dias', $tres_dias);
+        $error = (new errores())->error('Error al obtener fechas', $fechas);
         print_r($error);
         die('Error');
     }
 
-
-    $ayer = (new gamboamartin\calculo\calculo())->obten_fecha_resta(fecha: $hoy, n_dias: 1,
-        tipo_val:'fecha_hora_min_sec_esp' );
-    if(errores::$error){
-        $error = (new errores())->error('Error al obtener dias', $ayer);
-        print_r($error);
-        die('Error');
-    }
-
-    var_dump($ayer);
+    var_dump($fechas);
 
     $partida_factura_modelo = new partida_factura($link_thecloud);
 
     $campo = 'partida_factura.fecha_alta';
-    $fecha_final = $ayer;
-    $fecha_inicial = $tres_dias;
+    $fecha_final = $fechas->fecha_2;
+    $fecha_inicial = $fechas->fecha_1;
     $tipo_val = 'fecha_hora_min_sec_esp';
     $filtro_sql = 'partida_factura.insumo_id IS NULL';
     $limit_sql = 2000;
@@ -99,7 +89,6 @@ foreach ($empresas_data as $empresa){
     $keys = array();
     $keys[] = 'partida_factura_insumo_id';
 
-
     $dels = $partida_factura_modelo->elimina_partidas_vacias(keys: $keys,partidas:  $partidas);
     if(errores::$error){
         $error = (new errores())->error('Error al limpiar', $dels);
@@ -107,7 +96,6 @@ foreach ($empresas_data as $empresa){
         die('Error');
     }
     var_dump($dels);
-
 
 }
 

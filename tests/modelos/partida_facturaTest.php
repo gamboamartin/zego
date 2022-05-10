@@ -149,7 +149,7 @@ class partida_facturaTest extends test {
         errores::$error = false;
 
         $modelo = new partida_factura($this->link);
-        //$modelo = new liberator($modelo);
+        $modelo = new liberator($modelo);
 
 
         $keys = array();
