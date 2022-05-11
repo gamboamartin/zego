@@ -105,13 +105,21 @@ class validacion {
     }
 
     /**
-     * Valida el regex de un correo
-     * PARAMS-ORDER P INT ERRREV    DOC
-     * @param int|string|null $correo
-     * @return bool true si es valido el formato de correo false si no lo es
+     * T Valida el regex de un correo
+     *
+     * @param int|string|null $correo texto con correo a validar
+     * @return bool|array true si es valido el formato de correo false si no lo es
      */
-    private function correo(int|string|null $correo):bool{
-        return $this->valida_pattern(key: 'correo',txt: $correo);
+    private function correo(int|string|null $correo):bool|array{
+        $correo = trim($correo);
+        if($correo === ''){
+            return $this->error->error(mensaje: 'Error el correo esta vacio', data:$correo,params: get_defined_vars());
+        }
+        $valida = $this->valida_pattern(key: 'correo',txt: $correo);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error verificar regex', data:$valida,params: get_defined_vars());
+        }
+        return $valida;
     }
 
     /**
@@ -137,6 +145,7 @@ class validacion {
     public function fechas_in_array(array $data, array $keys): bool|array
     {
         foreach($keys as $key){
+
             if($key === ''){
                 return $this->error->error(mensaje: "Error key no puede venir vacio", data: $key,
                     params: get_defined_vars());
@@ -146,6 +155,15 @@ class validacion {
                 return $this->error->error(mensaje: "Error al validar existencia de key", data: $key,
                     params: get_defined_vars());
             }
+            /**
+             * El key debe ser el tipo val para la obtencion del regex de formato de fecha
+             * @param $key
+             *          utiliza los patterns de las siguientes formas
+             *          fecha=yyyy-mm-dd
+             *          fecha_hora_min_sec_esp = yyyy-mm-dd hh-mm-ss
+             *          fecha_hora_min_sec_t = yyyy-mm-ddThh-mm-ss
+             * 
+             */
             $valida = $this->valida_fecha(fecha: $data[$key]);
             if(errores::$error){
                 return $this->error->error(mensaje: "Error al validar fecha: ".'$data['.$key.']', data: $valida,
@@ -358,12 +376,17 @@ class validacion {
     /**
      * PARAMS-ORDER P INT ERRREV DOC
      * Valida si un correo es valido
-     * @param string $correo
+     * @param string $correo txt con correo a validar
      * @return bool|array bool true si es un correo valido, array si error
      */
     public function valida_correo(string $correo): bool|array
     {
-        if(!$this->correo(correo: $correo)){
+        $valida = $this->correo(correo: $correo);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error el correo es invalido',data:  $valida,
+                params: get_defined_vars());
+        }
+        if(!$valida){
             return $this->error->error(mensaje: 'Error el correo es invalido',data:  $correo,
                 params: get_defined_vars());
         }
@@ -678,10 +701,10 @@ class validacion {
     }
 
     /**
-     * FULL DOC
+     * TODO
      * Funcion para validar LA ESTRUCTURA DE UNA FECHA
      *
-     * @param string $fecha
+     * @param string $fecha txt con fecha a validar
      * @param string $tipo_val
      *          utiliza los patterns de las siguientes formas
      *          fecha=yyyy-mm-dd
@@ -897,7 +920,7 @@ class validacion {
     }
 
     /**
-     * FULL DOC
+     * TODO
      * funcion que revisa si una expresion regular es valida declarada con this->patterns
      *
      * @param  string $key key definido para obtener de this->patterns

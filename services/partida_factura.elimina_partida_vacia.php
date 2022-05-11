@@ -54,8 +54,6 @@ foreach ($empresas_data as $empresa){
     }
 
 
-    $tabla = 'partida_factura';
-
     $fechas = (new calculo())->rangos_fechas(n_dias_1:30, n_dias_2: 1, tipo_val: 'fecha_hora_min_sec_esp');
     if(errores::$error){
         $error = (new errores())->error('Error al obtener fechas', $fechas);
@@ -66,26 +64,18 @@ foreach ($empresas_data as $empresa){
     var_dump($fechas);
 
     $partida_factura_modelo = new partida_factura($link_thecloud);
-
-    $campo = 'partida_factura.fecha_alta';
-    $fecha_final = $fechas->fecha_2;
-    $fecha_inicial = $fechas->fecha_1;
-    $tipo_val = 'fecha_hora_min_sec_esp';
-    $filtro_sql = 'partida_factura.insumo_id IS NULL';
     $limit_sql = 2000;
-    $r_partidas = $partida_factura_modelo->rows_entre_fechas(campo:$campo, fecha_final: $fecha_final,
-        fecha_inicial: $fecha_inicial, filtro_sql: $filtro_sql, limit_sql: $limit_sql, tabla: $tabla,
-        tipo_val: $tipo_val);
+
+    $partidas = $partida_factura_modelo->partidas_por_limpiar(fechas: $fechas,limit_sql: $limit_sql);
 
     if(errores::$error){
-        $error = (new errores())->error('Error al obtener partidas', $r_partidas);
+        $error = (new errores())->error('Error al obtener partidas', $partidas);
         print_r($error);
         die('Error');
     }
 
-    var_dump($r_partidas);
+    var_dump($partidas);
 
-    $partidas = $r_partidas['registros'];
     $keys = array();
     $keys[] = 'partida_factura_insumo_id';
 

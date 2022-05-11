@@ -92,6 +92,37 @@ class calculoTest extends test {
         errores::$error = false;
     }
 
+    public function test_rangos_fechas(){
+        errores::$error = false;
+        $calculo = new calculo();
+        $n_dias_2 = 1;
+        $n_dias_1 = 1;
+        $tipo_val = '';
+        $resultado = $calculo->rangos_fechas($n_dias_1, $n_dias_2, $tipo_val);
+        $this->assertIsArray( $resultado);
+        $this->assertStringContainsStringIgnoringCase('Error al validar tipo_val', $resultado['mensaje']);
+        $this->assertTrue(errores::$error);
+
+        errores::$error = false;
+        $n_dias_2 = 1;
+        $n_dias_1 = 1;
+        $tipo_val = 'x';
+        $resultado = $calculo->rangos_fechas($n_dias_1, $n_dias_2, $tipo_val);
+        $this->assertIsArray( $resultado);
+        $this->assertStringContainsStringIgnoringCase('Error al validar tipo_val', $resultado['mensaje']);
+        $this->assertTrue(errores::$error);
+
+        errores::$error = false;
+        $n_dias_2 = 1;
+        $n_dias_1 = 1;
+        $tipo_val = 'fecha';
+        $resultado = $calculo->rangos_fechas($n_dias_1, $n_dias_2, $tipo_val);
+        $this->assertIsObject( $resultado);
+        $this->assertEquals(date('Y-m-d'),$resultado->hoy);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
 
 
 

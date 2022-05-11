@@ -31,6 +31,25 @@ class partida_factura extends modelos {
         return $r_alta_bd;
     }
 
+    public function partidas_por_limpiar(stdClass $fechas, int $limit_sql):array{
+        $campo = 'partida_factura.fecha_alta';
+        $fecha_final = $fechas->fecha_2;
+        $fecha_inicial = $fechas->fecha_1;
+        $tipo_val = 'fecha_hora_min_sec_esp';
+        $filtro_sql = 'partida_factura.insumo_id IS NULL';
+
+        $r_partidas = $this->rows_entre_fechas(campo:$campo, fecha_final: $fecha_final,
+            fecha_inicial: $fecha_inicial, filtro_sql: $filtro_sql, limit_sql: $limit_sql, tabla: 'partida_factura',
+            tipo_val: $tipo_val);
+
+        if(errores::$error){
+            return $this->error->error('Error al obtener partidas', $r_partidas);
+        }
+
+        return $r_partidas['registros'];
+    }
+
+
     public function elimina_partidas_vacias(array $keys, array $partidas): array
     {
         $dels = array();

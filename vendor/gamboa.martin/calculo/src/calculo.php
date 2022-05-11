@@ -31,27 +31,36 @@ class calculo{
     }
 
     /**
-     * DOC
+     * DOC UNIT
      * Obtiene las fechas restando el dia de hoy hasta el numero de dias y el formato dependiendo del tipo
      * @param int $n_dias_1 numero de dias a restar a partir de hoy
      * @param int $n_dias_2 numero de dias a restar a partir de hoy
      * @param string $tipo_val Formato de salida de date fecha = Y-m-d, fecha_hora_min_sec_esp = Y-m-d H:i:s
      *                          fecha_hora_min_sec_t = Y-m-dTH:i:s
-     * @return array|stdClass
+     * @return array|stdClass stdclass
+     *      string obj->fecha_1 resta de dias de n_dias_1  string obj->fecha_2 resta de dias de n_dias_2
+     *      string obj->hoy fecha de hoy array si hay error
      */
     public function rangos_fechas(int $n_dias_1, int $n_dias_2, string $tipo_val): array|stdClass
     {
+        $tipo_val = trim($tipo_val);
+        $valida = $this->valida_tipo_val(tipo_val:$tipo_val);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al validar tipo_val', data: $valida, params: get_defined_vars());
+        }
+
+
         $hoy = date($this->formats_fecha[$tipo_val]);
         $fecha_1 = $this->obten_fecha_resta(fecha: $hoy, n_dias: $n_dias_1,
             tipo_val:$tipo_val );
         if(errores::$error){
-            return $this->error->error('Error al obtener dias', $fecha_1);
+            return $this->error->error(mensaje: 'Error al obtener dias', data: $fecha_1, params: get_defined_vars());
         }
 
         $fecha_2 = $this->obten_fecha_resta(fecha: $hoy, n_dias: $n_dias_2,
             tipo_val:$tipo_val );
         if(errores::$error){
-            return $this->error->error('Error al obtener dias', $fecha_2);
+            return $this->error->error(mensaje: 'Error al obtener dias',data:  $fecha_2, params: get_defined_vars());
         }
         $data = new stdClass();
         $data->fecha_1 = $fecha_1;
@@ -128,11 +137,16 @@ class calculo{
     }
 
     /**
-     * FULL
-     * @param int $n_dias
-     * @param string $fecha
+     * TODO
+     * Obtiene la fecha restando el numero de dias basado en la fecha del parametro
+     * @param int $n_dias Numero de dias a restar a la fecha
+     * @param string $fecha Fecha a la que se le estaran los dias
      * @param string $tipo_val
-     * @return string|array
+     *          utiliza los patterns de las siguientes formas
+     *          fecha=yyyy-mm-dd
+     *          fecha_hora_min_sec_esp = yyyy-mm-dd hh-mm-ss
+     *          fecha_hora_min_sec_t = yyyy-mm-ddThh-mm-ss
+     * @return string|array string con la fecha del resultado de la resta en dias array si error
      */
     public function obten_fecha_resta(string $fecha, int $n_dias, string $tipo_val = 'fecha'):string|array{
         $valida = $this->validaciones->valida_fecha(fecha: $fecha, tipo_val: $tipo_val);
@@ -178,6 +192,29 @@ class calculo{
             return $this->error->error("Error al calcular diferencia de fechas", $data);
         }
         return (int)$diff->days + 1;
+    }
+
+    /**
+     * Funcion para validar los parametros de uso de un tipo val el tipo val es relacionado al formato de fecha
+     * @param string $tipo_val
+     *          utiliza los patterns de las siguientes formas
+     *          fecha=yyyy-mm-dd
+     *          fecha_hora_min_sec_esp = yyyy-mm-dd hh-mm-ss
+     *          fecha_hora_min_sec_t = yyyy-mm-ddThh-mm-ss
+     * @return bool|array bool true si no hay error
+     */
+    private function valida_tipo_val(string $tipo_val): bool|array
+    {
+        $tipo_val = trim($tipo_val);
+        if($tipo_val === ''){
+            return $this->error->error(mensaje: 'Error $tipo_val esta vacio', data: $tipo_val,
+                params: get_defined_vars());
+        }
+        if(!isset($this->formats_fecha[$tipo_val])){
+            return $this->error->error(mensaje: 'Error $tipo_val invalido', data: $tipo_val,
+                params: get_defined_vars());
+        }
+        return true;
     }
 
 }
