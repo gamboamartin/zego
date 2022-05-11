@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '54008c629a36e2e500ebf8c2a5c48d0f96b24c50',
+        'reference' => 'cbab163dd488f5be101f476a6820ddd5ddf30331',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '54008c629a36e2e500ebf8c2a5c48d0f96b24c50',
+            'reference' => 'cbab163dd488f5be101f476a6820ddd5ddf30331',
             'dev_requirement' => false,
         ),
         'doctrine/instantiator' => array(
@@ -109,7 +109,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => 'b369de632768e489564f99a694a8570c21ef3b39',
+            'reference' => '24313bde09a6a246e48f3537ae20d4c68d9f8839',
             'dev_requirement' => false,
         ),
         'maennchen/zipstream-php' => array(

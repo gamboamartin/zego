@@ -438,12 +438,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/validacion.git",
-                "reference": "b369de632768e489564f99a694a8570c21ef3b39"
+                "reference": "24313bde09a6a246e48f3537ae20d4c68d9f8839"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/validacion/zipball/b369de632768e489564f99a694a8570c21ef3b39",
-                "reference": "b369de632768e489564f99a694a8570c21ef3b39",
+                "url": "https://api.github.com/repos/gamboamartin/validacion/zipball/24313bde09a6a246e48f3537ae20d4c68d9f8839",
+                "reference": "24313bde09a6a246e48f3537ae20d4c68d9f8839",
                 "shasum": ""
             },
             "require": {
@@ -454,7 +454,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-11T15:04:20+00:00",
+            "time": "2022-05-11T18:25:53+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
