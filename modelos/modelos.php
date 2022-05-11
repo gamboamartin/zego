@@ -687,12 +687,13 @@ class modelos{
      * @param string $campo
      * @param string $fecha_final
      * @param string $fecha_inicial
-     * @param string $filtro_sql
+     * @param array $filtro_sql
+     * @param int $limit_sql
      * @param string $tabla
      * @param string $tipo_val
      * @return array
      */
-    public function rows_entre_fechas(string $campo, string $fecha_final, string $fecha_inicial, string $filtro_sql,
+    public function rows_entre_fechas(string $campo, string $fecha_final, string $fecha_inicial, array $filtro_sql,
                                       int $limit_sql, string $tabla, string $tipo_val): array
     {
         $tabla = trim($tabla);
@@ -715,18 +716,30 @@ class modelos{
             return $this->error->error(mensaje: 'Error al obtener sql_base', data: $sql, params: get_defined_vars());
         }
 
+
         $and = '';
-        $filtro_sql = trim($filtro_sql);
-        if($filtro_sql!==''){
+        if(count($filtro_sql)>0){
             $and = 'AND';
         }
+
+        $filtro_sql_exec = '';
+
+        foreach ($filtro_sql as $complemento){
+            $filtro_sql_exec = trim($filtro_sql_exec);
+            $and_complemento = '';
+            if($filtro_sql_exec !==''){
+                $and_complemento = 'AND';
+            }
+            $filtro_sql_exec.=' '.$and_complemento.' '.$complemento;
+        }
+
 
         $limit = '';
         if($limit_sql>0){
             $limit = ' LIMIT '.$limit_sql;
         }
 
-        $where = "WHERE ($campo BETWEEN '$fecha_inicial' AND '$fecha_final') $and $filtro_sql $limit";
+        $where = "WHERE ($campo BETWEEN '$fecha_inicial' AND '$fecha_final') $and $filtro_sql_exec $limit";
 
         $sql .= " $where ";
         $result = $this->ejecuta_consulta($sql);

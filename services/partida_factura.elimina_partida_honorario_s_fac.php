@@ -45,6 +45,13 @@ foreach ($empresas_data as $empresa){
     $pass_r = $empresa['remote_pass'];
     $nombre_base_datos_r = $empresa['remote_nombre_base_datos'];
 
+    /*
+    $host_r = $empresa['host'];
+    $user_r = $empresa['user'];
+    $pass_r = $empresa['pass'];
+    $nombre_base_datos_r = $empresa['nombre_base_datos'];
+    */
+
     $link_thecloud = (new services)->conecta_mysqli(host: $host_r,
         nombre_base_datos:  $nombre_base_datos_r, pass: $pass_r,user:  $user_r);
     if(errores::$error){
@@ -54,7 +61,7 @@ foreach ($empresas_data as $empresa){
     }
 
 
-    $fechas = (new calculo())->rangos_fechas(n_dias_1:30, n_dias_2: 1, tipo_val: 'fecha_hora_min_sec_esp');
+    $fechas = (new calculo())->rangos_fechas(n_dias_1:30, n_dias_2: 2, tipo_val: 'fecha_hora_min_sec_esp');
     if(errores::$error){
         $error = (new errores())->error('Error al obtener fechas', $fechas);
         print_r($error);
@@ -64,8 +71,10 @@ foreach ($empresas_data as $empresa){
     var_dump($fechas);
 
     $partida_factura_modelo = new partida_factura($link_thecloud);
-    $limit_sql = 2000;
-    $filtro_sql[] = 'partida_factura.insumo_id IS NULL';
+    $limit_sql = 1;
+    $filtro_sql[] = 'partida_factura.factura_id IS NULL';
+    $filtro_sql[] = "partida_factura.insumo_id = '233'";
+    $filtro_sql[] = "partida_factura.valor_unitario = '0.01'";
 
     $partidas = $partida_factura_modelo->partidas_por_limpiar(fechas: $fechas, filtro_sql: $filtro_sql,
         limit_sql: $limit_sql);
@@ -79,7 +88,7 @@ foreach ($empresas_data as $empresa){
     var_dump($partidas);
 
     $keys = array();
-    $keys[] = 'partida_factura_insumo_id';
+    $keys[] = 'partida_factura_factura_id';
 
     $dels = $partida_factura_modelo->elimina_partidas_vacias(keys: $keys,partidas:  $partidas);
     if(errores::$error){
