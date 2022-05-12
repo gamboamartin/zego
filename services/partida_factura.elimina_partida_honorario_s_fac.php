@@ -71,7 +71,7 @@ foreach ($empresas_data as $empresa){
     var_dump($fechas);
 
     $partida_factura_modelo = new partida_factura($link_thecloud);
-    $limit_sql = 1;
+    $limit_sql = 10;
     $filtro_sql[] = 'partida_factura.factura_id IS NULL';
     $filtro_sql[] = "partida_factura.insumo_id = '233'";
     $filtro_sql[] = "partida_factura.valor_unitario = '0.01'";

@@ -30,7 +30,7 @@ class services{
 
         $valida = $this->valida_conexion(host: $host,nombre_base_datos:  $nombre_base_datos,pass:  $pass,user:  $user);
         if(errores::$error){
-            return $this->error->error('Error al validar datos', $valida);
+            return $this->error->error(mensaje: 'Error al validar datos',data:  $valida);
         }
 
         try {
@@ -45,7 +45,7 @@ class services{
 
         }
         catch (Throwable $e){
-            return $this->error->error('Error al conectarse', $e);
+            return $this->error->error(mensaje: 'Error al conectarse',data:  $e);
         }
     }
 
@@ -169,19 +169,19 @@ class services{
     {
         $host = trim($host);
         if($host === ''){
-            return $this->error->error('Error el host esta vacio', $host);
+            return $this->error->error(mensaje: 'Error el host esta vacio', data: $host);
         }
         $nombre_base_datos = trim($nombre_base_datos);
         if($nombre_base_datos === ''){
-            return $this->error->error('Error el $nombre_base_datos esta vacio', $nombre_base_datos);
+            return $this->error->error(mensaje:'Error el $nombre_base_datos esta vacio',data: $nombre_base_datos);
         }
         $pass = trim($pass);
         if($pass === ''){
-            return $this->error->error('Error el $pass esta vacio', $pass);
+            return $this->error->error(mensaje:'Error el $pass esta vacio',data: $pass);
         }
         $user = trim($user);
         if($user === ''){
-            return $this->error->error('Error el $pass esta vacio', $user);
+            return $this->error->error(mensaje:'Error el $pass esta vacio', data:$user);
         }
         return true;
     }

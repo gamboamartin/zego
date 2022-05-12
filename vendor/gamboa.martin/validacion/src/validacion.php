@@ -82,8 +82,9 @@ class validacion {
     }
 
     /**
-     * FULL
-     * @param string $tabla
+     * TODO
+     * Valida que una clase de tipo modelo sea correcta y la inicializa como models\\tabla
+     * @param string $tabla Tabla o estructura de la base de datos y modelo
      * @return string|array
      */
     private function class_depurada(string $tabla): string|array
@@ -124,8 +125,9 @@ class validacion {
 
     /**
      * P ORDER P INT ERRORREV
-     * @param string $key
-     * @param array $arreglo
+     * Verifica si existe un elemento en un array
+     * @param string $key Key a buscar en el arreglo
+     * @param array $arreglo arreglo donde se buscara la llave
      * @return bool
      */
     public function existe_key_data(array $arreglo, string $key ):bool{
@@ -138,8 +140,9 @@ class validacion {
 
     /**
      * P ORDER P INT ERRORREV
-     * @param array $keys
-     * @param array $data
+     * Verifica los keys que existen dentro de data para ver que este cargada de manera correcta la fecha
+     * @param array $keys Keys a verificar
+     * @param array $data arreglo donde se verificaran las fechas en base a los keys enviados
      * @return bool|array
      */
     public function fechas_in_array(array $data, array $keys): bool|array
@@ -215,7 +218,7 @@ class validacion {
     }
 
     /**
-     * P ORDER P INT
+     * Funcion que valida el dato de una seccion corresponda con la existencia de un modelo
      * @param string $seccion
      * @return array|bool
      */
@@ -224,10 +227,10 @@ class validacion {
         $class_model = 'models\\'.$seccion;
         $seccion = strtolower(trim($seccion));
         if(trim($seccion) === ''){
-            return  $this->error->error('Error seccion  no puede ser vacio',$seccion);
+            return  $this->error->error(mensaje: 'Error seccion  no puede ser vacio',data: $seccion);
         }
         if(!class_exists($class_model)){
-            return  $this->error->error('Error no existe el modelo '.$class_model,$class_model);
+            return  $this->error->error(mensaje: 'Error no existe el modelo '.$class_model,data: $class_model);
         }
         return true;
     }
@@ -322,9 +325,9 @@ class validacion {
     }
 
     /**
-     * FULL
-     * @param string $tabla
-     * @param string $class
+     * TODO valida si una clase de tipo modelo es valida
+     * @param string $tabla Tabla o estructura de la bd
+     * @param string $class Class o estructura de una bd regularmente la misma que tabla
      * @return bool|array
      */
     PUBLIC function valida_class(string $class, string $tabla): bool|array
@@ -333,16 +336,13 @@ class validacion {
         $class = 'models\\'.$class;
 
         if($tabla === ''){
-            return $this->error->error(mensaje: 'Error tabla no puede venir vacia',data: $tabla,
-                params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error tabla no puede venir vacia',data: $tabla);
         }
         if($class === ''){
-            return $this->error->error(mensaje:'Error $class no puede venir vacia',data: $class,
-                params: get_defined_vars());
+            return $this->error->error(mensaje:'Error $class no puede venir vacia',data: $class);
         }
         if(!class_exists($class)){
-            return $this->error->error(mensaje:'Error CLASE no existe '.$class,data: $tabla,
-                params: get_defined_vars());
+            return $this->error->error(mensaje:'Error CLASE no existe '.$class,data: $tabla);
         }
         return true;
     }
@@ -883,8 +883,8 @@ class validacion {
     }
 
     /**
-     * FULL
-     * @param string $tabla
+     * Se valida que la tabla sea un modelo valido
+     * @param string $tabla Tabla o estructura de la base de datos y modelo
      * @return bool|array
      */
     public function valida_modelo(string $tabla): bool|array
