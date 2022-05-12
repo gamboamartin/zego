@@ -1,6 +1,8 @@
 <?php
 include "init.php";
 const PATH_BASE = '/var/www/html/zego/';
+
+
 require PATH_BASE.'vendor/autoload.php';
 
 use gamboamartin\errores\errores;
@@ -18,7 +20,7 @@ $empresas_data = $empresas->empresas;
 
 foreach ($empresas_data as $empresa){
 
-    $link = $services->conecta_remoto_mysqli(empresa: $empresa);
+    $link = $services->conecta_local_mysqli(empresa: $empresa);
     if(errores::$error){
         $error = (new errores())->error('Error al conectar remoto', $link);
         print_r($error);

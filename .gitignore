@@ -5,3 +5,4 @@
 composer.lock
 /config/database.php
 /services/partida_factura.php.lock
+/config/generales.php

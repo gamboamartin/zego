@@ -7,12 +7,29 @@ use Throwable;
 
 class services{
     private errores $error;
-    public function __construct(){
+    public stdClass $data_conexion;
+    public stdClass $name_files;
+    public bool $corriendo;
+    public function __construct(string $path){
         $this->error = new errores();
+        $data_service = $this->verifica_servicio(path: $path);
+        if(errores::$error){
+            $error = $this->error->error('Error al verificar servicio', $data_service);
+            print_r($error);
+            die('Error');
+        }
+        $this->corriendo = $data_service->corriendo;
+
+        if($data_service->corriendo){
+            echo 'El servicio esta corriendo '.$path;
+            exit;
+        }
     }
 
+
+
     /**
-     * DOC ERROR UNIT
+     * TODO
      * Crea un link de mysql con mysqli
      * @param string $host ruta de servidor
      * @param string $nombre_base_datos Nombre de la base de datos
@@ -20,7 +37,7 @@ class services{
      * @param string $user user mysql
      * @return bool|array|mysqli
      */
-    public function conecta_mysqli(string $host, string $nombre_base_datos, string $pass,
+    private function conecta_mysqli(string $host, string $nombre_base_datos, string $pass,
                                    string $user): bool|array|mysqli
     {
         $host = trim($host);
@@ -49,6 +66,81 @@ class services{
         }
     }
 
+    public function conecta_local_mysqli(array $empresa): bool|array|mysqli
+    {
+
+        $data = $this->data_conecta(empresa: $empresa, tipo: '');
+        if(errores::$error){
+            return $this->error->error('Error al ajustar datos', $data);
+        }
+
+        $link = $this->conecta_mysqli(host: $data->host, nombre_base_datos:  $data->nombre_base_datos,
+            pass: $data->pass,user:  $data->user);
+        if(errores::$error){
+            return $this->error->error('Error al conectar', $link);
+        }
+
+        return $link;
+    }
+
+    public function conecta_remoto_mysqli(array $empresa): bool|array|mysqli
+    {
+
+        $data = $this->data_conecta(empresa: $empresa, tipo: 'remote');
+        if(errores::$error){
+            return $this->error->error('Error al ajustar datos', $data);
+        }
+
+        $link = $this->conecta_mysqli(host: $data->host, nombre_base_datos:  $data->nombre_base_datos,
+            pass: $data->pass,user:  $data->user);
+        if(errores::$error){
+            return $this->error->error('Error al conectar remoto', $link);
+        }
+
+        return $link;
+    }
+
+    /**
+     * TODO
+     * Genera los datos necesarios para la conexion a una bd de mysql, si remote, ajusta los datos de empresa
+     * remote conexion
+     * @param array $empresa arreglo de empresa
+     * @param string $tipo tipo de conexion si remota o local
+     * @return stdClass|array obj->host, obj->user, obj->pass, obj->nombre_base_datos
+     */
+    private function data_conecta(array $empresa, string $tipo): stdClass|array
+    {
+
+        $data = new stdClass();
+        $keys_base = array('host','user','pass','nombre_base_datos');
+        foreach($keys_base as $key_base){
+            $data = $this->data_empresa(data: $data,empresa: $empresa,key_base: $key_base,tipo: $tipo);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al generar datos', data:$data);
+            }
+        }
+
+        $this->data_conexion = $data;
+
+        return $data;
+    }
+
+    private function data_empresa(stdClass $data, array $empresa, string $key_base, string $tipo): array|stdClass
+    {
+        $key_empresa = $this->key_empresa_base(key_base: $key_base,tipo: $tipo);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener key', data:$key_empresa);
+        }
+
+        if(!isset($empresa[$key_empresa])){
+            return $this->error->error(mensaje: 'Error no existe key ['.$key_empresa.']', data:$empresa);
+        }
+
+        $data->$key_base = $empresa[$key_empresa];
+        return $data;
+    }
+
+
     /**
      * DOC ERROR
      * Genera los archivos necesarios para el bloqueo de un servicio
@@ -71,6 +163,13 @@ class services{
             }
         }
         return $servicio_corriendo;
+    }
+
+    public function finaliza_servicio(): stdClass
+    {
+        unlink($this->name_files->path_info);
+        unlink($this->name_files->path_lock);
+        return $this->name_files;
     }
 
     /**
@@ -132,14 +231,37 @@ class services{
         return $data;
     }
 
-    /**
-     * DOC ERROR
-     * Genera el nombre de file para info de un servicio para poder identificar a que hora se ejecuto
-     * @param string $file_base
-     * @return string
-     */
-    private function name_file_lock(string $file_base): string
+    private function key_empresa(string $tipo): string
     {
+        $key = '';
+        $tipo = trim($tipo);
+        if($tipo === 'remote'){
+            $key = $tipo.'_';
+        }
+        return $key;
+    }
+
+    private function key_empresa_base(string $key_base, string $tipo): array|string
+    {
+        $key = $this->key_empresa(tipo: $tipo);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener key', data:$key);
+        }
+        return $key.$key_base;
+    }
+
+    /**
+     * DOC ERROR UNIT
+     * Genera el nombre de file para info de un servicio para poder identificar a que hora se ejecuto
+     * @param string $file_base Nombre del path del servicio en ejecucion
+     * @return string|array
+     */
+    private function name_file_lock(string $file_base): string|array
+    {
+        $file_base = trim($file_base);
+        if($file_base === ''){
+            return $this->error->error(mensaje: 'Error file_base esta vacio', data: $file_base);
+        }
         return $file_base.'.'.date('Y-m-d.H:i:s');
     }
 
@@ -153,11 +275,14 @@ class services{
         $data = new stdClass();
         $data->path_lock = $path_lock;
         $data->path_info = $path_info;
+
+        $this->name_files = $data;
+
         return $data;
     }
 
     /**
-     *  DOC ERROR
+     *  TODO
      *  Verifica los datos necesarios para conectarse a una base de datos mysql
      * @param string $host Ruta servidor
      * @param string $nombre_base_datos nombre de base de datos

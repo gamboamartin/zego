@@ -335,12 +335,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/services.git",
-                "reference": "5b5a26f6344c977ecbc864e06d38e97cea186d8a"
+                "reference": "479bcf64e642c6b4b5550c8ef61f76d9a81a4f2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/services/zipball/5b5a26f6344c977ecbc864e06d38e97cea186d8a",
-                "reference": "5b5a26f6344c977ecbc864e06d38e97cea186d8a",
+                "url": "https://api.github.com/repos/gamboamartin/services/zipball/479bcf64e642c6b4b5550c8ef61f76d9a81a4f2d",
+                "reference": "479bcf64e642c6b4b5550c8ef61f76d9a81a4f2d",
                 "shasum": ""
             },
             "require": {
@@ -352,7 +352,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-12T17:51:18+00:00",
+            "time": "2022-05-12T20:33:50+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",

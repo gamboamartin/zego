@@ -1,12 +1,5 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-setlocale(LC_ALL, 'es_MX.utf8');
-date_default_timezone_set('America/Mexico_City');
-set_time_limit(60000);
-ini_set('memory_limit', '-1');
-ini_set('upload_max_filesize', '2048M');
-ini_set('post_max_size', '2048M');
+include "init.php";
 const PATH_BASE = '/var/www/html/zego/';
 
 
@@ -20,17 +13,9 @@ use config\empresas;
 
 
 
-$data_service = (new services())->verifica_servicio(path: __FILE__);
-if(errores::$error){
-    $error = (new errores())->error('Error al verificar servicio', $data_service);
-    print_r($error);
-    die('Error');
-}
+$services = new services(path: __FILE__);
 
-if($data_service->corriendo){
-    echo 'El servicio esta corriendo '.__FILE__;
-    exit;
-}
+
 
 $calculo = new calculo();
 
@@ -40,19 +25,13 @@ $empresas_data = $empresas->empresas;
 
 foreach ($empresas_data as $empresa){
 
-    $host_r = $empresa['remote_host'];
-    $user_r = $empresa['remote_user'];
-    $pass_r = $empresa['remote_pass'];
-    $nombre_base_datos_r = $empresa['remote_nombre_base_datos'];
-
-    $link_thecloud = (new services)->conecta_mysqli(host: $host_r,
-        nombre_base_datos:  $nombre_base_datos_r, pass: $pass_r,user:  $user_r);
+    $link = $services->conecta_remoto_mysqli(empresa: $empresa);
     if(errores::$error){
-        $error = (new errores())->error('Error al conectar remoto', $link_thecloud);
+        $error = (new errores())->error('Error al conectar remoto', $link);
         print_r($error);
         die('Error');
     }
-
+    var_dump($services->data_conexion->host);
 
     $fechas = (new calculo())->rangos_fechas(n_dias_1:30, n_dias_2: 1, tipo_val: 'fecha_hora_min_sec_esp');
     if(errores::$error){
@@ -63,7 +42,7 @@ foreach ($empresas_data as $empresa){
 
     var_dump($fechas);
 
-    $partida_factura_modelo = new partida_factura($link_thecloud);
+    $partida_factura_modelo = new partida_factura($link);
     $limit_sql = 2000;
     $filtro_sql[] = 'partida_factura.insumo_id IS NULL';
 
@@ -90,6 +69,4 @@ foreach ($empresas_data as $empresa){
     var_dump($dels);
 
 }
-
-unlink($data_service->path_lock);
-unlink($data_service->path_info);
+$services->finaliza_servicio();
