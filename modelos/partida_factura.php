@@ -1,5 +1,6 @@
 <?php
 namespace models;
+use gamboamartin\calculo\calculo;
 use gamboamartin\errores\errores;
 use gamboamartin\validacion\validacion;
 use stdClass;
@@ -31,6 +32,46 @@ class partida_factura extends modelos {
         return $r_alta_bd;
     }
 
+    public function data_partidas_por_limpiar_filtro(array $filtro_sql, int $limit_sql, int $n_dias_1,
+                                                     int $n_dias_2): array|stdClass
+    {
+        $fechas = (new calculo())->rangos_fechas(n_dias_1:$n_dias_1, n_dias_2: $n_dias_2,
+            tipo_val: 'fecha_hora_min_sec_esp');
+        if(errores::$error){
+            return $this->error->error('Error al obtener fechas', $fechas);
+        }
+
+
+        $partidas = $this->partidas_por_limpiar_filtro(fechas: $fechas, filtro_sql: $filtro_sql,
+            limit_sql: $limit_sql);
+
+        if(errores::$error){
+            return $this->error->error('Error al obtener partidas', $partidas);
+        }
+        $data = new stdClass();
+        $data->partidas = $partidas;
+        $data->fechas = $fechas;
+        return $data;
+    }
+
+    public function elimina_partidas_por_key(array $filtros_sql, array $keys, int $limit_sql,
+                                             int $n_dias_1, int $n_dias_2): array|stdClass
+    {
+
+        $data = $this->data_partidas_por_limpiar_filtro(filtro_sql:$filtros_sql, limit_sql: $limit_sql,
+            n_dias_1: $n_dias_1,n_dias_2:  $n_dias_2);
+        if(errores::$error){
+            return $this->error->error('Error al obtener datos', $data);
+        }
+
+        $dels = $this->elimina_partidas_vacias(keys: $keys,partidas:  $data->partidas);
+        if(errores::$error){
+            return $this->error->error('Error al limpiar', $dels);
+        }
+        $data->dels = $dels;
+        return $data;
+    }
+
     public function partidas_por_limpiar(stdClass $fechas, array $filtro_sql, int $limit_sql):array{
         $campo = 'partida_factura.fecha_alta';
         $fecha_final = $fechas->fecha_2;
@@ -47,6 +88,18 @@ class partida_factura extends modelos {
         }
 
         return $r_partidas['registros'];
+    }
+
+    public function partidas_por_limpiar_filtro(stdClass $fechas, array $filtro_sql, int $limit_sql): array
+    {
+
+        $partidas = $this->partidas_por_limpiar(fechas: $fechas, filtro_sql: $filtro_sql,
+            limit_sql: $limit_sql);
+
+        if(errores::$error){
+            return $this->error->error('Error al obtener partidas', $partidas);
+        }
+        return $partidas;
     }
 
 
