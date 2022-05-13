@@ -3,6 +3,7 @@ namespace models;
 use base\consultas_base;
 use gamboamartin\errores\errores;
 use gamboamartin\validacion\validacion;
+use stdClass;
 use Throwable;
 
 class modelos{
@@ -185,7 +186,11 @@ class modelos{
             $result = $this->link->query($consulta);
         }
         catch (Throwable $e){
-            return $this->error->error('Error al ejecutar sql', array($e, $consulta, $this->link->error));
+            $data = new stdClass();
+            $data->exception = $e;
+            $data->sql = $consulta;
+            $data->error_mysql = $this->link->error;
+            return $this->error->error('Error al ejecutar sql', $data);
         }
 
         $n_registros = $result->num_rows;
@@ -237,6 +242,29 @@ class modelos{
         else{
             return array('mensaje'=>'Registro eliminado con éxito', 'error'=>False);
         }
+    }
+
+    public function existe_por_id(int $id, string $tabla): bool|array
+    {
+
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
+
+
+        $sql = "SELECT COUNT(*) AS n_rows FROM $tabla WHERE id = $id";
+        $result = $this->ejecuta_consulta($sql);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registros', data: $result);
+        }
+        $existe = false;
+        if((int)$result['registros'][0]['n_rows']>0){
+            $existe = true;
+        }
+
+
+        return $existe;
     }
 
     /**
@@ -659,11 +687,12 @@ class modelos{
 
     /**
      * ERROR UNIT
+     * @param int $limit
      * @param string $tabla
      * @param string $where
      * @return array
      */
-    public function registros_puros(string $tabla, string $where): array
+    public function registros_puros(int $limit, string $tabla, string $where): array
     {
         $tabla = trim($tabla);
         if($tabla === ''){
@@ -672,12 +701,19 @@ class modelos{
         $sql_where = '';
         $where = trim($where);
         if($where!==''){
-            $sql_where = 'WHERE '.$sql_where;
+            $sql_where = 'WHERE '.$where;
         }
-        $sql = "SELECT *FROM $tabla $sql_where";
+
+        $limit_sql = '';
+        if($limit>0){
+            $limit_sql = " LIMIT $limit ";
+        }
+
+        $sql = "SELECT *FROM $tabla $sql_where $limit_sql";
         $result = $this->ejecuta_consulta($sql);
         if(errores::$error){
-            return $this->error->error('Error al obtener registros', $result);
+
+            return $this->error->error(mensaje: 'Error al obtener registros', data: $result);
         }
         return $result;
     }

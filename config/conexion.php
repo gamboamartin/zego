@@ -8,7 +8,9 @@ class conexion{
 	public mysqli|false $link;
 	public string $nombre_base_datos = '';
     private errores $error;
-	public function __construct(string $host = '', string $name_bd = '', string $pass = '', string $user = ''){
+
+    /** @noinspection ForgottenDebugOutputInspection */
+    public function __construct(string $host = '', string $name_bd = '', string $pass = '', string $user = ''){
 	    if (isset($_SESSION['numero_empresa'])) {
             $this->error = new errores();
             $empresa = new empresas();
@@ -34,6 +36,7 @@ class conexion{
             }
             catch (Throwable $e){
                 $error = $this->error->error('Error al conectarse', $e);
+                /** @noinspection ForgottenDebugOutputInspection */
                 print_r($error);
                 die('Error');
             }
