@@ -219,8 +219,10 @@ class validacion {
 
     /**
      * Funcion que valida el dato de una seccion corresponda con la existencia de un modelo
+     * @version 1.0.0
      * @param string $seccion
      * @return array|bool
+     *
      */
     private function seccion(string $seccion):array|bool{
         $seccion = str_replace('models\\','',$seccion);
@@ -237,9 +239,10 @@ class validacion {
 
     /**
      * P INT P ORDER
-     * @param string $seccion
-     * @param string $accion
-     * @return array|bool
+     * verifica los datos de una seccion y una accion sean correctos
+     * @param string $seccion seccion basada en modelo
+     * @param string $accion accion a ejecutar
+     * @return array|bool array si hay error bool true exito
      */
     public function seccion_accion(string $accion, string $seccion):array|bool{
         $valida = $this->seccion(seccion: $seccion);
@@ -721,21 +724,20 @@ class validacion {
     {
         $fecha = trim($fecha);
         if($fecha === ''){
-            return $this->error->error(mensaje: 'Error la fecha esta vacia', data: $fecha, params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error la fecha esta vacia', data: $fecha);
         }
         $tipo_val = trim($tipo_val);
         if($tipo_val === ''){
-            return $this->error->error(mensaje: 'Error tipo_val no puede venir vacio', data: $tipo_val,
-                params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error tipo_val no puede venir vacio', data: $tipo_val);
         }
 
         if(!in_array($tipo_val, $this->regex_fecha, true)){
             return $this->error->error(mensaje: 'Error el tipo val no pertenece a fechas validas',
-                data: $this->regex_fecha, params: get_defined_vars());
+                data: $this->regex_fecha);
         }
 
         if(! $this->valida_pattern(key: $tipo_val,txt: $fecha)){
-            return $this->error->error(mensaje: 'Error fecha invalida', data: $fecha, params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error fecha invalida', data: $fecha);
         }
         return true;
     }
@@ -922,9 +924,8 @@ class validacion {
     }
 
     /**
-     * TODO
      * funcion que revisa si una expresion regular es valida declarada con this->patterns
-     *
+     * @version 1.0.0
      * @param  string $key key definido para obtener de this->patterns
      * @param  string $txt valor a comparar
      *

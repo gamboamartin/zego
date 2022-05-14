@@ -1,5 +1,6 @@
 <?php
 namespace gamboamartin\services;
+use gamboamartin\calculo\calculo;
 use gamboamartin\errores\errores;
 use mysqli;
 use stdClass;
@@ -64,6 +65,26 @@ class services{
         catch (Throwable $e){
             return $this->error->error(mensaje: 'Error al conectarse',data:  $e);
         }
+    }
+
+    public function conexiones(array $empresa): array|stdClass
+    {
+        $data = new stdClass();
+        $link_remote = $this->conecta_remoto_mysqli(empresa: $empresa);
+        if(errores::$error){
+            return $this->error->error('Error al conectar remoto', $link_remote);
+        }
+        $data->remote_host = $this->data_conexion->host;
+
+        $link_local = $this->conecta_local_mysqli(empresa: $empresa);
+        if(errores::$error){
+            return $this->error->error('Error al conectar remoto', $link_local);
+        }
+        $data->local_host = $this->data_conexion->host;
+        $data->remote = $link_remote;
+        $data->local = $link_local;
+        return $data;
+
     }
 
     public function conecta_local_mysqli(array $empresa): bool|array|mysqli
@@ -231,6 +252,11 @@ class services{
         return $data;
     }
 
+    /**
+     * Genera el key de busqueda de una empresa, puede ser remote o vacio para local
+     * @param string $tipo puede ser remote o vacio remote para conexion remota, vacio para conexion local
+     * @return string con el key a buscar para empresas
+     */
     private function key_empresa(string $tipo): string
     {
         $key = '';
@@ -279,6 +305,27 @@ class services{
         $this->name_files = $data;
 
         return $data;
+    }
+
+    /**
+     * Funcion para obtener la fecha de hoy menos n_dias
+     * @param int $n_dias Numero de dias a restar a la fecha
+     * @param string $tipo_val utiliza los patterns de las siguientes formas
+     *          fecha=yyyy-mm-dd
+     *          fecha_hora_min_sec_esp = yyyy-mm-dd hh-mm-ss
+     *          fecha_hora_min_sec_t = yyyy-mm-ddThh-mm-ss
+     * @return array|string
+     */
+    public function get_fecha_filtro_service(int $n_dias, string $tipo_val): array|string
+    {
+        $calculo = new calculo();
+        $hoy = date($calculo->formats_fecha[$tipo_val]);
+
+        $fecha = $calculo->obten_fecha_resta(fecha: $hoy,n_dias: $n_dias,tipo_val: $tipo_val);
+        if(errores::$error){
+            return $this->error->error('Error al obtener fecha', $fecha);
+        }
+        return $fecha;
     }
 
     /**

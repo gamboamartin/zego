@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'd8a0bf4700d126b427c5f02b9360227d923c15a6',
+        'reference' => '5a8c009455e784dd383346a5d8279773b11fc4d5',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'd8a0bf4700d126b427c5f02b9360227d923c15a6',
+            'reference' => '5a8c009455e784dd383346a5d8279773b11fc4d5',
             'dev_requirement' => false,
         ),
         'doctrine/instantiator' => array(
@@ -54,7 +54,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => 'cf28e990272abdf0efede181fdc46ebcccadfc69',
+            'reference' => '2c04cb6d9a2dcec641fa26a38bf885350f1ec886',
             'dev_requirement' => false,
         ),
         'gamboa.martin/errores' => array(
@@ -65,7 +65,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => 'eb45999e0d43ecb65672850fce3ed6b143ffbe1f',
+            'reference' => '8fb20df54f92e9e26f14dd4804b4e110759e0abd',
             'dev_requirement' => false,
         ),
         'gamboa.martin/plugins' => array(
@@ -87,7 +87,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '479bcf64e642c6b4b5550c8ef61f76d9a81a4f2d',
+            'reference' => 'aa1362ee200e3722586569731631b92f62c1cfa9',
             'dev_requirement' => false,
         ),
         'gamboa.martin/test' => array(
@@ -109,7 +109,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '3d42708171f9c65f2cbb4be0a3c21f720931502e',
+            'reference' => 'bff110cd6898bbe39df641a3b5ff6af0bc5d07df',
             'dev_requirement' => false,
         ),
         'maennchen/zipstream-php' => array(

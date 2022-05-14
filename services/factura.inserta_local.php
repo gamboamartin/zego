@@ -19,7 +19,6 @@ $empresas_data = $empresas->empresas;
 
 foreach ($empresas_data as $empresa){
 
-
     $conexiones = $services->conexiones(empresa: $empresa);
     if(errores::$error){
         $error = (new errores())->error('Error al conectar', $conexiones);
@@ -41,8 +40,6 @@ foreach ($empresas_data as $empresa){
         die('Error');
     }
 
-
-
     foreach($facturas as $factura){
         $existe = $factura_modelo_local->existe_factura($factura['id']);
         if(errores::$error){
@@ -50,18 +47,30 @@ foreach ($empresas_data as $empresa){
             print_r($error);
             die('Error');
         }
-        if($existe){
-            $r_factura_remota = $factura_modelo_remota->upd_factura_ins($factura['id']);
-            if(errores::$error){
-                $error = (new errores())->error('Error al actualizar', $r_factura_remota);
-                print_r($error);
-                die('Error');
+        if(!$existe){
+            $keys = array('lugar_expedicion','calle_expedicion','metodo_pago_codigo','total','sub_total',
+                'forma_pago_codigo','fecha','folio','rfc_emisor','regimen_fiscal_emisor_codigo','cliente_id',
+                'cliente_rfc','uso_cfdi_codigo');
+
+            foreach($factura as $campo=>$value){
+                $value = trim($value);
+                $inserta = true;
+                if($value===''){
+                    $inserta = false;
+                }
+
+                if($inserta){
+                    $r_ins_local = $factura_modelo_local->alta_bd($factura, 'factura');
+                    if(errores::$error){
+                        $error = (new errores())->error('Error al insertar en local', $r_ins_local);
+                        print_r($error);
+                        die('Error');
+                    }
+                    var_dump($r_ins_local);
+                }
             }
-            var_dump($r_factura_remota);
         }
-
     }
-
 
 
 }

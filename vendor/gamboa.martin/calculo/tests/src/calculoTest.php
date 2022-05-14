@@ -3,6 +3,7 @@ namespace tests\src;
 
 use gamboamartin\calculo\calculo;
 use gamboamartin\errores\errores;
+use gamboamartin\test\liberator;
 use gamboamartin\test\test;
 
 
@@ -119,6 +120,32 @@ class calculoTest extends test {
         $resultado = $calculo->rangos_fechas($n_dias_1, $n_dias_2, $tipo_val);
         $this->assertIsObject( $resultado);
         $this->assertEquals(date('Y-m-d'),$resultado->hoy);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
+    public function test_valida_tipo_val(){
+        errores::$error = false;
+        $calculo = new calculo();
+        $calculo = new liberator($calculo);
+        $tipo_val = '';
+        $resultado = $calculo->valida_tipo_val($tipo_val);
+        $this->assertIsArray( $resultado);
+        $this->assertStringContainsStringIgnoringCase('Error $tipo_val esta vacio', $resultado['mensaje']);
+        $this->assertTrue(errores::$error);
+
+        errores::$error = false;
+        $tipo_val = 'a';
+        $resultado = $calculo->valida_tipo_val($tipo_val);
+        $this->assertIsArray( $resultado);
+        $this->assertStringContainsStringIgnoringCase('Error $tipo_val invalido', $resultado['mensaje']);
+        $this->assertTrue(errores::$error);
+
+        errores::$error = false;
+        $tipo_val = 'fecha';
+        $resultado = $calculo->valida_tipo_val($tipo_val);
+        $this->assertIsBool( $resultado);
+        $this->assertTrue($resultado);
         $this->assertNotTrue(errores::$error);
         errores::$error = false;
     }

@@ -1,6 +1,8 @@
 <?php
 namespace models;
+use gamboamartin\calculo\calculo;
 use gamboamartin\errores\errores;
+use gamboamartin\services\services;
 use gamboamartin\validacion\validacion;
 
 class factura extends modelos{
@@ -174,6 +176,63 @@ class factura extends modelos{
         }
         return $registro;
     }
+
+    public function sql_filtro_factura(string $fecha, int $insertado): string
+    {
+        $sql_fecha_alta = "factura.fecha_alta >= '$fecha'";
+        $sql_fecha_alta .= " AND factura.insertado = $insertado ";
+        return $sql_fecha_alta;
+    }
+
+    public function sql_filtro_insertado(int $insertado, int $n_dias, services $services, string $tipo_val): array|string
+    {
+        $fecha = $services->get_fecha_filtro_service(n_dias: $n_dias, tipo_val: $tipo_val);
+        if(errores::$error){
+            return $this->error->error('Error al obtener fecha', $fecha);
+        }
+
+        $sql_fecha_alta = $this->sql_filtro_factura(fecha: $fecha,insertado:  $insertado);
+        if(errores::$error){
+            return $this->error->error('Error al obtener filtro', $sql_fecha_alta);
+        }
+        return $sql_fecha_alta;
+    }
+
+    public function facturas_sin_insertar(int $limit, int $n_dias, services $services){
+        $sql_fecha_alta = $this->sql_filtro_insertado(insertado: 0, n_dias:$n_dias,services:  $services,
+            tipo_val:  'fecha_hora_min_sec_esp');
+        if(errores::$error){
+            return $this->error->error('Error al obtener filtro', $sql_fecha_alta);
+        }
+
+        $r_factura = $this->registros_puros(limit:$limit, tabla: 'factura', where: $sql_fecha_alta);
+        if(errores::$error){
+            return $this->error->error('Error al obtener registros', $r_factura);
+        }
+
+        return $r_factura['registros'];
+    }
+
+    public function upd_factura_ins(int $factura_id): array
+    {
+        $factura_remota['insertado'] = 1;
+        $r_factura_remota = $this->modifica_bd($factura_remota, 'factura', $factura_id);
+        if(errores::$error){
+            return $this->error->error('Error al actualizar', $r_factura_remota);
+        }
+        return $r_factura_remota;
+    }
+
+    public function existe_factura(int $factura_id): bool|array
+    {
+        $existe = $this->existe_por_id(id: $factura_id, tabla: 'factura');
+        if(errores::$error){
+            return $this->error->error('Error al verificar si existe', $existe);
+        }
+        return $existe;
+    }
+
+
 
     /**
      * ERROR UNIT

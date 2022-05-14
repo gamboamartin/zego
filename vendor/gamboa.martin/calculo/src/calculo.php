@@ -12,7 +12,7 @@ class calculo{
     private array $meses_espaniol;
     public validacion $validaciones;
     public errores $error;
-    private array $formats_fecha = array();
+    public array $formats_fecha = array();
 
     /**
      *
@@ -151,11 +151,10 @@ class calculo{
     public function obten_fecha_resta(string $fecha, int $n_dias, string $tipo_val = 'fecha'):string|array{
         $valida = $this->validaciones->valida_fecha(fecha: $fecha, tipo_val: $tipo_val);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al validar fecha',data:  $valida ,params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error al validar fecha',data:  $valida);
         }
         if($n_dias<0){
-            return $this->error->error(mensaje: 'Error $n_dias debe ser mayor o igual a 0', data: $n_dias,
-                params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error $n_dias debe ser mayor o igual a 0', data: $n_dias);
         }
 
         $format = $this->formats_fecha[$tipo_val];
@@ -196,6 +195,7 @@ class calculo{
 
     /**
      * Funcion para validar los parametros de uso de un tipo val el tipo val es relacionado al formato de fecha
+     * @version 1.0.0
      * @param string $tipo_val
      *          utiliza los patterns de las siguientes formas
      *          fecha=yyyy-mm-dd
@@ -207,12 +207,10 @@ class calculo{
     {
         $tipo_val = trim($tipo_val);
         if($tipo_val === ''){
-            return $this->error->error(mensaje: 'Error $tipo_val esta vacio', data: $tipo_val,
-                params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error $tipo_val esta vacio', data: $tipo_val);
         }
         if(!isset($this->formats_fecha[$tipo_val])){
-            return $this->error->error(mensaje: 'Error $tipo_val invalido', data: $tipo_val,
-                params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error $tipo_val invalido', data: $tipo_val);
         }
         return true;
     }
