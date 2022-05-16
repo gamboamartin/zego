@@ -1,6 +1,7 @@
 <?php
 
 use config\generales;
+use gamboamartin\plugins\files;
 
 include "init.php";
 const PATH_BASE = '/var/www/html/zego/';
@@ -11,6 +12,7 @@ $archivos = array();
 while ($archivo = readdir($directorio)){
     if (!is_dir($archivo) && ($archivo!=='index.php')) {
         $archivos[] = $archivo;
+        $es_lock = (new files())->es_lock_service(archivo: $archivo);
     }
 }
 

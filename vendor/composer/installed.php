@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'ec73520dbe21907b6a01fbfc642a6dc7f93f0a49',
+        'reference' => 'e3620495b996e602d5fc483685773dfa8a7fe02e',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'ec73520dbe21907b6a01fbfc642a6dc7f93f0a49',
+            'reference' => 'e3620495b996e602d5fc483685773dfa8a7fe02e',
             'dev_requirement' => false,
         ),
         'doctrine/instantiator' => array(
@@ -76,7 +76,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '8490609e2d6c87ef4cbf2e71741c8056ac986ca3',
+            'reference' => '76e4fa621fd62c714258f44a7048d6bbe413bdb7',
             'dev_requirement' => false,
         ),
         'gamboa.martin/services' => array(
