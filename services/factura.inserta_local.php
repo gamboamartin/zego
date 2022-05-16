@@ -5,7 +5,9 @@ const PATH_BASE = '/var/www/html/zego/';
 
 require PATH_BASE.'vendor/autoload.php';
 
+
 use gamboamartin\errores\errores;
+use gamboamartin\services\error_write\error_write;
 use gamboamartin\services\services;
 use gamboamartin\calculo\calculo;
 use config\empresas;
@@ -16,14 +18,14 @@ $calculo = new calculo();
 
 $empresas = new empresas();
 $empresas_data = $empresas->empresas;
-
+$info = '';
 foreach ($empresas_data as $empresa){
 
     $conexiones = $services->conexiones(empresa: $empresa);
     if(errores::$error){
         $error = (new errores())->error('Error al conectar', $conexiones);
-        print_r($error);
-        die('Error');
+        (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
+
     }
 
     var_dump($conexiones);
@@ -32,20 +34,17 @@ foreach ($empresas_data as $empresa){
     $factura_modelo_local = new factura(link: $conexiones->local);
 
 
-
     $facturas = $factura_modelo_remota->facturas_sin_insertar(limit:100,n_dias:  5, services: $services);
     if(errores::$error){
         $error = (new errores())->error('Error al obtener registros', $facturas);
-        print_r($error);
-        die('Error');
+        (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
 
     foreach($facturas as $factura){
         $existe = $factura_modelo_local->existe_factura($factura['id']);
         if(errores::$error){
             $error = (new errores())->error('Error al verificar si existe', $existe);
-            print_r($error);
-            die('Error');
+            (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
         }
         if(!$existe){
             $keys = array('lugar_expedicion','calle_expedicion','metodo_pago_codigo','total','sub_total',
@@ -63,8 +62,7 @@ foreach ($empresas_data as $empresa){
                     $r_ins_local = $factura_modelo_local->alta_bd($factura, 'factura');
                     if(errores::$error){
                         $error = (new errores())->error('Error al insertar en local', $r_ins_local);
-                        print_r($error);
-                        die('Error');
+                        (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
                     }
                     var_dump($r_ins_local);
                 }

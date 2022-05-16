@@ -5,6 +5,7 @@
     "license": "GPL-3.0-or-later",
     "autoload": {
         "psr-4": {
+            "gamboamartin\\services\\error_write\\": "src/",
             "gamboamartin\\services\\": "src/",
             "gamboamartin\\test\\": "tests/",
             "config\\": "config/"

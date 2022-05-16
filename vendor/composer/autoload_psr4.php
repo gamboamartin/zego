@@ -13,6 +13,7 @@ return array(
     'models\\' => array($baseDir . '/modelos', $vendorDir . '/gamboa.martin/test/src/models'),
     'gamboamartin\\validacion\\' => array($vendorDir . '/gamboa.martin/validacion/src'),
     'gamboamartin\\test\\' => array($vendorDir . '/gamboa.martin/calculo/tests', $vendorDir . '/gamboa.martin/errores/tests', $vendorDir . '/gamboa.martin/plugins/tests', $vendorDir . '/gamboa.martin/services/tests', $vendorDir . '/gamboa.martin/test/src', $vendorDir . '/gamboa.martin/validacion/tests'),
+    'gamboamartin\\services\\error_write\\' => array($vendorDir . '/gamboa.martin/services/src'),
     'gamboamartin\\services\\' => array($vendorDir . '/gamboa.martin/services/src'),
     'gamboamartin\\plugins\\' => array($vendorDir . '/gamboa.martin/plugins/src'),
     'gamboamartin\\errores\\' => array($vendorDir . '/gamboa.martin/errores/src'),

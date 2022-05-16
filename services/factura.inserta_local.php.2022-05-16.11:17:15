@@ -1,0 +1,163 @@
+Array
+(
+    [error] => 1
+    [mensaje] => <b><span style="color:red">Error al insertar en local</span></b>
+    [file] => <b>/var/www/html/zego/services/factura.inserta_local.php</b>
+    [line] => <b>64</b>
+    [class] => <b></b>
+    [function] => <b></b>
+    [data] => Array
+        (
+            [error] => 1
+            [mensaje] => <b><span style="color:red">Error al asignar datos de receptor</span></b>
+            [file] => <b>/var/www/html/zego/modelos/factura.php</b>
+            [line] => <b>16</b>
+            [class] => <b>models\factura</b>
+            [function] => <b>alta_bd</b>
+            [data] => Array
+                (
+                    [error] => 1
+                    [mensaje] => <b><span style="color:red">Error al asignar regimen fiscal</span></b>
+                    [file] => <b>/var/www/html/zego/modelos/factura.php</b>
+                    [line] => <b>42</b>
+                    [class] => <b>models\factura</b>
+                    [function] => <b>init_registro_receptor</b>
+                    [data] => Array
+                        (
+                            [error] => 1
+                            [mensaje] => <b><span style="color:red">Error al asignar regimen fiscal</span></b>
+                            [file] => <b>/var/www/html/zego/modelos/factura.php</b>
+                            [line] => <b>62</b>
+                            [class] => <b>models\factura</b>
+                            [function] => <b>regimen_fiscal_receptor</b>
+                            [data] => Array
+                                (
+                                    [error] => 1
+                                    [mensaje] => <b><span style="color:red">Error no existe regimen fiscal en cliente</span></b>
+                                    [file] => <b>/var/www/html/zego/modelos/factura.php</b>
+                                    [line] => <b>92</b>
+                                    [class] => <b>models\factura</b>
+                                    [function] => <b>aplica_reg_fis_cte</b>
+                                    [data] => Array
+                                        (
+                                            [cliente_id] => 9
+                                            [cliente_observaciones] => 
+                                            [cliente_status] => 1
+                                            [cliente_rfc] => AME9904233AA
+                                            [cliente_nombre_representante_legal] => 
+                                            [cliente_pagina_web] => 
+                                            [cliente_razon_social] => ADM MEXICO, S.A. DE C.V.
+                                            [cliente_cp] => 11560
+                                            [cliente_calle] => 
+                                            [cliente_exterior] => 
+                                            [cliente_interior] => 
+                                            [cliente_colonia] => CHAPULTEPEC POLANCO, DEL. MIGUEL HIDALGO
+                                            [cliente_telefono] => 
+                                            [cliente_email] => 
+                                            [cliente_municipio_id] => 
+                                            [cliente_puesto_responsable_pagos] => 
+                                            [cliente_nombre_responsable_pagos] => 
+                                            [cliente_telefono_responsable_pagos] => 
+                                            [cliente_extension_responsable_pagos] => 
+                                            [cliente_correo_responsable_pagos] => 
+                                            [cliente_nombre_persona_proporciona_informacion] => 
+                                            [cliente_municipio_servicio_id] => 
+                                            [cliente_cp_servicio] => 
+                                            [cliente_colonia_servicio] => 
+                                            [cliente_calle_servicio] => 
+                                            [cliente_exterior_servicio] => 
+                                            [cliente_interior_servicio] => 
+                                            [cliente_nombre_responsable_servcio] => 
+                                            [cliente_puesto_responsable_servicio] => 
+                                            [cliente_telefono_responsable_servicio] => 
+                                            [cliente_extension_responsable_servicio] => 
+                                            [cliente_correo_responsable_servicio] => 
+                                            [cliente_cantidad_aproximada_recoleccion] => 
+                                            [cliente_dias_periodicidad] => 
+                                            [cliente_horarios_laborales] => 
+                                            [cliente_especificaciones_servicio] => 
+                                            [cliente_dias_credito] => 
+                                            [cliente_dias_tramite_pago] => 
+                                            [cliente_archivo_rfc] => 
+                                            [cliente_uso_cfdi_id] => 3
+                                            [cliente_moneda_id] => 100
+                                            [cliente_forma_pago_id] => 3
+                                            [cliente_metodo_pago_id] => 2
+                                            [cliente_zica_cliente_id] => 9
+                                            [cliente_zica_numero_interno] => 9
+                                            [cliente_direccion] => ANDRES BELLO #10 PISO 5
+                                            [cliente_zica_entidad_id] => 9
+                                            [cliente_zica_cuidad] => MEXICO
+                                            [cliente_zica_pais_id] => 1
+                                            [cliente_regimen_fiscal_id] => 
+                                            [municipio_id] => 
+                                            [municipio_descripcion] => 
+                                            [municipio_codigo] => 
+                                            [municipio_observaciones] => 
+                                            [municipio_estado_id] => 
+                                            [municipio_status] => 
+                                            [estado_id] => 
+                                            [estado_descripcion] => 
+                                            [estado_codigo] => 
+                                            [estado_observaciones] => 
+                                            [estado_pais_id] => 
+                                            [estado_status] => 
+                                            [estado_zica_estado_id] => 
+                                            [pais_id] => 
+                                            [pais_descripcion] => 
+                                            [pais_codigo] => 
+                                            [pais_observaciones] => 
+                                            [pais_status] => 
+                                            [pais_zica_pais_id] => 
+                                            [uso_cfdi_id] => 3
+                                            [uso_cfdi_descripcion] => Gastos en general
+                                            [uso_cfdi_codigo] => G03
+                                            [uso_cfdi_observaciones] => 
+                                            [uso_cfdi_status] => 1
+                                            [moneda_id] => 100
+                                            [moneda_descripcion] => Peso Mexicano
+                                            [moneda_codigo] => MXN
+                                            [moneda_observaciones] => 
+                                            [moneda_status] => 1
+                                            [tipo_cambio_hoy] => 
+                                            [forma_pago_id] => 3
+                                            [forma_pago_descripcion] => Transferencia electrónica de fondos
+                                            [forma_pago_codigo] => 03
+                                            [forma_pago_observaciones] => 
+                                            [forma_pago_status] => 1
+                                            [metodo_pago_id] => 2
+                                            [metodo_pago_descripcion] => Pago en parcialidades o diferido
+                                            [metodo_pago_codigo] => PPD
+                                            [metodo_pago_observaciones] => 
+                                            [metodo_pago_status] => 1
+                                        )
+
+                                    [params] => Array
+                                        (
+                                        )
+
+                                )
+
+                            [params] => Array
+                                (
+                                )
+
+                        )
+
+                    [params] => Array
+                        (
+                        )
+
+                )
+
+            [params] => Array
+                (
+                )
+
+        )
+
+    [params] => Array
+        (
+        )
+
+)

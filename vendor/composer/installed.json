@@ -335,12 +335,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/services.git",
-                "reference": "aa1362ee200e3722586569731631b92f62c1cfa9"
+                "reference": "06cec8aabc538569fe5c4c697a4a8824cac113b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/services/zipball/aa1362ee200e3722586569731631b92f62c1cfa9",
-                "reference": "aa1362ee200e3722586569731631b92f62c1cfa9",
+                "url": "https://api.github.com/repos/gamboamartin/services/zipball/06cec8aabc538569fe5c4c697a4a8824cac113b6",
+                "reference": "06cec8aabc538569fe5c4c697a4a8824cac113b6",
                 "shasum": ""
             },
             "require": {
@@ -354,7 +354,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-14T16:29:49+00:00",
+            "time": "2022-05-16T16:14:05+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
@@ -362,7 +362,8 @@
                 "psr-4": {
                     "config\\": "config/",
                     "gamboamartin\\test\\": "tests/",
-                    "gamboamartin\\services\\": "src/"
+                    "gamboamartin\\services\\": "src/",
+                    "gamboamartin\\services\\error_write\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",

@@ -39,6 +39,7 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         array (
             'gamboamartin\\validacion\\' => 24,
             'gamboamartin\\test\\' => 18,
+            'gamboamartin\\services\\error_write\\' => 34,
             'gamboamartin\\services\\' => 22,
             'gamboamartin\\plugins\\' => 21,
             'gamboamartin\\errores\\' => 21,
@@ -131,6 +132,10 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
             3 => __DIR__ . '/..' . '/gamboa.martin/services/tests',
             4 => __DIR__ . '/..' . '/gamboa.martin/test/src',
             5 => __DIR__ . '/..' . '/gamboa.martin/validacion/tests',
+        ),
+        'gamboamartin\\services\\error_write\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/services/src',
         ),
         'gamboamartin\\services\\' => 
         array (
