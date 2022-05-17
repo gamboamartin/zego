@@ -11,6 +11,10 @@ class services{
     public stdClass $data_conexion;
     public stdClass $name_files;
     public bool $corriendo;
+
+    /**
+     * @param string $path Ruta de servicio en ejecucion
+     */
     public function __construct(string $path){
         $this->error = new errores();
         $data_service = $this->verifica_servicio(path: $path);
@@ -277,8 +281,8 @@ class services{
     }
 
     /**
-     * DOC ERROR UNIT
      * Genera el nombre de file para info de un servicio para poder identificar a que hora se ejecuto
+     * @version 1.0.0
      * @param string $file_base Nombre del path del servicio en ejecucion
      * @return string|array
      */
@@ -288,11 +292,21 @@ class services{
         if($file_base === ''){
             return $this->error->error(mensaje: 'Error file_base esta vacio', data: $file_base);
         }
-        return $file_base.'.'.date('Y-m-d.H:i:s');
+        return $file_base.'.'.date('Y-m-d.H:i:s').'.info';
     }
 
-    private function name_files(string $path): array|stdClass
+    /**
+     * Genera los nombres de los archivos para la ejecucion de un servicio genera un .lock y un .info
+     * @version 1.0.0
+     * @param string $path Ruta de servicio en ejecucion
+     * @return array|stdClass
+     */
+    PUBLIC function name_files(string $path): array|stdClass
     {
+        $path = trim($path);
+        if($path === ''){
+            return $this->error->error(mensaje: 'Error $path esta vacio', data: $path);
+        }
         $path_lock = $path.'.lock';
         $path_info = $this->name_file_lock(file_base: $path);
         if(errores::$error){
@@ -400,7 +414,10 @@ class services{
         return true;
     }
 
-
+    /**
+     * @param string $path Ruta de servicio en ejecucion
+     * @return stdClass|array
+     */
     public function verifica_servicio(string $path): stdClass|array
     {
 

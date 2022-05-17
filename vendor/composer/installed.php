@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'e3620495b996e602d5fc483685773dfa8a7fe02e',
+        'reference' => '6fccc249d13d2d4b0efce4e5dd143d2455826128',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'e3620495b996e602d5fc483685773dfa8a7fe02e',
+            'reference' => '6fccc249d13d2d4b0efce4e5dd143d2455826128',
             'dev_requirement' => false,
         ),
         'doctrine/instantiator' => array(
@@ -76,7 +76,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '76e4fa621fd62c714258f44a7048d6bbe413bdb7',
+            'reference' => '10ffa155d0cf1b74f5dd73b72149ee30b452936b',
             'dev_requirement' => false,
         ),
         'gamboa.martin/services' => array(
@@ -87,7 +87,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '06cec8aabc538569fe5c4c697a4a8824cac113b6',
+            'reference' => '4d233c195524294ab5cfda5de00e954c03ab6d8a',
             'dev_requirement' => false,
         ),
         'gamboa.martin/test' => array(
@@ -109,7 +109,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => 'bff110cd6898bbe39df641a3b5ff6af0bc5d07df',
+            'reference' => '4f53758af66be053f590d973f17fecb76cd09b73',
             'dev_requirement' => false,
         ),
         'maennchen/zipstream-php' => array(

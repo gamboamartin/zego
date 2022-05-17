@@ -150,6 +150,40 @@ class servicesTest extends test {
         errores::$error = false;
     }
 
+    public function test_name_files(): void
+    {
+        errores::$error = false;
+        if(file_exists('test.file')){
+            unlink('test.file');
+        }
+
+        $srv = new services(__FILE__);
+        $srv = new liberator($srv);
+
+        $path = '';
+        $resultado = $srv->name_files($path);
+        $this->assertIsArray( $resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('Error $path esta vacio',$resultado['mensaje']);
+        $srv->finaliza_servicio();
+
+        errores::$error = false;
+        if(file_exists('test.file')){
+            unlink('test.file');
+        }
+        $path = 'test.file';
+        $srv = new services($path);
+
+        $resultado = $srv->name_files($path);
+        $this->assertIsObject( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase('test.file.lock',$resultado->path_lock);
+        $this->assertStringContainsStringIgnoringCase('.info',$resultado->path_info);
+        $this->assertStringContainsStringIgnoringCase('test.file.',$resultado->path_info);
+        $srv->finaliza_servicio();
+        errores::$error = false;
+    }
+
     public function test_valida_conexion(): void
     {
         errores::$error = false;

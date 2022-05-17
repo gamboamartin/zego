@@ -284,12 +284,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/plugins.git",
-                "reference": "76e4fa621fd62c714258f44a7048d6bbe413bdb7"
+                "reference": "10ffa155d0cf1b74f5dd73b72149ee30b452936b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/plugins/zipball/76e4fa621fd62c714258f44a7048d6bbe413bdb7",
-                "reference": "76e4fa621fd62c714258f44a7048d6bbe413bdb7",
+                "url": "https://api.github.com/repos/gamboamartin/plugins/zipball/10ffa155d0cf1b74f5dd73b72149ee30b452936b",
+                "reference": "10ffa155d0cf1b74f5dd73b72149ee30b452936b",
                 "shasum": ""
             },
             "require": {
@@ -300,7 +300,7 @@
                 "phpoffice/phpspreadsheet": "^1.16",
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-16T16:53:47+00:00",
+            "time": "2022-05-17T15:46:33+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
@@ -335,12 +335,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/services.git",
-                "reference": "06cec8aabc538569fe5c4c697a4a8824cac113b6"
+                "reference": "4d233c195524294ab5cfda5de00e954c03ab6d8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/services/zipball/06cec8aabc538569fe5c4c697a4a8824cac113b6",
-                "reference": "06cec8aabc538569fe5c4c697a4a8824cac113b6",
+                "url": "https://api.github.com/repos/gamboamartin/services/zipball/4d233c195524294ab5cfda5de00e954c03ab6d8a",
+                "reference": "4d233c195524294ab5cfda5de00e954c03ab6d8a",
                 "shasum": ""
             },
             "require": {
@@ -354,7 +354,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-16T16:14:05+00:00",
+            "time": "2022-05-17T14:22:12+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
@@ -441,12 +441,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/validacion.git",
-                "reference": "bff110cd6898bbe39df641a3b5ff6af0bc5d07df"
+                "reference": "4f53758af66be053f590d973f17fecb76cd09b73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/validacion/zipball/bff110cd6898bbe39df641a3b5ff6af0bc5d07df",
-                "reference": "bff110cd6898bbe39df641a3b5ff6af0bc5d07df",
+                "url": "https://api.github.com/repos/gamboamartin/validacion/zipball/4f53758af66be053f590d973f17fecb76cd09b73",
+                "reference": "4f53758af66be053f590d973f17fecb76cd09b73",
                 "shasum": ""
             },
             "require": {
@@ -457,7 +457,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-14T16:06:07+00:00",
+            "time": "2022-05-16T18:16:51+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",

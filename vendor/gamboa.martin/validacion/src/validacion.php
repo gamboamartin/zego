@@ -23,6 +23,7 @@ class validacion {
         $this->patterns['double'] = '/^[0-9]*.[0-9]*$/';
         $this->patterns['nomina_antiguedad'] = "/^P[0-9]+W$/";
         $this->patterns['correo'] = "/^[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/";
+        $this->patterns['telefono_mx'] = "/^[1-9]{1}[0-9]{9}$/";
 
         $this->regex_fecha[] = 'fecha';
         $this->regex_fecha[] = 'fecha_hora_min_sec_esp';
@@ -30,27 +31,24 @@ class validacion {
     }
 
     /**
-     * FULL
-     * @param array $data_boton
-     * @return bool|array
+     * Verifica los datos minimos necesarios para la creacion de un boton en html
+     * @version 1.0.0
+     * @param array $data_boton datos['filtro'=>array(),'id', 'etiqueta]
+     * @return bool|array Bool true si es exito
      */
     public function btn_base(array $data_boton): bool|array
     {
         if(!isset($data_boton['filtro'])){
-            return $this->error->error(mensaje: 'Error $data_boton[filtro] debe existir',data: $data_boton
-                , params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error $data_boton[filtro] debe existir',data: $data_boton);
         }
         if(!is_array($data_boton['filtro'])){
-            return $this->error->error(mensaje: 'Error $data_boton[filtro] debe ser un array',data: $data_boton,
-                params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error $data_boton[filtro] debe ser un array',data: $data_boton);
         }
         if(!isset($data_boton['id'])){
-            return $this->error->error(mensaje: 'Error $data_boton[id] debe existir',data: $data_boton,
-                params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error $data_boton[id] debe existir',data: $data_boton);
         }
         if(!isset($data_boton['etiqueta'])){
-            return $this->error->error(mensaje: 'Error $data_boton[etiqueta] debe existir',data: $data_boton,
-                params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error $data_boton[etiqueta] debe existir',data: $data_boton);
         }
         return true;
     }
@@ -352,8 +350,9 @@ class validacion {
 
     /**
      * P INT P ORDER ERROR
-     * @param array $registro
-     * @return bool|array
+     * Funcion para verificar que dentro de un registro exista de manera correcta colonia_id
+     * @param array $registro Registro a validar
+     * @return bool|array array si hay error
      */
     public function valida_colonia(array $registro): bool|array
     {
@@ -654,12 +653,12 @@ class validacion {
     }
 
     /**
-     * TODO
+     *
      * Funcion para validar que exista o no sea vacia una llave dentro de un arreglo
-     *
+     * @version 1.0.0
      * @param array $keys Keys a validar
-     *
      * @param array|stdClass $registro Registro a validar
+     * @param bool $valida_vacio Si es true verificara el key sea vacio si es false solo valida que existe el key
      * @return array|bool array con datos del registro
      * @example
      *      $keys = array('clase','sub_clase','producto','unidad');
@@ -668,23 +667,20 @@ class validacion {
      * return $this->errores->error('Error al validar $datos_formulario',$valida);
      * }
      */
-    public function valida_existencia_keys(array $keys, mixed $registro, bool $valida_vacio = true):array|bool{ //DEBUG
+    public function valida_existencia_keys(array $keys, mixed $registro, bool $valida_vacio = true):array|bool{
 
         if(is_object($registro)){
             $registro = (array)$registro;
         }
         foreach ($keys as $key){
             if($key === ''){
-                return $this->error->error(mensaje:'Error '.$key.' no puede venir vacio',data: $keys,
-                    params: get_defined_vars());
+                return $this->error->error(mensaje:'Error '.$key.' no puede venir vacio',data: $keys);
             }
             if(!isset($registro[$key])){
-                return $this->error->error(mensaje: 'Error '.$key.' no existe en el registro', data: $registro,
-                    params: get_defined_vars());
+                return $this->error->error(mensaje: 'Error '.$key.' no existe en el registro', data: $registro);
             }
             if($registro[$key] === '' && $valida_vacio){
-                return $this->error->error(mensaje: 'Error '.$key.' esta vacio en el registro', data: $registro,
-                    params: get_defined_vars());
+                return $this->error->error(mensaje: 'Error '.$key.' esta vacio en el registro', data: $registro);
             }
         }
 
@@ -792,9 +788,9 @@ class validacion {
     }
 
     /**
-     * FULL
-     * @param string $key Key a validar
-     *
+     * Valida si un id es valido, en base a los keys a verificar
+     * @version 1.0.0
+     * @param string $key Key a validar de tipo id
      * @param array $registro Registro a validar
      * @return bool|array array con datos del registro y mensaje de exito
      * @example
@@ -805,31 +801,29 @@ class validacion {
     public function valida_id(string $key, array $registro): bool|array{
         $key = trim($key);
         if($key === ''){
-            return $this->error->error(mensaje: 'Error key no puede venir vacio '.$key,data: $registro,
-                params: get_defined_vars());
+            return $this->error->error(mensaje: 'Error key no puede venir vacio '.$key,data: $registro);
         }
         if(!isset($registro[$key])){
-            return $this->error->error(mensaje:'Error no existe '.$key,data:$registro, params: get_defined_vars());
+            return $this->error->error(mensaje:'Error no existe '.$key,data:$registro);
         }
         if((string)$registro[$key] === ''){
-            return $this->error->error(mensaje:'Error esta vacio '.$key,data:$registro, params: get_defined_vars());
+            return $this->error->error(mensaje:'Error esta vacio '.$key,data:$registro);
         }
         if((int)$registro[$key] <= 0){
-            return $this->error->error(mensaje:'Error el '.$key.' debe ser mayor a 0',data:$registro,
-                params: get_defined_vars());
+            return $this->error->error(mensaje:'Error el '.$key.' debe ser mayor a 0',data:$registro);
         }
         if(!$this->id(txt:$registro[$key])){
-            return $this->error->error(mensaje:'Error el '.$key.' es invalido',data:$registro,
-                params: get_defined_vars());
+            return $this->error->error(mensaje:'Error el '.$key.' es invalido',data:$registro);
         }
 
         return true;
     }
 
     /**
-     * FULL
-     * Funcion para validar la forma correcta de un id
      *
+     * Funcion para validar la forma correcta de un id basada en un conjunto de keys para verificar dentro de un
+     * registro
+     * @version 1.0.0
      * @param array $registro Registro a validar
      * @param array $keys Keys a validar
      *
@@ -846,21 +840,18 @@ class validacion {
      */
     public function valida_ids(array $keys, array $registro):array{
         if(count($keys) === 0){
-            return $this->error->error(mensaje: "Error keys vacios",data: $keys, params: get_defined_vars());
+            return $this->error->error(mensaje: "Error keys vacios",data: $keys);
         }
         foreach($keys as $key){
             if($key === ''){
-                return $this->error->error(mensaje:'Error '.$key.' Invalido',data:$registro,
-                    params: get_defined_vars());
+                return $this->error->error(mensaje:'Error '.$key.' Invalido',data:$registro);
             }
             if(!isset($registro[$key])){
-                return  $this->error->error(mensaje:'Error no existe '.$key,data:$registro,
-                    params: get_defined_vars());
+                return  $this->error->error(mensaje:'Error no existe '.$key,data:$registro);
             }
             $id_valido = $this->valida_id(key: $key, registro: $registro);
             if(errores::$error){
-                return  $this->error->error(mensaje:'Error '.$key.' Invalido',data:$id_valido,
-                    params: get_defined_vars());
+                return  $this->error->error(mensaje:'Error '.$key.' Invalido',data:$id_valido);
             }
         }
         return array('mensaje'=>'ids validos',$registro,$keys);
