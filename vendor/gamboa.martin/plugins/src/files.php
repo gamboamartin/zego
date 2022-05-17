@@ -1,6 +1,7 @@
 <?php
 namespace gamboamartin\plugins;
 use gamboamartin\errores\errores;
+use gamboamartin\validacion\validacion;
 use JetBrains\PhpStorm\Pure;
 use SplFileInfo;
 use stdClass;
@@ -42,8 +43,6 @@ class files{
             return $this->error->error(mensaje:  'Error al obtener nombre del servicio',data: $name_service);
         }
 
-        $explode_name = explode('.php', $archivo);
-        $name_service = $explode_name[0];
 
         $data = new stdClass();
         $data->file = $archivo;
@@ -54,6 +53,73 @@ class files{
 
 
         return $data;
+    }
+
+    /**
+     * Se asignan los datos de un servicio
+     * @version 1.0.0
+     * @param stdClass $archivo File de services a verificar
+     * @param array $servicio servicio en verificacion
+     * @return array
+     */
+    private function asigna_data_service(stdClass $archivo, array $servicio): array
+    {
+        $keys = array('es_service','es_lock','es_info','file');
+        $valida = (new validacion())->valida_existencia_keys(keys:$keys, registro: $archivo, valida_vacio: false);
+        if(errores::$error){
+            return $this->error->error('Error al validar archivo', $valida);
+        }
+
+
+        $servicio = $this->init_data_file_service(servicio: $servicio);
+        if(errores::$error){
+            return $this->error->error('Error al inicializar servicio', $servicio);
+        }
+
+
+        if($archivo->es_service){
+            $servicio['file'] =  $archivo->file;
+        }
+        if($archivo->es_lock){
+            $servicio['file_lock'] =  $archivo->file;
+        }
+        if($archivo->es_info){
+            $servicio['file_info'] =  $archivo->file;
+        }
+        return $servicio;
+    }
+
+    /**
+     * Se asignan los archivos de una carpeta de servicios
+     * @version 1.0.0
+     * @param stdClass $archivo datos ocn ruta del servicio
+     * @param array $servicios conjunto de servicios recursivos
+     * @return array retorna los servicios ajustados
+     */
+    private function asigna_servicios(stdClass $archivo, array $servicios): array
+    {
+        $keys = array('name_service');
+        $valida = (new validacion())->valida_existencia_keys(keys:$keys, registro: $archivo, valida_vacio: false);
+        if(errores::$error){
+            return $this->error->error('Error al validar archivo', $valida);
+        }
+
+        $keys = array('es_service','es_lock','es_info','file');
+        $valida = (new validacion())->valida_existencia_keys(keys:$keys, registro: $archivo, valida_vacio: false);
+        if(errores::$error){
+            return $this->error->error('Error al validar archivo', $valida);
+        }
+
+        if(!isset($servicios[$archivo->name_service])){
+            $servicios[$archivo->name_service] = array();
+        }
+        $servicio = $servicios[$archivo->name_service];
+        $service = $this->asigna_data_service(archivo: $archivo, servicio: $servicio);
+        if(errores::$error){
+            return $this->error->error('Error al asignar datos', $service);
+        }
+        $servicios[$archivo->name_service] = $service;
+        return $servicios;
     }
 
     /**
@@ -151,7 +217,7 @@ class files{
      * @param mixed $directorio Recurso tipo opendir
      * @return array un arreglo de objetos
      */
-    public function files_services(mixed $directorio): array
+    private function files_services(mixed $directorio): array
     {
         if(is_string($directorio)){
             return $this->error->error(mensaje:  'Error el directorio no puede ser un string',data: $directorio);
@@ -177,6 +243,20 @@ class files{
 
         asort($archivos);
         return $archivos;
+    }
+
+    public function get_files_services(mixed $directorio): array
+    {
+        $archivos = $this->files_services(directorio: $directorio);
+        if(errores::$error){
+            return $this->error->error(mensaje:  'Error al asignar files',data: $archivos);
+        }
+
+        $servicios = $this->maqueta_files_service($archivos);
+        if(errores::$error){
+            return $this->error->error(mensaje:  'Error al maquetar files',data: $servicios);
+        }
+        return $servicios;
     }
 
     /**
@@ -208,6 +288,20 @@ class files{
         return $ruta_file;
     }
 
+    private function init_data_file_service(array $servicio): array
+    {
+        if(!isset( $servicio['file'])){
+            $servicio['file'] = '';
+        }
+        if(!isset( $servicio['file_lock'])){
+            $servicio['file_lock'] = '';
+        }
+        if(!isset( $servicio['file_info'])){
+            $servicio['file_info'] = '';
+        }
+        return $servicio;
+    }
+
     /**
      * P ORDER P INT
      * @param string $ruta
@@ -235,6 +329,27 @@ class files{
             return $this->error->error('Error directorio invalido',$ruta);
         }
         return $datas;
+    }
+
+    /**
+     * Maqueta los archivos para dar salida a un array con los servicios a mostrar en un index
+     * @version 1.0.0
+     * @param array $archivos conjunto de datos de archivos para su maquetacion
+     * @return array
+     */
+    private function maqueta_files_service(array $archivos): array
+    {
+        $servicios = array();
+        foreach($archivos as $archivo){
+            if(!is_object($archivo)){
+                return $this->error->error('Error el archivo debe ser un stdclass', $archivo);
+            }
+            $servicios = $this->asigna_servicios(archivo: $archivo,servicios: $servicios);
+            if(errores::$error){
+                return $this->error->error('Error al asignar datos servicios', $servicios);
+            }
+        }
+        return $servicios;
     }
 
     /**

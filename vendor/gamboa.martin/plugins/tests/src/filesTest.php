@@ -5,7 +5,7 @@ use gamboamartin\errores\errores;
 use gamboamartin\plugins\files;
 use gamboamartin\test\liberator;
 use gamboamartin\test\test;
-
+use stdClass;
 
 
 class filesTest extends test {
@@ -49,6 +49,42 @@ class filesTest extends test {
 
         errores::$error = false;
 
+    }
+
+    public function test_asigna_data_service()
+    {
+        errores::$error = false;
+        $fl = new files();
+        $fl = new liberator($fl);
+
+        $archivo = new stdClass();
+        $archivo->es_service = false;
+        $archivo->es_lock = false;
+        $archivo->es_info = false;
+        $archivo->file = 'a';
+        $servicio = array();
+        $resultado = $fl->asigna_data_service($archivo, $servicio);
+        $this->assertIsArray($resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
+    public function test_asigna_servicios(){
+        errores::$error = false;
+        $fl = new files();
+        $fl = new liberator($fl);
+
+        $archivo = new stdClass();
+        $archivo->name_service = 'a';
+        $archivo->es_service = true;
+        $archivo->es_info = false;
+        $archivo->es_lock = false;
+        $archivo->file = 'a';
+        $servicios = array();
+        $resultado = $fl->asigna_servicios($archivo, $servicios);
+        $this->assertIsArray($resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
     }
 
     public function test_es_info_service()
@@ -184,7 +220,7 @@ class filesTest extends test {
     {
         errores::$error = false;
         $fl = new files();
-        //$fl = new liberator($fl);
+        $fl = new liberator($fl);
 
         $directorio = '';
         $resultado = $fl->files_services($directorio);
@@ -196,12 +232,42 @@ class filesTest extends test {
 
         $directorio = opendir('/var/www/html/plugins/src/');
         $resultado = $fl->files_services($directorio);
-        print_r($resultado);
+
         $this->assertIsArray($resultado);
         $this->assertNotTrue(errores::$error);
 
         errores::$error = false;
 
+    }
+
+    public function test_maqueta_files_services()
+    {
+        errores::$error = false;
+        $fl = new files();
+        $fl = new liberator($fl);
+
+        $archivos = array();
+
+        $resultado = $fl->maqueta_files_service($archivos);
+        $this->assertIsArray($resultado);
+        $this->assertEmpty($resultado);
+        $this->assertNotTrue(errores::$error);
+
+        errores::$error = false;
+
+        $archivos = array();
+        $archivos[0] = new stdClass();
+        $archivos[0]->name_service = 'a';
+        $archivos[0]->es_service = true;
+        $archivos[0]->es_lock = true;
+        $archivos[0]->es_info = true;
+        $archivos[0]->file = 'z';
+
+        $resultado = $fl->maqueta_files_service($archivos);
+        $this->assertIsArray($resultado);
+        $this->assertNotTrue(errores::$error);
+
+        errores::$error = false;
     }
 
     public function test_parte_to_name_file()
