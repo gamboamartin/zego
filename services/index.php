@@ -27,6 +27,11 @@ foreach($servicios as $name_service =>$servicio){
     $liga .= $servicio['file_info'];
     $liga .= "</a>";
 
+    $liga .= '<a href="'.(new generales())->url_base.'/services/limpia_log.php?service='.$name_service.'">';
+    $liga .= ' LIMPIA ';
+    $liga .= "</a>";
+
+
     $liga.= '<br><br>';
 
     echo $liga;

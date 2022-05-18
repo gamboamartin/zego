@@ -184,6 +184,33 @@ class filesTest extends test {
         $this->assertTrue($resultado);
         errores::$error = false;
     }
+    public function test_estructura(){
+        errores::$error = false;
+        $fl = new files();
+        //$fl = new liberator($fl);
+
+        $ruta = '';
+        $resultado = $fl->estructura($ruta);
+        $this->assertIsArray($resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase("Error al validar ruta", $resultado['mensaje']);
+
+        errores::$error = false;
+        $ruta = 'X';
+        $resultado = $fl->estructura($ruta);
+        $this->assertIsArray($resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase("Error al validar ruta", $resultado['mensaje']);
+
+        errores::$error = false;
+        $ruta = '/var/www/html/plugins/tests/services';
+        $resultado = $fl->estructura($ruta);
+        $this->assertIsArray($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals("service1.php.lock", $resultado[4]->name_file);
+        errores::$error = false;
+    }
+
 
     public function test_extension(){
         errores::$error = false;
@@ -238,6 +265,21 @@ class filesTest extends test {
 
         errores::$error = false;
 
+    }
+
+    public function test_get_data_service()
+    {
+        errores::$error = false;
+        $fl = new files();
+        //$fl = new liberator($fl);
+
+        $ruta = '/var/www/html/plugins/tests/services';
+        $resultado = $fl->get_data_service($ruta,'service1');
+        $this->assertIsArray($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals('service1.php',$resultado['file']);
+
+        errores::$error = false;
     }
 
     public function test_maqueta_files_services()
@@ -336,6 +378,43 @@ class filesTest extends test {
 
         $archivo = 'a.z';
         $resultado = $fl->valida_extension($archivo);
+        $this->assertIsBool($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
+    public function test_valida_folder(){
+        errores::$error = false;
+        $fl = new files();
+        $fl = new liberator($fl);
+
+        $ruta = '';
+        $resultado = $fl->valida_folder($ruta);
+        $this->assertIsArray($resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase("Error la ruta esta vacio", $resultado['mensaje']);
+
+        errores::$error = false;
+
+        $ruta = 'zzz';
+        $resultado = $fl->valida_folder($ruta);
+        $this->assertIsArray($resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase("Error la ruta no existe o no es una carpeta", $resultado['mensaje']);
+
+        errores::$error = false;
+
+        $ruta = '/var/www/html/plugins/tests/services/service1.php';
+        $resultado = $fl->valida_folder($ruta);
+        $this->assertIsArray($resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertStringContainsStringIgnoringCase("Error la ruta no existe o no es una carpeta", $resultado['mensaje']);
+
+        errores::$error = false;
+
+        $ruta = '/var/www/html/plugins/tests/services/';
+        $resultado = $fl->valida_folder($ruta);
         $this->assertIsBool($resultado);
         $this->assertNotTrue(errores::$error);
         $this->assertTrue($resultado);

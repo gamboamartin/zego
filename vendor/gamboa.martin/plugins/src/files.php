@@ -12,6 +12,29 @@ class files{
         $this->error = new errores();
     }
 
+    private function asigna_archivos(mixed $directorio): array
+    {
+        $archivos = array();
+        while ($archivo = readdir($directorio)){
+            $data = $this->asigna_data_file(ruta: $archivo);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al asignar datos', data: $data);
+            }
+            $archivos[] = $data;
+        }
+        return $archivos;
+    }
+    private function asigna_data_file(string $ruta): stdClass
+    {
+        $data = new stdClass();
+        $data->es_directorio = false;
+        if(is_dir($ruta)){
+            $data->es_directorio = true;
+        }
+        $data->name_file = $ruta;
+
+        return $data;
+    }
     /**
      * Asigna los datos necesarios para verificar los archivos de un servicio
      * @version 1.0.0
@@ -60,7 +83,7 @@ class files{
      * @version 1.0.0
      * @param stdClass $archivo File de services a verificar
      * @param array $servicio servicio en verificacion
-     * @return array
+     * @return array $servicio[file,file_lock,file_info]
      */
     private function asigna_data_service(stdClass $archivo, array $servicio): array
     {
@@ -94,7 +117,8 @@ class files{
      * @version 1.0.0
      * @param stdClass $archivo datos ocn ruta del servicio
      * @param array $servicios conjunto de servicios recursivos
-     * @return array retorna los servicios ajustados
+     * @return array retorna los servicios ajustados  $servicios[name_service][file,file_lock,file_info] pueden ser
+     * varios
      */
     private function asigna_servicios(stdClass $archivo, array $servicios): array
     {
@@ -195,6 +219,33 @@ class files{
     }
 
     /**
+     * Obtiene la estructura de una carpeta
+     * @version 1.0.0
+     * @param string $ruta debe ser una carpeta con ruta absoluta
+     * @return array un array de objetos $result[n]->es_directorio y $result[n]->name_file
+     */
+    public function estructura(string $ruta): array
+    {
+        $ruta = trim($ruta);
+        $valida = $this->valida_folder(ruta: $ruta);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al validar ruta', data: $valida);
+        }
+
+        $directorio = opendir($ruta);
+        if(!$directorio){
+            return $this->error->error(mensaje: 'Error al abrir ruta', data: $ruta);
+        }
+        $archivos = $this->asigna_archivos(directorio: $directorio);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al asignar archivos', data: $archivos);
+        }
+
+        return $archivos;
+
+    }
+
+    /**
      * Obtiene la extension de un archivo mandando solamente el nombre del doc
      * @param string $archivo Path o nombre del archivo
      * @return string|array string = extension del archivo array error
@@ -245,6 +296,56 @@ class files{
         return $archivos;
     }
 
+    /**
+     * Funcion donde se obtienen los datos de un servicio
+     * @param string $ruta
+     * @param string $name_service
+     * @return array
+     */
+    public function get_data_service(string $ruta, string $name_service): array
+    {
+        $ruta = trim($ruta);
+        $name_service = trim($name_service);
+
+        $valida = $this->valida_folder(ruta: $ruta);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al validar ruta', data: $valida);
+        }
+        $directorio = opendir($ruta);
+        $data = $this->get_files_services(directorio: $directorio);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener servicios', data: $data);
+        }
+        return $data[$name_service] ?? $this->error->error(mensaje: 'Error no existe el servicio', data: $data);
+
+
+    }
+
+    private function get_files_folder(string $ruta): array
+    {
+        $ruta = trim($ruta);
+        $valida = $this->valida_folder(ruta: $ruta);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al validar ruta', data: $valida);
+        }
+        $estructura = $this->estructura(ruta: $ruta);
+        if(errores::$error){
+            return $this->error->error(mensaje:  'Error al obtener estructura',data: $estructura);
+        }
+        $archivos = array();
+        foreach ($estructura as $data){
+            if(!$data->es_directorio){
+                $archivos[] = $data;
+            }
+        }
+        return $archivos;
+    }
+
+    /**
+     * @param mixed $directorio Recurso tipo opendir
+     * @return array retorna los servicios ajustados  $servicios[name_service][file,file_lock,file_info]
+     * pueden ser varios
+     */
     public function get_files_services(mixed $directorio): array
     {
         $archivos = $this->files_services(directorio: $directorio);
@@ -252,7 +353,7 @@ class files{
             return $this->error->error(mensaje:  'Error al asignar files',data: $archivos);
         }
 
-        $servicios = $this->maqueta_files_service($archivos);
+        $servicios = $this->maqueta_files_service(archivos: $archivos);
         if(errores::$error){
             return $this->error->error(mensaje:  'Error al maquetar files',data: $servicios);
         }
@@ -288,6 +389,11 @@ class files{
         return $ruta_file;
     }
 
+    /**
+     * Si los keys de file, file_lock y file_info no existen los inicializa como vacios
+     * @param array $servicio servicio en verificacion puede estar vacio
+     * @return array $servicio[file,file_lock,file_info] todos vacios si no existen
+     */
     private function init_data_file_service(array $servicio): array
     {
         if(!isset( $servicio['file'])){
@@ -335,7 +441,7 @@ class files{
      * Maqueta los archivos para dar salida a un array con los servicios a mostrar en un index
      * @version 1.0.0
      * @param array $archivos conjunto de datos de archivos para su maquetacion
-     * @return array
+     * @return array retorna los servicios ajustados  $servicios[name_service][file,file_lock,file_info] pueden ser varios
      */
     private function maqueta_files_service(array $archivos): array
     {
@@ -484,6 +590,24 @@ class files{
         }
 
 
+        return true;
+    }
+
+    /**
+     * Verifica que la ruta sea un folder
+     * @version 1.0.0
+     * @param string $ruta Ruta a verificar
+     * @return bool|array true si es correcto
+     */
+    private function valida_folder(string $ruta): bool|array
+    {
+        $ruta = trim($ruta);
+        if($ruta === ''){
+            return $this->error->error(mensaje: 'Error la ruta esta vacio', data: $ruta);
+        }
+        if(!is_dir($ruta)){
+            return $this->error->error(mensaje: 'Error la ruta no existe o no es una carpeta', data: $ruta);
+        }
         return true;
     }
 

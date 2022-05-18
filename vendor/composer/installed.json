@@ -284,12 +284,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/plugins.git",
-                "reference": "9aca51664a305fcba56f13a19dee18b7cf341dc6"
+                "reference": "1dd77bffebbafcf695d1e58709510554312d24c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/plugins/zipball/9aca51664a305fcba56f13a19dee18b7cf341dc6",
-                "reference": "9aca51664a305fcba56f13a19dee18b7cf341dc6",
+                "url": "https://api.github.com/repos/gamboamartin/plugins/zipball/1dd77bffebbafcf695d1e58709510554312d24c0",
+                "reference": "1dd77bffebbafcf695d1e58709510554312d24c0",
                 "shasum": ""
             },
             "require": {
@@ -300,10 +300,10 @@
                 "phpoffice/phpspreadsheet": "^1.16",
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-17T16:43:31+00:00",
+            "time": "2022-05-18T22:24:59+00:00",
             "default-branch": true,
             "type": "library",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "config\\": "config/",
@@ -441,12 +441,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/validacion.git",
-                "reference": "4f53758af66be053f590d973f17fecb76cd09b73"
+                "reference": "3cd8d9e891111360a0fa0a9a3a48669bf9927f67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/validacion/zipball/4f53758af66be053f590d973f17fecb76cd09b73",
-                "reference": "4f53758af66be053f590d973f17fecb76cd09b73",
+                "url": "https://api.github.com/repos/gamboamartin/validacion/zipball/3cd8d9e891111360a0fa0a9a3a48669bf9927f67",
+                "reference": "3cd8d9e891111360a0fa0a9a3a48669bf9927f67",
                 "shasum": ""
             },
             "require": {
@@ -457,7 +457,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-16T18:16:51+00:00",
+            "time": "2022-05-18T21:26:28+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
@@ -487,32 +487,34 @@
         },
         {
             "name": "maennchen/zipstream-php",
-            "version": "2.1.0",
-            "version_normalized": "2.1.0.0",
+            "version": "2.2.1",
+            "version_normalized": "2.2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maennchen/ZipStream-PHP.git",
-                "reference": "c4c5803cc1f93df3d2448478ef79394a5981cc58"
+                "reference": "211e9ba1530ea5260b45d90c9ea252f56ec52729"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/c4c5803cc1f93df3d2448478ef79394a5981cc58",
-                "reference": "c4c5803cc1f93df3d2448478ef79394a5981cc58",
+                "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/211e9ba1530ea5260b45d90c9ea252f56ec52729",
+                "reference": "211e9ba1530ea5260b45d90c9ea252f56ec52729",
                 "shasum": ""
             },
             "require": {
                 "myclabs/php-enum": "^1.5",
-                "php": ">= 7.1",
+                "php": "^7.4 || ^8.0",
                 "psr/http-message": "^1.0",
                 "symfony/polyfill-mbstring": "^1.0"
             },
             "require-dev": {
                 "ext-zip": "*",
-                "guzzlehttp/guzzle": ">= 6.3",
+                "guzzlehttp/guzzle": "^6.5.3 || ^7.2.0",
                 "mikey179/vfsstream": "^1.6",
-                "phpunit/phpunit": ">= 7.5"
+                "php-coveralls/php-coveralls": "^2.4",
+                "phpunit/phpunit": "^8.5.8 || ^9.4.2",
+                "vimeo/psalm": "^4.1"
             },
-            "time": "2020-05-30T13:11:16+00:00",
+            "time": "2022-05-18T15:52:06+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -549,7 +551,7 @@
             ],
             "support": {
                 "issues": "https://github.com/maennchen/ZipStream-PHP/issues",
-                "source": "https://github.com/maennchen/ZipStream-PHP/tree/master"
+                "source": "https://github.com/maennchen/ZipStream-PHP/tree/2.2.1"
             },
             "funding": [
                 {
