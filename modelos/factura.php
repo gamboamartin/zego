@@ -42,9 +42,6 @@ class factura extends modelos{
             return $this->error->error('Error al asignar regimen fiscal', $registro);
         }
 
-
-
-
         return $registro;
     }
 
@@ -113,7 +110,7 @@ class factura extends modelos{
         $regimen_fiscal = (new regimen_fiscal($this->link))->get_regimen_fiscal(
             regimen_fiscal_id: $regimen_fiscal_id);
         if(errores::$error){
-            return $this->error->error('Error al al obtener regimen_fiscal', $regimen_fiscal);
+            return $this->error->error('Error al al obtener regimen_fiscal', array($regimen_fiscal, $registro));
         }
         $registro['cliente_rf'] = $regimen_fiscal['regimen_fiscal_codigo'];
         return $registro;

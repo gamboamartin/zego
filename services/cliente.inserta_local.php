@@ -12,7 +12,6 @@ use gamboamartin\services\services;
 use gamboamartin\calculo\calculo;
 use config\empresas;
 use models\cliente;
-use models\factura;
 
 $services = new services(path: __FILE__);
 $calculo = new calculo();

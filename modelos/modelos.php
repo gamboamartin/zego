@@ -274,6 +274,12 @@ class modelos{
         $sql_fecha_alta .= " AND $tabla.insertado = $insertado ";
         return $sql_fecha_alta;
     }
+    public function sql_filtro_modifica(string $fecha, string $tabla): string
+    {
+        $sql = "$tabla.fecha_modifica >= '$fecha'";
+        $sql .= " AND $tabla.insertado = 1";
+        return $sql;
+    }
 
     public function sql_filtro_insertado(int $insertado, int $n_dias, services $services, string $tabla, string $tipo_val): array|string
     {
@@ -289,6 +295,20 @@ class modelos{
         return $sql_fecha_alta;
     }
 
+    public function sql_filtro_modificado(int $n_dias, services $services, string $tabla, string $tipo_val): array|string
+    {
+        $fecha = $services->get_fecha_filtro_service(n_dias: $n_dias, tipo_val: $tipo_val);
+        if(errores::$error){
+            return $this->error->error('Error al obtener fecha', $fecha);
+        }
+
+        $sql_fecha_alta = $this->sql_filtro_modifica(fecha: $fecha,tabla: $tabla);
+        if(errores::$error){
+            return $this->error->error('Error al obtener filtro', $sql_fecha_alta);
+        }
+        return $sql_fecha_alta;
+    }
+
     public function registros_sin_insertar(int $limit, int $n_dias, services $services, string $tabla){
         $sql_fecha_alta = $this->sql_filtro_insertado(insertado: 0, n_dias:$n_dias,services:  $services, tabla: $tabla,
             tipo_val:  'fecha_hora_min_sec_esp');
@@ -296,7 +316,22 @@ class modelos{
             return $this->error->error('Error al obtener filtro', $sql_fecha_alta);
         }
 
-        $r_ = $this->registros_puros(limit:$limit, tabla: $tabla, where: $sql_fecha_alta);
+        $r_ = $this->registros_puros(limit:$limit, order: '', tabla: $tabla, where: $sql_fecha_alta);
+        if(errores::$error){
+            return $this->error->error('Error al obtener registros', $r_);
+        }
+
+        return $r_['registros'];
+    }
+
+    public function registros_modificados(int $limit, int $n_dias, string $order, services $services, string $tabla){
+        $sql_fecha_alta = $this->sql_filtro_modificado( n_dias:$n_dias,services:  $services, tabla: $tabla,
+            tipo_val:  'fecha_hora_min_sec_esp');
+        if(errores::$error){
+            return $this->error->error('Error al obtener filtro', $sql_fecha_alta);
+        }
+
+        $r_ = $this->registros_puros(limit:$limit, order: $order, tabla: $tabla, where: $sql_fecha_alta);
         if(errores::$error){
             return $this->error->error('Error al obtener registros', $r_);
         }
@@ -773,11 +808,12 @@ class modelos{
     /**
      * ERROR UNIT
      * @param int $limit
+     * @param string $order
      * @param string $tabla
      * @param string $where
      * @return array
      */
-    public function registros_puros(int $limit, string $tabla, string $where): array
+    public function registros_puros(int $limit, string $order, string $tabla, string $where): array
     {
         $tabla = trim($tabla);
         if($tabla === ''){
@@ -794,7 +830,12 @@ class modelos{
             $limit_sql = " LIMIT $limit ";
         }
 
-        $sql = "SELECT *FROM $tabla $sql_where $limit_sql";
+        $order_sql = '';
+        if($order!==''){
+            $order_sql = " ORDER BY $order ";
+        }
+
+        $sql = "SELECT *FROM $tabla $sql_where $order_sql $limit_sql";
         $result = $this->ejecuta_consulta($sql);
         if(errores::$error){
 
@@ -802,6 +843,26 @@ class modelos{
         }
         return $result;
     }
+
+    public function registro_puro(string $id, string $tabla): array
+    {
+        $tabla = trim($tabla);
+        if($tabla === ''){
+            return $this->error->error('Error la tabla esta vacia', $tabla);
+        }
+
+            $sql_where = 'WHERE id = '.$id;
+
+
+        $sql = "SELECT *FROM $tabla $sql_where ";
+        $result = $this->ejecuta_consulta($sql);
+        if(errores::$error){
+
+            return $this->error->error(mensaje: 'Error al obtener registros', data: $result);
+        }
+        return $result['registros'][0];
+    }
+
 
     /**
      * ERROR UNIT

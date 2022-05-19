@@ -17,7 +17,7 @@ $calculo = new calculo();
 
 $empresas = new empresas();
 $empresas_data = $empresas->empresas;
-
+$info = '';
 foreach ($empresas_data as $empresa){
 
 
@@ -33,11 +33,10 @@ foreach ($empresas_data as $empresa){
     $cliente_modelo_local = new cliente(link: $conexiones->local);
 
     $where = 'cliente.insertado = 0';
-    $r_clientes = $cliente_modelo_remota->registros_puros(limit: 100, tabla: 'cliente', where: $where);
+    $r_clientes = $cliente_modelo_remota->registros_puros(limit: 100,order:'', tabla: 'cliente', where: $where);
     if(errores::$error){
         $error = (new errores())->error('Error al obtener registros', $r_clientes);
-        print_r($error);
-        die('Error');
+        (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
     $clientes = $r_clientes['registros'];
     foreach($clientes as $cliente){
@@ -45,8 +44,7 @@ foreach ($empresas_data as $empresa){
         $existe_en_local = $cliente_modelo_local->existe_por_id($cliente_id, 'cliente');
         if(errores::$error){
             $error = (new errores())->error('Error al obtener cliente local', $existe_en_local);
-            print_r($error);
-            die('Error');
+            (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
         }
 
         if($existe_en_local){
@@ -55,8 +53,7 @@ foreach ($empresas_data as $empresa){
             $upd = $cliente_modelo_remota->modifica_bd($cliente_remoto_upd, 'cliente', $cliente_id);
             if(errores::$error){
                 $error = (new errores())->error('Error al actualizar cliente remoto', $upd);
-                print_r($error);
-                die('Error');
+                (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
             }
             var_dump($upd);
         }
