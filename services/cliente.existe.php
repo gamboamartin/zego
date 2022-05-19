@@ -6,6 +6,7 @@ const PATH_BASE = '/var/www/html/zego/';
 require PATH_BASE.'vendor/autoload.php';
 
 use gamboamartin\errores\errores;
+use gamboamartin\services\error_write\error_write;
 use gamboamartin\services\services;
 use gamboamartin\calculo\calculo;
 use config\empresas;
@@ -23,8 +24,7 @@ foreach ($empresas_data as $empresa){
     $conexiones = $services->conexiones(empresa: $empresa);
     if(errores::$error){
         $error = (new errores())->error('Error al conectar', $conexiones);
-        print_r($error);
-        die('Error');
+        (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
 
     var_dump($conexiones);
@@ -32,7 +32,7 @@ foreach ($empresas_data as $empresa){
     $cliente_modelo_remota = new cliente(link: $conexiones->remote);
     $cliente_modelo_local = new cliente(link: $conexiones->local);
 
-    $where = 'cliente.existe = 0';
+    $where = 'cliente.insertado = 0';
     $r_clientes = $cliente_modelo_remota->registros_puros(limit: 100, tabla: 'cliente', where: $where);
     if(errores::$error){
         $error = (new errores())->error('Error al obtener registros', $r_clientes);
@@ -50,7 +50,7 @@ foreach ($empresas_data as $empresa){
         }
 
         if($existe_en_local){
-            $cliente_remoto_upd['existe'] = 1;
+            $cliente_remoto_upd['insertado'] = 1;
             $cliente_remoto_upd['status'] = 1;
             $upd = $cliente_modelo_remota->modifica_bd($cliente_remoto_upd, 'cliente', $cliente_id);
             if(errores::$error){

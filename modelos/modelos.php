@@ -2,6 +2,7 @@
 namespace models;
 use base\consultas_base;
 use gamboamartin\errores\errores;
+use gamboamartin\services\services;
 use gamboamartin\validacion\validacion;
 use stdClass;
 use Throwable;
@@ -265,6 +266,90 @@ class modelos{
 
 
         return $existe;
+    }
+
+    public function sql_filtro_inserta(string $fecha, int $insertado, string $tabla): string
+    {
+        $sql_fecha_alta = "$tabla.fecha_alta >= '$fecha'";
+        $sql_fecha_alta .= " AND $tabla.insertado = $insertado ";
+        return $sql_fecha_alta;
+    }
+
+    public function sql_filtro_insertado(int $insertado, int $n_dias, services $services, string $tabla, string $tipo_val): array|string
+    {
+        $fecha = $services->get_fecha_filtro_service(n_dias: $n_dias, tipo_val: $tipo_val);
+        if(errores::$error){
+            return $this->error->error('Error al obtener fecha', $fecha);
+        }
+
+        $sql_fecha_alta = $this->sql_filtro_inserta(fecha: $fecha,insertado:  $insertado,tabla: $tabla);
+        if(errores::$error){
+            return $this->error->error('Error al obtener filtro', $sql_fecha_alta);
+        }
+        return $sql_fecha_alta;
+    }
+
+    public function registros_sin_insertar(int $limit, int $n_dias, services $services, string $tabla){
+        $sql_fecha_alta = $this->sql_filtro_insertado(insertado: 0, n_dias:$n_dias,services:  $services, tabla: $tabla,
+            tipo_val:  'fecha_hora_min_sec_esp');
+        if(errores::$error){
+            return $this->error->error('Error al obtener filtro', $sql_fecha_alta);
+        }
+
+        $r_ = $this->registros_puros(limit:$limit, tabla: $tabla, where: $sql_fecha_alta);
+        if(errores::$error){
+            return $this->error->error('Error al obtener registros', $r_);
+        }
+
+        return $r_['registros'];
+    }
+
+    public function inserta_en_service_local(array $keys, array $registro, string $tabla): array
+    {
+        $r_ins_local = array();
+        $inserta = $this->inserta_local($keys, $registro);
+        if(errores::$error){
+            return $this->error->error('Error al verificar si inserta', $inserta);
+
+        }
+        if($inserta){
+            $r_ins_local = $this->alta_bd($registro, $tabla);
+            if(errores::$error){
+                return $this->error->error('Error al insertar en local', $r_ins_local);
+            }
+        }
+        return $r_ins_local;
+    }
+
+    public function inserta_row_service(int $id, array $keys, array $registro, string $tabla): array
+    {
+        $inserta = array();
+        $existe = $this->existe_por_id($id,$tabla);
+        if(errores::$error){
+            return $this->error->error('Error al verificar si existe', $existe);
+        }
+        if(!$existe){
+
+            $inserta = $this->inserta_en_service_local($keys, $registro, $tabla);
+            if(errores::$error){
+                return $this->error->error('Error al verificar si inserta', $inserta);
+            }
+
+
+        }
+        return $inserta;
+    }
+
+    public function inserta_local(array $keys, array $registro): bool
+    {
+        $inserta = true;
+        foreach($keys as $key){
+            $value = trim($registro[$key]);
+            if($value === ''){
+                $inserta = false;
+            }
+        }
+        return $inserta;
     }
 
     /**

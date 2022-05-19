@@ -11,6 +11,7 @@ use gamboamartin\services\error_write\error_write;
 use gamboamartin\services\services;
 use gamboamartin\calculo\calculo;
 use config\empresas;
+use models\cliente;
 use models\factura;
 
 $services = new services(path: __FILE__);
@@ -30,22 +31,20 @@ foreach ($empresas_data as $empresa){
 
     var_dump($conexiones);
 
-    $factura_modelo_remota = new factura(link: $conexiones->remote);
-    $factura_modelo_local = new factura(link: $conexiones->local);
+    $cliente_modelo_remota = new cliente(link: $conexiones->remote);
+    $cliente_modelo_local = new cliente(link: $conexiones->local);
 
 
-    $facturas = $factura_modelo_remota->registros_sin_insertar(limit:100,n_dias:  5, services: $services, tabla: 'factura');
+    $clientes = $cliente_modelo_remota->registros_sin_insertar(limit:100,n_dias:  5, services: $services, tabla: 'cliente');
     if(errores::$error){
-        $error = (new errores())->error('Error al obtener registros', $facturas);
+        $error = (new errores())->error('Error al obtener registros', $clientes);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
 
-    foreach($facturas as $factura){
+    foreach($clientes as $cliente){
 
-        $keys = array('lugar_expedicion','calle_expedicion','metodo_pago_codigo','total','sub_total',
-            'forma_pago_codigo','fecha','folio','rfc_emisor','regimen_fiscal_emisor_codigo','cliente_id',
-            'cliente_rfc','uso_cfdi_codigo');
-        $inserta = $factura_modelo_local->inserta_row_service($factura['id'], $keys, $factura, 'factura');
+        $keys = array('rfc');
+        $inserta = $cliente_modelo_local->inserta_row_service($cliente['id'], $keys, $cliente, 'cliente');
         if(errores::$error){
             $error = (new errores())->error('Error al verificar si inserta', $inserta);
             (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
