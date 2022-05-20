@@ -41,41 +41,14 @@ foreach ($empresas_data as $empresa){
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
 
-
-    foreach($clientes as $cliente){
-
-        $cliente_id = $cliente['id'];
-
-        $cliente_local = $cliente_modelo_local->registro_puro($cliente_id, 'cliente');
-        if(errores::$error){
-            $error = (new errores())->error('Error al obtener registro', $cliente_local);
-            (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
-        }
-
-        $aplica_upd = false;
-        $registro_upd = array();
-        foreach($cliente_local as $campo=>$value_local){
-            $value_local = trim($value_local);
-            $value_remote = trim($cliente[$campo]);
-
-            if($value_remote!==$value_local){
-                $aplica_upd = true;
-            }
-        }
-        $upd = array();
-        if($aplica_upd){
-            $upd = $cliente_modelo_local->modifica_bd($cliente, 'cliente', $cliente_id);
-            if(errores::$error){
-                $error = (new errores())->error('Error al modificar registro', $upd);
-                (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
-            }
-
-        }
-
-
-        var_dump($upd);
-
+    $datas = $cliente_modelo_local->servicio_actualiza_rows(registros_remotos: $clientes, tabla: 'cliente');
+    if(errores::$error){
+        $error = (new errores())->error('Error al actualizar valor', $datas);
+        (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
+
+    var_dump($datas);
+
 
 
 }

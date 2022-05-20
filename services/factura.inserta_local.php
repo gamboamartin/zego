@@ -40,19 +40,14 @@ foreach ($empresas_data as $empresa){
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
 
-    foreach($facturas as $factura){
 
-        $keys = array('lugar_expedicion','calle_expedicion','metodo_pago_codigo','total','sub_total',
-            'forma_pago_codigo','fecha','folio','rfc_emisor','regimen_fiscal_emisor_codigo','cliente_id',
-            'cliente_rfc','uso_cfdi_codigo');
-        $inserta = $factura_modelo_local->inserta_row_service($factura['id'], $keys, $factura, 'factura');
-        if(errores::$error){
-            $error = (new errores())->error('Error al verificar si inserta', $inserta);
-            (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
-        }
-        var_dump($inserta);
-
+    $keys = array();
+    $inserta = $factura_modelo_local->servicio_insersiones($keys, $facturas, 'factura');
+    if(errores::$error){
+        $error = (new errores())->error('Error al verificar si inserta', $inserta);
+        (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
+    var_dump($inserta);
 
 
 }

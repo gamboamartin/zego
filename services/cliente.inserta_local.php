@@ -34,23 +34,22 @@ foreach ($empresas_data as $empresa){
     $cliente_modelo_local = new cliente(link: $conexiones->local);
 
 
-    $clientes = $cliente_modelo_remota->registros_sin_insertar(limit:100,n_dias:  5, services: $services, tabla: 'cliente');
+    $clientes = $cliente_modelo_remota->registros_sin_insertar(limit:1,n_dias:  5, services: $services, tabla: 'cliente');
     if(errores::$error){
         $error = (new errores())->error('Error al obtener registros', $clientes);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
 
-    foreach($clientes as $cliente){
 
-        $keys = array('rfc');
-        $inserta = $cliente_modelo_local->inserta_row_service($cliente['id'], $keys, $cliente, 'cliente');
-        if(errores::$error){
-            $error = (new errores())->error('Error al verificar si inserta', $inserta);
-            (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
-        }
-        var_dump($inserta);
-
+    $keys = array();
+    $inserta = $cliente_modelo_local->servicio_insersiones($keys, $clientes, 'cliente');
+    if(errores::$error){
+        $error = (new errores())->error('Error al verificar si inserta', $inserta);
+        (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
+    var_dump($inserta);
+
+
 
 
 }

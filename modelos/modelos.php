@@ -4,6 +4,7 @@ use base\consultas_base;
 use gamboamartin\errores\errores;
 use gamboamartin\services\services;
 use gamboamartin\validacion\validacion;
+use PhpParser\Builder\Function_;
 use stdClass;
 use Throwable;
 
@@ -68,7 +69,7 @@ class modelos{
         }
 
         foreach ($registro as $campo => $value) {
-            if($campo == 'status'){
+            if($campo === 'status'){
                 if($value == '1'){
                     $value = 1;
                 }
@@ -383,6 +384,7 @@ class modelos{
             if($value === ''){
                 $inserta = false;
             }
+            var_dump($value);
         }
         return $inserta;
     }
@@ -612,8 +614,13 @@ class modelos{
             }
             $campo = addslashes($campo);
             $value = addslashes($value);
+
             if(!in_array($campo, $campos_no_insertables, true)) {
-                $campos .= $campos === "" ? "$campo = '$value'" : ", $campo = '$value'";
+                if($value !== 'NULL'){
+                    $value = "'$value'";
+                }
+
+                $campos .= $campos === "" ? "$campo = $value" : ", $campo = $value";
             }
         }
         if(!$existe_status){
@@ -659,6 +666,180 @@ class modelos{
         return array(
             'mensaje'=>'Registro modificado con éxito', 'error'=>False, 'registro_id'=>$registro_id);
 
+    }
+
+    public function limpia_valor(string $campo, array $registro, string|null $value_local): stdClass
+    {
+        $value_local = trim($value_local);
+        $value_remote = trim($registro[$campo]);
+
+        $data = new stdClass();
+        $data->local = $value_local;
+        $data->remote = $value_remote;
+        return $data;
+    }
+
+    public function asigna_valor(string $campo, array $registro, stdClass $valores): stdClass
+    {
+        $aplica_upd = false;
+        if($valores->remote!==$valores->local){
+            $aplica_upd = true;
+        }
+        $data = new stdClass();
+        $data->aplica_upd = $aplica_upd;
+        $data->value = $registro[$campo];
+        return $data;
+    }
+
+    public function null_value(string $campo, array $registro): array
+    {
+        if(is_null($registro[$campo])){
+            $registro[$campo] = 'NULL';
+        }
+        return $registro;
+    }
+
+    public function valores_upd_service(string $campo, array $registro, stdClass $valores): array|stdClass
+    {
+        $registro = $this->null_value(campo: $campo, registro: $registro);
+        if(errores::$error){
+            return $this->error->error('Error al limpiar valor', $registro);
+        }
+
+        $data_value = $this->asigna_valor(campo:$campo,registro:  $registro, valores: $valores);
+        if(errores::$error){
+            return $this->error->error('Error al limpiar valor', $valores);
+        }
+        return $data_value;
+    }
+
+    public function data_service_upd(string $campo, array $registro, array $registro_upd, stdClass $valores): array|stdClass
+    {
+        $data_value = $this->valores_upd_service(campo: $campo,registro:  $registro, valores: $valores);
+        if(errores::$error){
+            return $this->error->error('Error al limpiar valor', $data_value);
+        }
+
+        if($data_value->aplica_upd){
+            $registro_upd[$campo] = $data_value->value;
+        }
+
+        $data_value->registro_upd = $registro_upd;
+        return $data_value;
+    }
+
+    public function continue_null(string $campo, array $registro, stdClass $valores): bool
+    {
+        $continue = false;
+        if(is_null($registro[$campo]) && $valores->local === ''){
+            $continue = true;
+        }
+        return $continue;
+    }
+
+    public function data_continue(string $campo, array $registro, null|string $value_local): array|stdClass
+    {
+        $valores = $this->limpia_valor(campo:$campo,registro:  $registro, value_local: $value_local);
+        if(errores::$error){
+            return $this->error->error('Error al limpiar valor', $valores);
+        }
+
+        $continue = $this->continue_null(campo: $campo, registro: $registro, valores: $valores);
+        if(errores::$error){
+            return $this->error->error('Error verificar continue', $continue);
+        }
+
+        $valores->continue = $continue;
+        return $valores;
+    }
+
+    public function data_upd_service_val(array $registro_local, array $registro_remoto): array|stdClass
+    {
+        $data_value = new stdClass();
+        $data_value->aplica_upd = false;
+        $data_value->registro_upd = array();
+        foreach($registro_local as $campo=>$value_local){
+
+            $valores = $this->data_continue($campo, $registro_remoto, $value_local);
+            if(errores::$error){
+               return $this->error->error('Error al limpiar valor', $valores);
+            }
+
+            if($valores->continue){
+                continue;
+            }
+
+            $data_value = $this->data_service_upd(campo: $campo,registro:  $registro_remoto,
+                registro_upd:  $data_value->registro_upd, valores: $valores);
+            if(errores::$error){
+                return $this->error->error('Error al limpiar valor', $valores);
+            }
+        }
+        return $data_value;
+    }
+
+    public function datos_para_actualizacion_service(array $registro_remoto, string $tabla): array|stdClass
+    {
+        $registro_id = $registro_remoto['id'];
+
+        $registro_local = $this->registro_puro($registro_id, $tabla);
+        if(errores::$error){
+           return $this->error->error('Error al obtener registro', $registro_local);
+        }
+
+        $data_value = $this->data_upd_service_val(registro_local: $registro_local, registro_remoto:$registro_remoto);
+        if(errores::$error){
+            return $this->error->error('Error al limpiar valor', $data_value);
+        }
+        return $data_value;
+    }
+
+    public function servicio_actualiza_row(array $registro_remoto, string $tabla ): array|stdClass
+    {
+        $data_value = $this->datos_para_actualizacion_service(registro_remoto: $registro_remoto, tabla: $tabla);
+        if(errores::$error){
+            return $this->error->error('Error al limpiar valor', $data_value);
+        }
+
+        if($data_value->aplica_upd){
+            $upd = $this->modifica_bd($data_value->registro_upd, $tabla, $registro_remoto['id']);
+            if(errores::$error){
+                return $this->error->error('Error al modificar registro', $upd);
+            }
+        }
+        return $data_value;
+
+    }
+
+    public function servicio_actualiza_rows(array $registros_remotos, string $tabla): array
+    {
+        $datas = array();
+        foreach($registros_remotos as $registro_remoto){
+
+            $data_value = $this->servicio_actualiza_row(registro_remoto: $registro_remoto, tabla: $tabla);
+            if(errores::$error){
+                return $this->error->error('Error al limpiar valor', $data_value);
+            }
+            $datas[] = $data_value;
+
+
+        }
+        return $datas;
+    }
+
+    public function servicio_insersiones(array $keys_validar, array $registros_remotos, string $tabla): array
+    {
+        $data = array();
+        foreach($registros_remotos as $registro_remoto){
+
+            $inserta = $this->inserta_row_service($registro_remoto['id'], $keys_validar, $registro_remoto, $tabla);
+            if(errores::$error){
+                return  $this->error->error('Error al verificar si inserta', $inserta);
+
+            }
+            $data[] = $inserta;
+        }
+        return $data;
     }
 
     /**
