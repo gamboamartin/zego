@@ -98,10 +98,10 @@ class modelos{
 
             $campo = addslashes($campo);
 
-
             if(!in_array($campo,$campos_no_insertables)) {
                 if(is_null($value)){
-                    $value = '';
+                    continue;
+                    //$value = '';
                 }
                 $value = addslashes($value);
                 $campos .= $campos === "" ? "$campo" : ",$campo";
