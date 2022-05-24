@@ -183,16 +183,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/calculo.git",
-                "reference": "2c04cb6d9a2dcec641fa26a38bf885350f1ec886"
+                "reference": "35b51008cf6fbf619a5ee1cd60e51116eb23af21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/calculo/zipball/2c04cb6d9a2dcec641fa26a38bf885350f1ec886",
-                "reference": "2c04cb6d9a2dcec641fa26a38bf885350f1ec886",
+                "url": "https://api.github.com/repos/gamboamartin/calculo/zipball/35b51008cf6fbf619a5ee1cd60e51116eb23af21",
+                "reference": "35b51008cf6fbf619a5ee1cd60e51116eb23af21",
                 "shasum": ""
             },
             "require": {
-                "gamboa.martin/errores": "dev-main",
+                "gamboa.martin/errores": "^1.0.0",
                 "gamboa.martin/test": "dev-main",
                 "gamboa.martin/validacion": "dev-main",
                 "php": " >=8.1"
@@ -200,7 +200,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-14T16:07:21+00:00",
+            "time": "2022-05-24T14:29:31+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
@@ -230,8 +230,8 @@
         },
         {
             "name": "gamboa.martin/errores",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
+            "version": "v1.0.0",
+            "version_normalized": "1.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/errores.git",
@@ -251,7 +251,6 @@
                 "phpunit/phpunit": "^9.5"
             },
             "time": "2022-05-13T20:39:49+00:00",
-            "default-branch": true,
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -273,7 +272,7 @@
             "description": "Clase para controlar errores",
             "support": {
                 "issues": "https://github.com/gamboamartin/errores/issues",
-                "source": "https://github.com/gamboamartin/errores/tree/main"
+                "source": "https://github.com/gamboamartin/errores/tree/v1.0.0"
             },
             "install-path": "../gamboa.martin/errores"
         },
@@ -284,23 +283,23 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/plugins.git",
-                "reference": "1dd77bffebbafcf695d1e58709510554312d24c0"
+                "reference": "564a66e890daca464bd5b058f8424807931c4d8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/plugins/zipball/1dd77bffebbafcf695d1e58709510554312d24c0",
-                "reference": "1dd77bffebbafcf695d1e58709510554312d24c0",
+                "url": "https://api.github.com/repos/gamboamartin/plugins/zipball/564a66e890daca464bd5b058f8424807931c4d8e",
+                "reference": "564a66e890daca464bd5b058f8424807931c4d8e",
                 "shasum": ""
             },
             "require": {
-                "gamboa.martin/errores": "main-dev",
+                "gamboa.martin/errores": "^1.0.0",
                 "gamboa.martin/test": "main-dev",
                 "gamboa.martin/validacion": "main-dev",
                 "php": " >=8.1",
                 "phpoffice/phpspreadsheet": "^1.16",
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-18T22:24:59+00:00",
+            "time": "2022-05-24T14:30:33+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "source",
@@ -335,18 +334,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/services.git",
-                "reference": "4d233c195524294ab5cfda5de00e954c03ab6d8a"
+                "reference": "d767a4d7acc1997fc7b57193db81df2a5f90bf70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/services/zipball/4d233c195524294ab5cfda5de00e954c03ab6d8a",
-                "reference": "4d233c195524294ab5cfda5de00e954c03ab6d8a",
+                "url": "https://api.github.com/repos/gamboamartin/services/zipball/d767a4d7acc1997fc7b57193db81df2a5f90bf70",
+                "reference": "d767a4d7acc1997fc7b57193db81df2a5f90bf70",
                 "shasum": ""
             },
             "require": {
                 "ext-mysqli": "*",
                 "gamboa.martin/calculo": "dev-main",
-                "gamboa.martin/errores": "dev-main",
+                "gamboa.martin/errores": "^1.0.0",
                 "gamboa.martin/test": "dev-main",
                 "gamboa.martin/validacion": "dev-main",
                 "php": " >=8.1"
@@ -354,7 +353,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-17T14:22:12+00:00",
+            "time": "2022-05-24T14:31:38+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
@@ -441,23 +440,23 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/validacion.git",
-                "reference": "3cd8d9e891111360a0fa0a9a3a48669bf9927f67"
+                "reference": "66055233f4007c23980152dcbaa59ad628c20313"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/validacion/zipball/3cd8d9e891111360a0fa0a9a3a48669bf9927f67",
-                "reference": "3cd8d9e891111360a0fa0a9a3a48669bf9927f67",
+                "url": "https://api.github.com/repos/gamboamartin/validacion/zipball/66055233f4007c23980152dcbaa59ad628c20313",
+                "reference": "66055233f4007c23980152dcbaa59ad628c20313",
                 "shasum": ""
             },
             "require": {
-                "gamboa.martin/errores": "dev-main",
+                "gamboa.martin/errores": "^1.0.0",
                 "gamboa.martin/test": "dev-main",
                 "php": " >=8.1"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2022-05-18T21:26:28+00:00",
+            "time": "2022-05-24T14:28:44+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",

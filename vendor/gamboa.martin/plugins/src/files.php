@@ -376,16 +376,19 @@ class files{
      */
     public function guarda_archivo_fisico(string $contenido_file, string $ruta_file):string|array{
         if($ruta_file === ''){
-            return $this->error->error('Error $ruta_file esta vacia', $ruta_file);
+            return $this->error->error(mensaje: 'Error $ruta_file esta vacia',data:  $ruta_file);
         }
-        if($contenido_file === ''){
-            return $this->error->error('Error $contenido_file esta vacio', $contenido_file);
+        if($contenido_file === '') {
+            return $this->error->error(mensaje: 'Error $contenido_file esta vacio', data: $contenido_file);
         }
         $ruta_file = strtolower($ruta_file);
-        if(!file_put_contents($ruta_file, $contenido_file) || !file_exists($ruta_file)){
-            return $this->error->error('Error al guardar archivo', $ruta_file);
+        if(!file_put_contents($ruta_file, $contenido_file)){
+            return $this->error->error(mensaje:'Error al guardar archivo', data: $ruta_file);
         }
-        chmod($ruta_file, 0777);
+        if(!file_exists($ruta_file)){
+            return $this->error->error(mensaje:'Error no existe el doc', data: $ruta_file);
+        }
+
         return $ruta_file;
     }
 
@@ -491,6 +494,16 @@ class files{
         return $explode_name[0];
     }
 
+    public function nombre_doc(int $tipo_documento_id, string $extension): string
+    {
+        $nombre = $tipo_documento_id .'.';
+        for ($i = 0; $i < 6; $i++){
+            $nombre.= rand(10,99);
+        }
+
+        return $nombre.".".$extension;
+    }
+
     /**
      * Verifica si la parte enviada esta vacia o no
      * @version 1.0.0
@@ -570,7 +583,7 @@ class files{
      * @param string $archivo Ruta a verificar la extension
      * @return bool|array
      */
-    private function valida_extension(string $archivo): bool|array
+    public function valida_extension(string $archivo): bool|array
     {
         $archivo = trim($archivo);
         if($archivo === ''){

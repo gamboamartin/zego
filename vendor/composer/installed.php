@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '8acb30bb2fbec5674e45371d582096af2e1291ae',
+        'reference' => 'e79dc08b0f7078b6fe3b156a7e5461762cce6207',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '8acb30bb2fbec5674e45371d582096af2e1291ae',
+            'reference' => 'e79dc08b0f7078b6fe3b156a7e5461762cce6207',
             'dev_requirement' => false,
         ),
         'doctrine/instantiator' => array(
@@ -54,17 +54,15 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '2c04cb6d9a2dcec641fa26a38bf885350f1ec886',
+            'reference' => '35b51008cf6fbf619a5ee1cd60e51116eb23af21',
             'dev_requirement' => false,
         ),
         'gamboa.martin/errores' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
+            'pretty_version' => 'v1.0.0',
+            'version' => '1.0.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../gamboa.martin/errores',
-            'aliases' => array(
-                0 => '9999999-dev',
-            ),
+            'aliases' => array(),
             'reference' => '8fb20df54f92e9e26f14dd4804b4e110759e0abd',
             'dev_requirement' => false,
         ),
@@ -76,7 +74,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '1dd77bffebbafcf695d1e58709510554312d24c0',
+            'reference' => '564a66e890daca464bd5b058f8424807931c4d8e',
             'dev_requirement' => false,
         ),
         'gamboa.martin/services' => array(
@@ -87,7 +85,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '4d233c195524294ab5cfda5de00e954c03ab6d8a',
+            'reference' => 'd767a4d7acc1997fc7b57193db81df2a5f90bf70',
             'dev_requirement' => false,
         ),
         'gamboa.martin/test' => array(
@@ -109,7 +107,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '3cd8d9e891111360a0fa0a9a3a48669bf9927f67',
+            'reference' => '66055233f4007c23980152dcbaa59ad628c20313',
             'dev_requirement' => false,
         ),
         'maennchen/zipstream-php' => array(

@@ -796,16 +796,20 @@ class modelos{
 
     public function servicio_actualiza_row(array $registro_remoto, string $tabla ): array|stdClass
     {
+
         $data_value = $this->datos_para_actualizacion_service(registro_remoto: $registro_remoto, tabla: $tabla);
         if(errores::$error){
             return $this->error->error('Error al limpiar valor', $data_value);
         }
 
         if($data_value->aplica_upd){
+
             $upd = $this->modifica_bd($data_value->registro_upd, $tabla, $registro_remoto['id']);
             if(errores::$error){
                 return $this->error->error('Error al modificar registro', $upd);
             }
+            echo 'hola';
+
         }
         return $data_value;
 
@@ -820,6 +824,7 @@ class modelos{
             if(errores::$error){
                 return $this->error->error('Error al limpiar valor', $data_value);
             }
+
             $datas[] = $data_value;
 
 
