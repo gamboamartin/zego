@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'e79dc08b0f7078b6fe3b156a7e5461762cce6207',
+        'reference' => 'a8436a06403a82bddb96c9a41ed70e733ed6ab2c',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'e79dc08b0f7078b6fe3b156a7e5461762cce6207',
+            'reference' => 'a8436a06403a82bddb96c9a41ed70e733ed6ab2c',
             'dev_requirement' => false,
         ),
         'doctrine/instantiator' => array(
@@ -156,12 +156,12 @@
             'dev_requirement' => false,
         ),
         'nikic/php-parser' => array(
-            'pretty_version' => 'v4.13.2',
-            'version' => '4.13.2.0',
+            'pretty_version' => 'v4.14.0',
+            'version' => '4.14.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../nikic/php-parser',
             'aliases' => array(),
-            'reference' => '210577fe3cf7badcc5814d99455df46564f3c077',
+            'reference' => '34bea19b6e03d8153165d8f30bba4c3be86184c1',
             'dev_requirement' => false,
         ),
         'phar-io/manifest' => array(

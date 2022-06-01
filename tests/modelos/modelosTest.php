@@ -518,7 +518,7 @@ class modelosTest extends test {
         //$modelo = new liberator($modelo);
 
         $tabla = '';
-        $resultado = $modelo->registros_puros(1,$tabla, '');
+        $resultado = $modelo->registros_puros(1,'',$tabla, '');
         $this->assertIsArray( $resultado);
         $this->assertTrue(errores::$error);
         $this->assertStringContainsStringIgnoringCase('Error la tabla esta vacia',$resultado['mensaje']);
@@ -527,7 +527,7 @@ class modelosTest extends test {
 
 
         $tabla = 'a';
-        $resultado = $modelo->registros_puros(1,$tabla, '');
+        $resultado = $modelo->registros_puros(1,'',$tabla, '');
         $this->assertIsArray( $resultado);
         $this->assertTrue(errores::$error);
         $this->assertStringContainsStringIgnoringCase('Error al obtener registros',$resultado['mensaje']);
@@ -536,7 +536,7 @@ class modelosTest extends test {
 
 
         $tabla = 'insumo';
-        $resultado = $modelo->registros_puros(1,$tabla,'');
+        $resultado = $modelo->registros_puros(1,'',$tabla,'');
         $this->assertIsArray( $resultado);
         $this->assertNotTrue(errores::$error);
         errores::$error = false;

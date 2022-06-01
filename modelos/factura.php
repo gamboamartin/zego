@@ -215,7 +215,7 @@ class factura extends modelos{
         $cliente_id = $registro['cliente_id'];
         $cp = (new cliente($this->link))->cp($cliente_id);
         if(errores::$error){
-            return $this->error->error('Error al obtener cp del cliente', $cp);
+            return $this->error->error('Error al obtener cp del cliente del cliente_id: '.$cliente_id, $cp);
         }
         $registro['cliente_cp'] = $cp;
         return $registro;

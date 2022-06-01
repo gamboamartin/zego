@@ -10,7 +10,6 @@ class repositorio{
     private errores $error;
 
 
-
     public function __construct(){
         $this->error = new errores();
         if(isset($_SESSION['numero_empresa'])){

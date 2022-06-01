@@ -12,7 +12,7 @@ return array(
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src'),
     'models\\' => array($baseDir . '/modelos', $vendorDir . '/gamboa.martin/test/src/models'),
     'gamboamartin\\validacion\\' => array($vendorDir . '/gamboa.martin/validacion/src'),
-    'gamboamartin\\test\\' => array($vendorDir . '/gamboa.martin/calculo/tests', $vendorDir . '/gamboa.martin/plugins/tests', $vendorDir . '/gamboa.martin/services/tests', $vendorDir . '/gamboa.martin/test/src', $vendorDir . '/gamboa.martin/validacion/tests', $vendorDir . '/gamboa.martin/errores/tests'),
+    'gamboamartin\\test\\' => array($vendorDir . '/gamboa.martin/calculo/tests', $vendorDir . '/gamboa.martin/errores/tests', $vendorDir . '/gamboa.martin/plugins/tests', $vendorDir . '/gamboa.martin/services/tests', $vendorDir . '/gamboa.martin/test/src', $vendorDir . '/gamboa.martin/validacion/tests'),
     'gamboamartin\\services\\error_write\\' => array($vendorDir . '/gamboa.martin/services/src'),
     'gamboamartin\\services\\' => array($vendorDir . '/gamboa.martin/services/src'),
     'gamboamartin\\plugins\\' => array($vendorDir . '/gamboa.martin/plugins/src'),

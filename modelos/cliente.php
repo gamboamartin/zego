@@ -21,7 +21,7 @@ class cliente extends modelo_sobrecargado{
 
         $cliente = (new cliente($this->link))->registro(id:$cliente_id, tabla: 'cliente');
         if(errores::$error){
-            return $this->error->error('Error al obtener cliente', $cliente);
+            return $this->error->error('Error al obtener cliente con el id: '.$cliente_id, $cliente);
         }
         return $cliente;
 
@@ -37,7 +37,7 @@ class cliente extends modelo_sobrecargado{
 
         $cliente = (new cliente($this->link))->cliente(cliente_id: $cliente_id);
         if(errores::$error){
-            return $this->error->error('Error al obtener cliente', $cliente);
+            return $this->error->error('Error al obtener cliente con el id'.$cliente_id, $cliente);
         }
 
         return  $cliente['cliente_cp'];
