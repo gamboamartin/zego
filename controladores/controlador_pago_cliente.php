@@ -1,5 +1,19 @@
 <?php
 namespace controllers;
+
+use config\empresas;
+use facturas;
+use Fpdf\Fpdf;
+use models\cliente;
+use models\cuenta_bancaria;
+use models\cuenta_bancaria_empresa;
+use models\factura;
+use models\pago_cliente;
+use models\pago_cliente_factura;
+use models\regimen_fiscal;
+use Soapclient;
+use Soapfault;
+
 class controlador_pago_cliente extends controlador_base {
     public $hoy;
     public $cp;
@@ -27,8 +41,8 @@ class controlador_pago_cliente extends controlador_base {
     public $tipo_relacion;
 
     public function  alta(){
-        $empresa = new Empresas();
-        $pago_cliente = new Pago_Cliente($this->link);
+        $empresa = new empresas();
+        $pago_cliente = new pago_cliente($this->link);
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
         $this->cp = $datos_empresa['cp'];
         $this->serie = $datos_empresa['serie'];
@@ -49,11 +63,11 @@ class controlador_pago_cliente extends controlador_base {
 
         $this->options_cuenta_bancaria = $this->genera_option_cuenta('cuenta_bancaria',$this->cuenta_bancaria_id,'selected');
         $this->options_cuenta_bancaria_empresa = $this->genera_option_cuenta('cuenta_bancaria_empresa',$this->cuenta_bancaria_empresa_id,'selected');
-        $factura = new Factura($this->link);
+        $factura = new factura($this->link);
         $resultado = $factura->obten_facturas_con_saldo($this->cliente_id);
         $facturas_saldo = $resultado['registros'];
 
-        $pago_cliente_factura_modelo = new Pago_Cliente_Factura($this->link);
+        $pago_cliente_factura_modelo = new pago_cliente_factura($this->link);
 
 
 
@@ -100,7 +114,7 @@ class controlador_pago_cliente extends controlador_base {
         }
 
 
-        $factura = new Factura($this->link);
+        $factura = new factura($this->link);
         $resultado = $factura->obten_facturas_con_saldo($this->cliente_id);
 
 
@@ -114,17 +128,17 @@ class controlador_pago_cliente extends controlador_base {
         }
 
 
-        $cliente = new Cliente($this->link);
+        $cliente = new cliente($this->link);
         $resultado = $cliente->obten_por_id('cliente',$this->cliente_id);
         $this->registro = $resultado['registros'][0];
         $this->forma_pago_id = $this->registro['forma_pago_id'];
         $this->moneda_id = $this->registro['moneda_id'];
-        $cuenta_cliente = new Cuenta_Bancaria($this->link);
+        $cuenta_cliente = new cuenta_bancaria($this->link);
         $filtro = array('cliente.id'=>$this->cliente_id,'cuenta_bancaria.status');
         $resultado = $cuenta_cliente->filtro_and('cuenta_bancaria',$filtro);
         $cuentas = $resultado['registros'];
         $this->options_cuenta_bancaria = $this->genera_option($cuentas,'cuenta_bancaria',false);
-        $cuenta_empresa = new Cuenta_Bancaria_Empresa($this->link);
+        $cuenta_empresa = new cuenta_bancaria_empresa($this->link);
         $resultado = $cuenta_empresa->obten_registros_activos('cuenta_bancaria_empresa');
         $cuentas = $resultado['registros'];
         $this->options_cuenta_bancaria_empresa = $this->genera_option($cuentas,'cuenta_bancaria_empresa',false);
@@ -134,15 +148,15 @@ class controlador_pago_cliente extends controlador_base {
 
     public function aplica_pago(){
         $this->asigna_cookie();
-        $this->link->query('SET AUTOCOMMIT=0');
-        $this->link->query('START TRANSACTION');
+        $this->link->query('SET AUTOcOMMIT=0');
+        $this->link->query('START TRANSAcTION');
 
 
         $registro = $this->asigna_elemento_insercion();
 
 
 
-        $pago_cliente = new Pago_Cliente($this->link);
+        $pago_cliente = new pago_cliente($this->link);
         $resultado = $pago_cliente->alta_bd($registro,'pago_cliente');
 
 
@@ -150,7 +164,7 @@ class controlador_pago_cliente extends controlador_base {
 
 
         if($resultado['error']){
-            $this->link->query('ROLLBACK');
+            $this->link->query('ROLLBAcK');
             header('index.php?seccion=pago_cliente&accion=alta&mensaje=Error&tipo_mensaje=error&session_id='.SESSION_ID);
             exit;
         }
@@ -162,8 +176,8 @@ class controlador_pago_cliente extends controlador_base {
 
         $i = 0;
 
-        $pago_cliente_factura = new Pago_Cliente_Factura($this->link);
-        $factura = new Factura($this->link);
+        $pago_cliente_factura = new pago_cliente_factura($this->link);
+        $factura = new factura($this->link);
 
         $facturas_a_pagar = array();
         foreach ($montos_pagar as $monto){
@@ -187,17 +201,17 @@ class controlador_pago_cliente extends controlador_base {
 
 
                 if($resultado_insercion['error']){
-                    $this->link->query('ROLLBACK');
+                    $this->link->query('ROLLBAcK');
                     header('index.php?seccion=pago_cliente&accion=alta&mensaje=Error&tipo_mensaje=error&session_id='.SESSION_ID);
                     exit;
                 }
 
                 $saldo_factura = $factura_registro['factura_saldo']-$monto;
                 if($saldo_factura == 0){
-                    $status_factura = 'Timbrada/Pagada';
+                    $status_factura = 'Timbrada/pagada';
                 }
                 else{
-                    $status_factura = 'Timbrada/Pago Parcial';
+                    $status_factura = 'Timbrada/pago parcial';
                 }
 
 
@@ -208,7 +222,7 @@ class controlador_pago_cliente extends controlador_base {
                 $resultado_update_factura = $factura->modifica_bd($factura_update_saldo,'factura',$factura_id);
 
                 if($resultado_update_factura['error']){
-                    $this->link->query('ROLLBACK');
+                    $this->link->query('ROLLBAcK');
                     header('index.php?seccion=pago_cliente&accion=alta&mensaje=Error&tipo_mensaje=error&session_id='.SESSION_ID);
                     exit;
                 }
@@ -223,7 +237,7 @@ class controlador_pago_cliente extends controlador_base {
         $_SESSION['facturas_pagar'] = serialize($registro);
 
 
-        $this->link->query('COMMIT');
+        $this->link->query('cOMMIT');
 
 
         header('Location: index.php?seccion=pago_cliente&accion=vista_preliminar&pago_cliente_id='.$pago_cliente_id.'&session_id='.SESSION_ID);
@@ -342,7 +356,7 @@ class controlador_pago_cliente extends controlador_base {
         $registro['empresa_banco_descripcion'] = $cuenta_bancaria_empresa['banco_descripcion'];
 
 
-        $empresa = new Empresas();
+        $empresa = new empresas();
 
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
 
@@ -351,7 +365,7 @@ class controlador_pago_cliente extends controlador_base {
 
         $registro['regimen_fiscal_codigo'] = $datos_empresa['regimen_fiscal'];
 
-        $regimen_fiscal = new Regimen_Fiscal($this->link);
+        $regimen_fiscal = new regimen_fiscal($this->link);
         $filtro = array('regimen_fiscal.codigo'=>$registro['regimen_fiscal_codigo']);
 
         $resultado = $regimen_fiscal->filtro_and('regimen_fiscal',$filtro);
@@ -374,13 +388,13 @@ class controlador_pago_cliente extends controlador_base {
         $pago_cliente_id = $_GET['pago_cliente_id'];
 
 
-        $modelo_pago_cliente = new Pago_Cliente($this->link);
+        $modelo_pago_cliente = new pago_cliente($this->link);
         $resultado = $modelo_pago_cliente->obten_por_id('pago_cliente',$pago_cliente_id);
 
         $pago = $resultado['registros'][0];
 
         $numero_empresa = $_SESSION['numero_empresa'];
-        $empresas = new Empresas();
+        $empresas = new empresas();
         $datos_empresa = $empresas->empresas[$numero_empresa];
 
 
@@ -395,7 +409,7 @@ class controlador_pago_cliente extends controlador_base {
         /*Rfc del Emisor que emitió el comprobante*/
         $rfcEmisor = $datos_empresa['rfc'];
 
-        /*Folio fiscal(UUID) del comprobante a cancelar, deberá ser uno válido de los que hayamos timbrado previamente en pruebas*/
+        /*folio fiscal(UUID) del comprobante a cancelar, deberá ser uno válido de los que hayamos timbrado previamente en pruebas*/
 
         $folioUUID = $pago['pago_cliente_uuid'];
 
@@ -406,7 +420,7 @@ class controlador_pago_cliente extends controlador_base {
         $params['usuarioIntegrador'] = $usuarioIntegrador;
         /* Rfc emisor que emitió el comprobante*/
         $params['rfcEmisor'] = $rfcEmisor;
-        /*Folio fiscal del comprobante a cancelar*/
+        /*folio fiscal del comprobante a cancelar*/
         $params['folioUUID'] = $folioUUID;
 
 
@@ -416,23 +430,23 @@ class controlador_pago_cliente extends controlador_base {
             $params['usuarioIntegrador'] = $usuarioIntegrador;
             /* Rfc emisor que emitió el comprobante*/
             $params['rfcEmisor'] = $rfcEmisor;
-            /*Folio fiscal del comprobante a cancelar*/
+            /*folio fiscal del comprobante a cancelar*/
             $params['folioUUID'] = $folioUUID;
 
-            $client = new SoapClient($ws, $params);
-            $response = $client->__soapCall('CancelaCFDI', array('parameters' => $params));
-        } catch (SoapFault $fault) {
-            echo "SOAPFault: " . $fault->faultcode . "-" . $fault->faultstring . "\n";
+            $client = new Soapclient($ws, $params);
+            $response = $client->__soapcall('cancelacfDI', array('parameters' => $params));
+        } catch (Soapfault $fault) {
+            echo "SOApfault: " . $fault->faultcode . "-" . $fault->faultstring . "\n";
         }
         /*Obtenemos resultado del response*/
-        $tipoExcepcion = $response->CancelaCFDIResult->anyType[0];
-        $numeroExcepcion = $response->CancelaCFDIResult->anyType[1];
-        $descripcionResultado = $response->CancelaCFDIResult->anyType[2];
-        $xmlTimbrado = $response->CancelaCFDIResult->anyType[3];
-        $codigoQr = $response->CancelaCFDIResult->anyType[4];
-        $cadenaOriginal = $response->CancelaCFDIResult->anyType[5];
+        $tipoExcepcion = $response->cancelacfDIResult->anyType[0];
+        $numeroExcepcion = $response->cancelacfDIResult->anyType[1];
+        $descripcionResultado = $response->cancelacfDIResult->anyType[2];
+        $xmlTimbrado = $response->cancelacfDIResult->anyType[3];
+        $codigoQr = $response->cancelacfDIResult->anyType[4];
+        $cadenaOriginal = $response->cancelacfDIResult->anyType[5];
 
-        $datos_uuid = json_decode($response->CancelaCFDIResult->anyType[8]);
+        $datos_uuid = json_decode($response->cancelacfDIResult->anyType[8]);
 
         $uuid_cancelacion = $datos_uuid[0]->Value;
 
@@ -461,26 +475,26 @@ class controlador_pago_cliente extends controlador_base {
 
         $pago_cliente_id = $_GET['pago_cliente_id'];
 
-        $modelo_pago_cliente = new Pago_Cliente($this->link);
+        $modelo_pago_cliente = new pago_cliente($this->link);
         $resultado = $modelo_pago_cliente->obten_por_id('pago_cliente',$pago_cliente_id);
 
         $pago = $resultado['registros'][0];
 
         $folio = $pago['pago_cliente_folio'];
 
-        $name_file = 'P_'.$pago['pago_cliente_folio'];
+        $name_file = 'p_'.$pago['pago_cliente_folio'];
 
 
         $numero_empresa = $_SESSION['numero_empresa'];
-        $empresas = new Empresas();
+        $empresas = new empresas();
         $datos_empresa = $empresas->empresas[$numero_empresa];
 
         $ruta_base = $datos_empresa['nombre_base_datos'];
 
-        $ruta_xml = $ruta_base.'/xml_timbrado/P_'.$folio.'.xml';
+        $ruta_xml = $ruta_base.'/xml_timbrado/p_'.$folio.'.xml';
 
-        header("Content-disposition: attachment; filename=$name_file.xml");
-        header('Content-type: "text/xml"; charset="utf8"');
+        header("content-disposition: attachment; filename=$name_file.xml");
+        header('content-type: "text/xml"; charset="utf8"');
         readfile($ruta_xml);
         exit;
 
@@ -489,8 +503,8 @@ class controlador_pago_cliente extends controlador_base {
     public function elimina_facturas_relacionadas(){
 
 
-        $pago_cliente_factura_modelo = new Pago_Cliente_Factura($this->link);
-        $factura_modelo = new Factura($this->link);
+        $pago_cliente_factura_modelo = new pago_cliente_factura($this->link);
+        $factura_modelo = new factura($this->link);
 
 
         $r_pago_cliente_factura = $pago_cliente_factura_modelo->filtro_and('pago_cliente_factura',array('pago_cliente.id'=>$_GET['pago_cliente_id']));
@@ -522,7 +536,7 @@ class controlador_pago_cliente extends controlador_base {
 
         $this->link->autocommit(false);
         $this->elimina_facturas_relacionadas();
-        $pago_cliente_modelo = new Pago_Cliente($this->link);
+        $pago_cliente_modelo = new pago_cliente($this->link);
 
         $pago_cliente_modelo->elimina_bd('pago_cliente', $_GET['pago_cliente_id']);
         $this->link->commit();
@@ -567,96 +581,96 @@ class controlador_pago_cliente extends controlador_base {
 
     public function genera_xml(){
         $pago_cliente_id = $_GET['pago_cliente_id'];
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $repositorio = New Repositorio();
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
         $ruta_base = $datos_empresa['nombre_base_datos'];
 
 
-        $pago_cliente_modelo = new Pago_Cliente($this->link);
+        $pago_cliente_modelo = new pago_cliente($this->link);
         $resultado = $pago_cliente_modelo->obten_por_id('pago_cliente',$pago_cliente_id);
         $pago_cliente = $resultado['registros'][0];
 
-        $pago_cliente_factura_modelo = new Pago_Cliente_Factura($this->link);
+        $pago_cliente_factura_modelo = new pago_cliente_factura($this->link);
         $filtro = array('pago_cliente_id'=>$pago_cliente_id);
         $resultado = $pago_cliente_factura_modelo->filtro_and('pago_cliente_factura',$filtro);
         $pago_cliente_factura = $resultado['registros'];
 
         $LugarExpedicion = $pago_cliente['pago_cliente_cp'];
-        $Fecha = $pago_cliente['pago_cliente_fecha'].'T'.date('07:m:00');
-        $Folio = $pago_cliente['pago_cliente_folio'];
+        $fecha = $pago_cliente['pago_cliente_fecha'].'T'.date('07:m:00');
+        $folio = $pago_cliente['pago_cliente_folio'];
         $Serie = $pago_cliente['pago_cliente_serie'];
         $RfcEmisor = $pago_cliente['pago_cliente_empresa_rfc'];
         $NombreEmisor = $pago_cliente['pago_cliente_empresa_razon_social'];
-        $RegimenFiscal = $pago_cliente['pago_cliente_regimen_fiscal_codigo'];
+        $Regimenfiscal = $pago_cliente['pago_cliente_regimen_fiscal_codigo'];
         $RfcReceptor = $pago_cliente['pago_cliente_cliente_rfc'];
         $RfcReceptor = str_replace('&','&amp;',$RfcReceptor);
         $NombreReceptor = $pago_cliente['pago_cliente_cliente_razon_social'];
         $NombreReceptor = str_replace('&','&amp;',$NombreReceptor);
-        $FechaPago = $pago_cliente['pago_cliente_fecha_pago'].'T12:00:00';
-        $FormaDePagoP = $pago_cliente['pago_cliente_forma_pago_codigo'];
-        $MonedaP = $pago_cliente['pago_cliente_moneda_codigo'];
+        $fechapago = $pago_cliente['pago_cliente_fecha_pago'].'T12:00:00';
+        $formaDepagop = $pago_cliente['pago_cliente_forma_pago_codigo'];
+        $Monedap = $pago_cliente['pago_cliente_moneda_codigo'];
         $Monto = number_format(round($pago_cliente['pago_cliente_monto'],2),2,'.','');
         $NumOperacion = $pago_cliente['pago_cliente_numero_operacion'];
 
-        $RfcEmisorCtaOrd = $pago_cliente['pago_cliente_cliente_banco_rfc'];
+        $RfcEmisorctaOrd = $pago_cliente['pago_cliente_cliente_banco_rfc'];
 
-        $CtaOrdenante = $pago_cliente['pago_cliente_cuenta_bancaria_cuenta'];
-        $RfcEmisorCtaBen = $pago_cliente['pago_cliente_empresa_banco_rfc'];
-        $CtaBeneficiario = $pago_cliente['pago_cliente_cuenta_bancaria_empresa_cuenta'];
+        $ctaOrdenante = $pago_cliente['pago_cliente_cuenta_bancaria_cuenta'];
+        $RfcEmisorctaBen = $pago_cliente['pago_cliente_empresa_banco_rfc'];
+        $ctaBeneficiario = $pago_cliente['pago_cliente_cuenta_bancaria_empresa_cuenta'];
 
 
         $plantilla = './plantillas_cfdi/pago.xml';
         $xml  = file_get_contents($plantilla);
 
-        if($RfcEmisorCtaOrd != ''){
-            $xml = str_replace('|RfcEmisorCtaOrd|','RfcEmisorCtaOrd="'.$RfcEmisorCtaOrd.'"',$xml);
+        if($RfcEmisorctaOrd != ''){
+            $xml = str_replace('|RfcEmisorctaOrd|','RfcEmisorctaOrd="'.$RfcEmisorctaOrd.'"',$xml);
         }
         else{
-            $xml = str_replace('|RfcEmisorCtaOrd|','',$xml);
+            $xml = str_replace('|RfcEmisorctaOrd|','',$xml);
         }
 
 
-        if($CtaOrdenante != ''){
-            $xml = str_replace('|CtaOrdenante|','CtaOrdenante="'.$CtaOrdenante.'"',$xml);
+        if($ctaOrdenante != ''){
+            $xml = str_replace('|ctaOrdenante|','ctaOrdenante="'.$ctaOrdenante.'"',$xml);
         }
         else{
-            $xml = str_replace('|CtaOrdenante|','',$xml);
+            $xml = str_replace('|ctaOrdenante|','',$xml);
         }
 
-        if($RfcEmisorCtaBen != ''){
-            $xml = str_replace('|RfcEmisorCtaBen|','RfcEmisorCtaBen="'.$RfcEmisorCtaBen.'"',$xml);
+        if($RfcEmisorctaBen != ''){
+            $xml = str_replace('|RfcEmisorctaBen|','RfcEmisorctaBen="'.$RfcEmisorctaBen.'"',$xml);
         }
         else{
-            $xml = str_replace('|RfcEmisorCtaBen|','',$xml);
+            $xml = str_replace('|RfcEmisorctaBen|','',$xml);
         }
 
-        if($CtaBeneficiario != ''){
-            $xml = str_replace('|CtaBeneficiario|','CtaBeneficiario="'.$CtaBeneficiario.'"',$xml);
+        if($ctaBeneficiario != ''){
+            $xml = str_replace('|ctaBeneficiario|','ctaBeneficiario="'.$ctaBeneficiario.'"',$xml);
         }
         else{
-            $xml = str_replace('|CtaBeneficiario|','',$xml);
+            $xml = str_replace('|ctaBeneficiario|','',$xml);
         }
 
         $cfdis_relacionados = '';
         if((string)$pago_cliente['pago_cliente_uuid_relacionado']!==''){
-            $cfdis_relacionados = '<cfdi:CfdiRelacionados TipoRelacion="'.$pago_cliente['pago_cliente_tipo_relacion'].'">
-        <cfdi:CfdiRelacionado UUID="'.$pago_cliente['pago_cliente_uuid_relacionado'].'" />
-    </cfdi:CfdiRelacionados>';
+            $cfdis_relacionados = '<cfdi:cfdiRelacionados TipoRelacion="'.$pago_cliente['pago_cliente_tipo_relacion'].'">
+        <cfdi:cfdiRelacionado UUID="'.$pago_cliente['pago_cliente_uuid_relacionado'].'" />
+    </cfdi:cfdiRelacionados>';
         }
 
         $xml = str_replace('|LugarExpedicion|',$LugarExpedicion,$xml);
-        $xml = str_replace('|Fecha|',$Fecha,$xml);
-        $xml = str_replace('|Folio|','P_'.$Folio,$xml);
+        $xml = str_replace('|fecha|',$fecha,$xml);
+        $xml = str_replace('|folio|','p_'.$folio,$xml);
         $xml = str_replace('|Serie|',$Serie,$xml);
         $xml = str_replace('|RfcEmisor|',$RfcEmisor,$xml);
         $xml = str_replace('|NombreEmisor|',$NombreEmisor,$xml);
-        $xml = str_replace('|RegimenFiscal|',$RegimenFiscal,$xml);
+        $xml = str_replace('|Regimenfiscal|',$Regimenfiscal,$xml);
         $xml = str_replace('|RfcReceptor|',$RfcReceptor,$xml);
         $xml = str_replace('|NombreReceptor|',$NombreReceptor,$xml);
-        $xml = str_replace('|FechaPago|',$FechaPago,$xml);
-        $xml = str_replace('|FormaDePagoP|',$FormaDePagoP,$xml);
-        $xml = str_replace('|MonedaP|',$MonedaP,$xml);
+        $xml = str_replace('|fechapago|',$fechapago,$xml);
+        $xml = str_replace('|formaDepagop|',$formaDepagop,$xml);
+        $xml = str_replace('|Monedap|',$Monedap,$xml);
         $xml = str_replace('|Monto|',$Monto,$xml);
         $xml = str_replace('|NumOperacion|',$NumOperacion,$xml);
         $xml = str_replace('|cdfis_relacionados|',$cfdis_relacionados,$xml);
@@ -664,38 +678,38 @@ class controlador_pago_cliente extends controlador_base {
 
         $partida='';
         foreach($pago_cliente_factura as $pago){
-            $pago_base_xml = '<pago10:DoctoRelacionado IdDocumento="|IdDocumento|" Serie="|Serie|" Folio="|Folio|" MonedaDR="|MonedaDR|" MetodoDePagoDR="|MetodoDePagoDR|" NumParcialidad="|NumParcialidad|" ImpSaldoAnt="|ImpSaldoAnt|" ImpPagado="|ImpPagado|" ImpSaldoInsoluto="|ImpSaldoInsoluto|"></pago10:DoctoRelacionado>';
+            $pago_base_xml = '<pago10:DoctoRelacionado IdDocumento="|IdDocumento|" Serie="|Serie|" folio="|folio|" MonedaDR="|MonedaDR|" MetodoDepagoDR="|MetodoDepagoDR|" Numparcialidad="|Numparcialidad|" ImpSaldoAnt="|ImpSaldoAnt|" Imppagado="|Imppagado|" ImpSaldoInsoluto="|ImpSaldoInsoluto|"></pago10:DoctoRelacionado>';
             $IdDocumento = $pago['pago_cliente_factura_factura_uuid'];
             $Serie = $pago['factura_serie'];
-            $FolioFacturaPago = $pago['factura_folio'];
+            $foliofacturapago = $pago['factura_folio'];
             $MonedaDR = $pago['factura_moneda_codigo'];
-            $MetodoDePagoDR = $pago['factura_metodo_pago_codigo'];
-            $NumParcialidad = $pago['pago_cliente_factura_parcialidad'];
+            $MetodoDepagoDR = $pago['factura_metodo_pago_codigo'];
+            $Numparcialidad = $pago['pago_cliente_factura_parcialidad'];
             $ImpSaldoAnt = round($pago['pago_cliente_factura_importe_saldo_anterior'],2);
-            $ImpPagado = round($pago['pago_cliente_factura_monto'],2);
+            $Imppagado = round($pago['pago_cliente_factura_monto'],2);
             $ImpSaldoInsoluto = round($pago['pago_cliente_factura_importe_saldo_insoluto'],2);
 
 
             $pago_base_xml = str_replace('|IdDocumento|',$IdDocumento,$pago_base_xml);
             $pago_base_xml = str_replace('|Serie|',$Serie,$pago_base_xml);
-            $pago_base_xml = str_replace('|Folio|',$FolioFacturaPago,$pago_base_xml);
+            $pago_base_xml = str_replace('|folio|',$foliofacturapago,$pago_base_xml);
             $pago_base_xml = str_replace('|MonedaDR|',$MonedaDR,$pago_base_xml);
-            $pago_base_xml = str_replace('|MetodoDePagoDR|',$MetodoDePagoDR,$pago_base_xml);
-            $pago_base_xml = str_replace('|NumParcialidad|',$NumParcialidad,$pago_base_xml);
+            $pago_base_xml = str_replace('|MetodoDepagoDR|',$MetodoDepagoDR,$pago_base_xml);
+            $pago_base_xml = str_replace('|Numparcialidad|',$Numparcialidad,$pago_base_xml);
             $pago_base_xml = str_replace('|ImpSaldoAnt|',$ImpSaldoAnt,$pago_base_xml);
-            $pago_base_xml = str_replace('|ImpPagado|',$ImpPagado,$pago_base_xml);
+            $pago_base_xml = str_replace('|Imppagado|',$Imppagado,$pago_base_xml);
             $pago_base_xml = str_replace('|ImpSaldoInsoluto|',$ImpSaldoInsoluto,$pago_base_xml);
 
             $partida = $partida.$pago_base_xml;
         }
 
-        $xml = str_replace('|Pagos|',$partida,$xml);
+        $xml = str_replace('|pagos|',$partida,$xml);
 
 
-        $repositorio->guarda_archivo($xml,'P_'.$Folio, $repositorio->directorio_xml_sin_timbrar_completo, '.xml');
+        $repositorio->guarda_archivo($xml,'p_'.$folio, $repositorio->directorio_xml_sin_timbrar_completo, '.xml');
 
-        $factura = New Facturas($this->link);
-        $resultado = $factura->timbra_cfdi_pago($Folio);
+        $factura = New facturas($this->link);
+        $resultado = $factura->timbra_cfdi_pago($folio);
 
 
         $mensaje = 'Exito';
@@ -765,8 +779,8 @@ class controlador_pago_cliente extends controlador_base {
     }
 
     public function lista(){
-        $pago_cliente_modelo = new Pago_Cliente($this->link);
-        $resultado = $pago_cliente_modelo->obten_registros('pago_cliente',' ORDER BY pago_cliente.fecha DESC');
+        $pago_cliente_modelo = new pago_cliente($this->link);
+        $resultado = $pago_cliente_modelo->obten_registros('pago_cliente',' ORDER BY pago_cliente.fecha DESc');
         $this->pagos = $resultado['registros'];
 
     }
@@ -780,7 +794,7 @@ class controlador_pago_cliente extends controlador_base {
     }
 
     public function modifica_fecha_bd(){
-        $pago_cliente_modelo = new Pago_Cliente($this->link);
+        $pago_cliente_modelo = new pago_cliente($this->link);
         $tabla = $_GET['seccion'];
         $_POST['status'] = 1;
         $this->registro_id = $_GET['registro_id'];
@@ -796,7 +810,7 @@ class controlador_pago_cliente extends controlador_base {
 
     public function modifica_pago(){
         $_POST['status'] = 1;
-        $pago_cliente_modelo = new Pago_Cliente($this->link);
+        $pago_cliente_modelo = new pago_cliente($this->link);
         $pago_cliente_modelo->modifica_bd($_POST,'pago_cliente',$_GET['pago_cliente_id']);
         header('Location: index.php?seccion=pago_cliente&accion=vista_preliminar&session_id='.SESSION_ID.'&pago_cliente_id='.$_GET['pago_cliente_id']);
         exit;
@@ -809,7 +823,7 @@ class controlador_pago_cliente extends controlador_base {
         $_POST['status'] = 1;
 
 
-        $pago_cliente_factura_modelo = new Pago_Cliente_Factura($this->link);
+        $pago_cliente_factura_modelo = new pago_cliente_factura($this->link);
 
         $r = $pago_cliente_factura_modelo->modifica_bd($_POST,'pago_cliente_factura',$_GET['pago_cliente_factura_id']);
 
@@ -829,12 +843,12 @@ class controlador_pago_cliente extends controlador_base {
 
     public function set_font_info($pdf){
         $tamaño_texto_info = 8;
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
     }
 
     public function set_font_titulos($pdf){
         $tamaño_texto_titulos = 8;
-        $pdf->$pdf->SetFont('Arial','B',$tamaño_texto_titulos);
+        $pdf->$pdf->Setfont('Arial','B',$tamaño_texto_titulos);
     }
 
     public function ve_pdf(){
@@ -844,12 +858,12 @@ class controlador_pago_cliente extends controlador_base {
         $altura_celdas = 6;
 
 
-        $pago_cliente_modelo = new Pago_Cliente($this->link);
+        $pago_cliente_modelo = new pago_cliente($this->link);
         $resultado = $pago_cliente_modelo->obten_por_id('pago_cliente', $_GET['pago_cliente_id']);
         $pago_cliente = $resultado['registros'][0];
 
 
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $datos_empresa=$empresa->empresas[$_SESSION['numero_empresa']];
 
         $encabezado_1 = $datos_empresa['encabezado_1'];
@@ -859,37 +873,37 @@ class controlador_pago_cliente extends controlador_base {
         $leyenda_docto = $datos_empresa['leyenda_docto'];
         $nombre_empresa = $datos_empresa['razon_social'];
 
-        $pago_cliente_factura = new Pago_Cliente($this->link);
+        $pago_cliente_factura = new pago_cliente($this->link);
 
         $pago_cliente_id = $_GET['pago_cliente_id'];
         $filtro = array('pago_cliente_id'=>$pago_cliente_id);
         $resultado_pago_cliente_factura = $pago_cliente_factura->filtro_and('pago_cliente_factura', $filtro);
 
 
-        $RFC_emisor = utf8_decode($pago_cliente['pago_cliente_empresa_rfc']);
+        $Rfc_emisor = utf8_decode($pago_cliente['pago_cliente_empresa_rfc']);
         $folio_fiscal = utf8_decode($pago_cliente['pago_cliente_uuid']);
         $nombre_emisor = utf8_decode($pago_cliente['pago_cliente_empresa_razon_social']);
-        $No_serie_CSD = utf8_decode($pago_cliente['pago_cliente_sello_cfd']);
+        $No_serie_cSD = utf8_decode($pago_cliente['pago_cliente_sello_cfd']);
         $folio = utf8_decode($pago_cliente['pago_cliente_folio']);
         $serie = utf8_decode($pago_cliente['pago_cliente_serie']);
-        $RFC_receptor = utf8_decode($pago_cliente['pago_cliente_cliente_rfc']);
-        $codigo_postal = utf8_decode($pago_cliente['pago_cliente_cp']." ".$pago_cliente['pago_cliente_fecha']); //incluye fecha y hora
+        $Rfc_receptor = utf8_decode($pago_cliente['pago_cliente_cliente_rfc']);
+        $codigo_POSTal = utf8_decode($pago_cliente['pago_cliente_cp']." ".$pago_cliente['pago_cliente_fecha']); //incluye fecha y hora
         $nombre_receptor = utf8_decode($pago_cliente['pago_cliente_cliente_razon_social']);
         $efecto_de_comprobante = utf8_decode("");
-        $uso_CFDI = utf8_decode($pago_cliente['pago_cliente_uso_cfdi_descripcion']);
+        $uso_cfDI = utf8_decode($pago_cliente['pago_cliente_uso_cfdi_descripcion']);
         $regimen_fiscal = utf8_decode($pago_cliente['pago_cliente_regimen_fiscal_descripcion']);
 
 
         $forma_de_pago = utf8_decode($pago_cliente['pago_cliente_forma_pago_descripcion']);
         $fecha_de_pago = utf8_decode($pago_cliente['pago_cliente_fecha_pago']);
-        $RFC_emisor_cuenta_ordenante = utf8_decode($pago_cliente['pago_cliente_cliente_banco_rfc']);
+        $Rfc_emisor_cuenta_ordenante = utf8_decode($pago_cliente['pago_cliente_cliente_banco_rfc']);
         $moneda_de_pago = utf8_decode($pago_cliente['pago_cliente_moneda_codigo']." ".utf8_decode($pago_cliente['pago_cliente_moneda_descripcion']));
         $cuenta_ordenante = utf8_decode($pago_cliente['pago_cliente_cuenta_bancaria_cuenta']);
 
         $monto = number_format($pago_cliente['pago_cliente_monto'], 2);
         $numero_operacion = utf8_decode($pago_cliente['pago_cliente_numero_operacion']);
         $nombre_banco_ordenante = utf8_decode($pago_cliente['pago_cliente_cliente_banco_descripcion']);
-        $RFC_emisor_cuenta_beneficiario = utf8_decode($pago_cliente['pago_cliente_empresa_banco_rfc']);
+        $Rfc_emisor_cuenta_beneficiario = utf8_decode($pago_cliente['pago_cliente_empresa_banco_rfc']);
         $cuenta_beneficiario = utf8_decode($pago_cliente['pago_cliente_cuenta_bancaria_empresa_cuenta']);
         $tipo_cambio = $pago_cliente['pago_cliente_tipo_cambio'];
         $monto_pago = $pago_cliente['pago_cliente_monto'];
@@ -898,26 +912,26 @@ class controlador_pago_cliente extends controlador_base {
         $tipo_relacion = $pago_cliente['pago_cliente_tipo_relacion'];
 
         if((string)$tipo_relacion === '04'){
-            $tipo_relacion = 'Sustitución de los CFDI previos';
+            $tipo_relacion = 'Sustitución de los cfDI previos';
         }
 
 
 
-        //Comienza el PDF
-        $pdf = new FPDF();
-        $pdf->AliasNbPages();
-        $pdf->AddPage();
+        //comienza el pDf
+        $pdf = new fpDf();
+        $pdf->AliasNbpages();
+        $pdf->Addpage();
 
         //Encabezado
-        $pdf->SetFont('Courier','',$tamaño_texto_titulos);
-        $pdf->Cell(190,7,utf8_decode($nombre_empresa),0,1,'C');
-        $pdf->Cell(190,5,utf8_decode($encabezado_1),0,1,'C');
-        $pdf->Cell(190,5,utf8_decode($encabezado_2),0,1,'C');
+        $pdf->Setfont('courier','',$tamaño_texto_titulos);
+        $pdf->cell(190,7,utf8_decode($nombre_empresa),0,1,'c');
+        $pdf->cell(190,5,utf8_decode($encabezado_1),0,1,'c');
+        $pdf->cell(190,5,utf8_decode($encabezado_2),0,1,'c');
         $pdf->Ln();
-        $pdf->SetFont('Courier','',$tamaño_texto_info);
-        $pdf->MultiCell(90,5,utf8_decode($encabezado_3),'B','C');
+        $pdf->Setfont('courier','',$tamaño_texto_info);
+        $pdf->Multicell(90,5,utf8_decode($encabezado_3),'B','c');
         $pdf->SetXY(110,32);
-        $pdf->MultiCell(90,5,utf8_decode($encabezado_4),'B','C');
+        $pdf->Multicell(90,5,utf8_decode($encabezado_4),'B','c');
 
         $y_inicial = 47;
 
@@ -926,135 +940,135 @@ class controlador_pago_cliente extends controlador_base {
 
         $pdf->SetY($y_inicial);
 
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, "RFC Emisor:");
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, "Rfc Emisor:");
         $y = $pdf->GetY()-6;
         $x_texto_derecho = $w_etiqueta+10;
         $pdf->SetXY($x_texto_derecho,$y);
 
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, $RFC_emisor);
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, $Rfc_emisor);
 
 
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, "Nombre Emisor:");
-
-        $y = $pdf->GetY()-6;
-        $pdf->SetXY($x_texto_derecho,$y);
-
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, $nombre_emisor);
-
-
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, "Folio Fiscal:");
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, "Nombre Emisor:");
 
         $y = $pdf->GetY()-6;
         $pdf->SetXY($x_texto_derecho,$y);
 
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, $folio_fiscal);
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, $nombre_emisor);
 
 
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, "Folio:");
-
-
-        $y = $pdf->GetY()-6;
-        $pdf->SetXY($x_texto_derecho,$y);
-
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, $folio);
-
-
-
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, "Serie:");
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, "folio fiscal:");
 
         $y = $pdf->GetY()-6;
         $pdf->SetXY($x_texto_derecho,$y);
 
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, $serie);
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, $folio_fiscal);
 
 
-
-
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, "RFC receptor:");
-
-        $y = $pdf->GetY()-6;
-        $pdf->SetXY($x_texto_derecho,$y);
-
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, $RFC_receptor);
-
-
-
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, "Nombre Receptor:");
-
-        $y = $pdf->GetY()-6;
-        $pdf->SetXY($x_texto_derecho,$y);
-
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto,$altura_celdas,$nombre_receptor);
-
-
-
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, utf8_decode("Código postal y hora de emisión:"));
-
-        $y = $pdf->GetY()-6;
-        $pdf->SetXY($x_texto_derecho,$y);
-
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, $codigo_postal);
-
-
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, "Uso CFDI:");
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, "folio:");
 
 
         $y = $pdf->GetY()-6;
         $pdf->SetXY($x_texto_derecho,$y);
 
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, $uso_CFDI);
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, $folio);
 
 
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, utf8_decode("Régimen fiscal:"));
 
-        $y = $pdf->GetY()-6;
-        $pdf->SetXY($x_texto_derecho,$y);
-
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, $regimen_fiscal);
-
-
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, 8, utf8_decode("Tipo de Cambio:"));
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, "Serie:");
 
         $y = $pdf->GetY()-6;
         $pdf->SetXY($x_texto_derecho,$y);
 
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, number_format($tipo_cambio,2,'.',','));
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, $serie);
+
+
+
+
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, "Rfc receptor:");
+
+        $y = $pdf->GetY()-6;
+        $pdf->SetXY($x_texto_derecho,$y);
+
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, $Rfc_receptor);
+
+
+
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, "Nombre Receptor:");
+
+        $y = $pdf->GetY()-6;
+        $pdf->SetXY($x_texto_derecho,$y);
+
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto,$altura_celdas,$nombre_receptor);
+
+
+
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, utf8_decode("código POSTal y hora de emisión:"));
+
+        $y = $pdf->GetY()-6;
+        $pdf->SetXY($x_texto_derecho,$y);
+
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, $codigo_POSTal);
+
+
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, "Uso cfDI:");
+
+
+        $y = $pdf->GetY()-6;
+        $pdf->SetXY($x_texto_derecho,$y);
+
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, $uso_cfDI);
+
+
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, utf8_decode("Régimen fiscal:"));
+
+        $y = $pdf->GetY()-6;
+        $pdf->SetXY($x_texto_derecho,$y);
+
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, $regimen_fiscal);
+
+
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, 8, utf8_decode("Tipo de cambio:"));
+
+        $y = $pdf->GetY()-6;
+        $pdf->SetXY($x_texto_derecho,$y);
+
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, number_format($tipo_cambio,2,'.',','));
 
         if(trim($uuid_relacionado) !=='') {
-            $pdf->SetFont('Arial', '', $tamaño_texto_info);
-            $pdf->MultiCell(200, $altura_celdas, 'Tipo Relacion 04 '.utf8_decode($tipo_relacion).' UUID Relacionado ' .$uuid_relacionado);
+            $pdf->Setfont('Arial', '', $tamaño_texto_info);
+            $pdf->Multicell(200, $altura_celdas, 'Tipo Relacion 04 '.utf8_decode($tipo_relacion).' UUID Relacionado ' .$uuid_relacionado);
         }
 
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, utf8_decode("Monto de Pago:"));
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, utf8_decode("Monto de pago:"));
 
         $y = $pdf->GetY()-6;
         $pdf->SetXY($x_texto_derecho,$y);
 
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, '$'.number_format($monto_pago,2,'.',','));
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, '$'.number_format($monto_pago,2,'.',','));
 
 
 
@@ -1064,24 +1078,24 @@ class controlador_pago_cliente extends controlador_base {
 
         $pdf->SetXY($x_etiqueta_izq,$y_inicial);
 
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, "No. de serie del CSD:");
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, "No. de serie del cSD:");
 
         $pdf->SetXY($x_texto_izq,$y_inicial);
 
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, $No_serie_CSD);
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, $No_serie_cSD);
 
         $y = $pdf->GetY();
         $pdf->SetXY($x_etiqueta_izq,$y);
 
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->MultiCell($w_etiqueta, $altura_celdas, "Efecto de comprobante:");
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->Multicell($w_etiqueta, $altura_celdas, "Efecto de comprobante:");
 
         $pdf->SetXY($x_texto_izq,$y);
 
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->MultiCell($w_texto, $altura_celdas, 'P Pago');
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->Multicell($w_texto, $altura_celdas, 'p pago');
 
 
 
@@ -1090,35 +1104,35 @@ class controlador_pago_cliente extends controlador_base {
 
 
 
-        //Conceptos
-        $pdf->SetFont('Arial', 'B', 8);
-        $pdf->MultiCell(20, 8, "Conceptos");
+        //conceptos
+        $pdf->Setfont('Arial', 'B', 8);
+        $pdf->Multicell(20, 8, "conceptos");
         $pdf->Ln(10);
 
-        $pdf->SetFillColor(212, 212, 212);
-        $pdf->SetFont('Arial', 'B', 5);
-        $pdf->MultiCell(18, 3, "Clave del producto y/o servicio", 1, 'C', 1);
+        $pdf->Setfillcolor(212, 212, 212);
+        $pdf->Setfont('Arial', 'B', 5);
+        $pdf->Multicell(18, 3, "clave del producto y/o servicio", 1, 'c', 1);
 
         $y = $pdf->GetY() - 6;
         $x = $pdf->GetX() + 18;
 
         $pdf->SetXY($x, $y);
 
-        $pdf->Cell(23, 6, utf8_decode("No. Identificación"), 1, 0, 'C', 1);
-        $pdf->Cell(16, 6, "Cantidad", 1, 0, 'C', 1);
-        $pdf->MultiCell(14, 3, "Clave de unidad", 1, 'C', 1);
+        $pdf->cell(23, 6, utf8_decode("No. Identificación"), 1, 0, 'c', 1);
+        $pdf->cell(16, 6, "cantidad", 1, 0, 'c', 1);
+        $pdf->Multicell(14, 3, "clave de unidad", 1, 'c', 1);
 
         $y = $pdf->GetY() - 6;
         $x = $pdf->GetX() + 71;
 
         $pdf->SetXY($x, $y);
         
-        $pdf->Cell(19, 6, "Unidad", 1, 0, 'C', 1);
-        $pdf->Cell(21, 6, "Valor Unitario", 1, 0, 'C', 1);
-        $pdf->Cell(18, 6, "Importe", 1, 0, 'C', 1);
-        $pdf->Cell(18, 6, "Descuento", 1, 0, 'C', 1);
-        $pdf->Cell(21, 6, "No. de pedimento", 1, 0, 'C', 1);
-        $pdf->Cell(21, 6, "No. de cuenta predial", 1, 0, 'C', 1);
+        $pdf->cell(19, 6, "Unidad", 1, 0, 'c', 1);
+        $pdf->cell(21, 6, "Valor Unitario", 1, 0, 'c', 1);
+        $pdf->cell(18, 6, "Importe", 1, 0, 'c', 1);
+        $pdf->cell(18, 6, "Descuento", 1, 0, 'c', 1);
+        $pdf->cell(21, 6, "No. de pedimento", 1, 0, 'c', 1);
+        $pdf->cell(21, 6, "No. de cuenta predial", 1, 0, 'c', 1);
 
         $pdf->Ln();
 
@@ -1126,141 +1140,141 @@ class controlador_pago_cliente extends controlador_base {
         $numero_identificacion = "";
         $cantidad = 1;
         $clave_unidad = 1;
-        $unidad = "ACT";
-        $valor_unitario = "Pago";
+        $unidad = "AcT";
+        $valor_unitario = "pago";
         $importe = "";
         $descuento = "";
         $numero_pedimento = "";
         $numero_cuenta_predial = "";
 
-        $pdf->SetFont('Arial', '', 5);
-        $pdf->Cell(18, 3, $clave_producto_servicio, 1, 0, 'C');
-        $pdf->Cell(23, 3, $numero_identificacion, 1, 0, 'C');
-        $pdf->Cell(16, 3, $cantidad, 1, 0, 'C');
-        $pdf->Cell(14, 3, $clave_unidad, 1, 0, 'C');
-        $pdf->Cell(19, 3, $unidad, 1, 0, 'C');
-        $pdf->Cell(21, 3, $valor_unitario, 1, 0, 'C');
-        $pdf->Cell(18, 3, $importe, 1, 0, 'C');
-        $pdf->Cell(18, 3, $descuento, 1, 0, 'C');
-        $pdf->Cell(21, 3, $numero_pedimento, 1, 0, 'C');
-        $pdf->Cell(21, 3, $numero_cuenta_predial, 1, 0, 'C');
+        $pdf->Setfont('Arial', '', 5);
+        $pdf->cell(18, 3, $clave_producto_servicio, 1, 0, 'c');
+        $pdf->cell(23, 3, $numero_identificacion, 1, 0, 'c');
+        $pdf->cell(16, 3, $cantidad, 1, 0, 'c');
+        $pdf->cell(14, 3, $clave_unidad, 1, 0, 'c');
+        $pdf->cell(19, 3, $unidad, 1, 0, 'c');
+        $pdf->cell(21, 3, $valor_unitario, 1, 0, 'c');
+        $pdf->cell(18, 3, $importe, 1, 0, 'c');
+        $pdf->cell(18, 3, $descuento, 1, 0, 'c');
+        $pdf->cell(21, 3, $numero_pedimento, 1, 0, 'c');
+        $pdf->cell(21, 3, $numero_cuenta_predial, 1, 0, 'c');
 
         $pdf->Ln();
 
-        $pdf->Cell(18, 3, utf8_decode("Descripción"), 1, 0, 'C');
-        $pdf->Cell(72, 3, "", 1, 0, 'C');
+        $pdf->cell(18, 3, utf8_decode("Descripción"), 1, 0, 'c');
+        $pdf->cell(72, 3, "", 1, 0, 'c');
 
         $pdf->Ln(5);
 
-        $pdf->SetFont('Arial', 'B', 6);
-        $pdf->Cell(35, 6, "Moneda: ");
-        $pdf->SetFont('Arial', '', 6);
-        $pdf->MultiCell(56, 3, utf8_decode("Los códigos asignados para las transacciones en que intervenga ninguna moneda"));
+        $pdf->Setfont('Arial', 'B', 6);
+        $pdf->cell(35, 6, "Moneda: ");
+        $pdf->Setfont('Arial', '', 6);
+        $pdf->Multicell(56, 3, utf8_decode("Los códigos asignados para las transacciones en que intervenga ninguna moneda"));
 
         $x = $pdf->GetX();
         $y = $pdf->GetY();
         $pdf->SetXY($x+95, $y-6);
-        $pdf->SetFont('Arial', 'B', 6);  
-        $pdf->Cell(80, 3, "Subtotal: ");
-        $pdf->SetFont('Arial', '', 6);
-        $pdf->MultiCell(10, 3, "$ ".number_format(0, 2));
+        $pdf->Setfont('Arial', 'B', 6);  
+        $pdf->cell(80, 3, "Subtotal: ");
+        $pdf->Setfont('Arial', '', 6);
+        $pdf->Multicell(10, 3, "$ ".number_format(0, 2));
 
         $x = $pdf->GetX();
         $y = $pdf->GetY();
         $pdf->SetXY($x+95, $y);
-        $pdf->SetFont('Arial', 'B', 6);
-        $pdf->Cell(80, 3, "Total: ");
-        $pdf->SetFont('Arial', '', 6);
-        $pdf->MultiCell(80, 3, "$ ".number_format(0, 2));
+        $pdf->Setfont('Arial', 'B', 6);
+        $pdf->cell(80, 3, "Total: ");
+        $pdf->Setfont('Arial', '', 6);
+        $pdf->Multicell(80, 3, "$ ".number_format(0, 2));
 
         $pdf->Ln(10);
 
 
         //Información del pago
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->Cell(30, $altura_celdas, utf8_decode("Información del pago"));
+        $pdf->Setfont('Arial', 'B', 10);
+        $pdf->cell(30, $altura_celdas, utf8_decode("Información del pago"));
         $pdf->Ln($salto_de_linea);
 
-        //Primer Renglón I.P.
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->Cell(45, $altura_celdas, "Forma de pago:");
+        //primer Renglón I.p.
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->cell(45, $altura_celdas, "forma de pago:");
 
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->Cell(60, $altura_celdas, $forma_de_pago);
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->cell(60, $altura_celdas, $forma_de_pago);
 
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->Cell(30, $altura_celdas, "Fecha de pago:");
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->cell(30, $altura_celdas, "fecha de pago:");
 
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->Cell(30, $altura_celdas, $fecha_de_pago);
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->cell(30, $altura_celdas, $fecha_de_pago);
 
         $pdf->Ln($salto_de_linea);
 
-        //Segundo Renglón I.P.
+        //Segundo Renglón I.p.
 
-        if($RFC_emisor_cuenta_ordenante !='') {
+        if($Rfc_emisor_cuenta_ordenante !='') {
 
-            $pdf->SetFont('Arial', 'B', $tamaño_texto_titulos);
-            $pdf->Cell(45, $altura_celdas, "RFC emisor cuenta ordenante:");
+            $pdf->Setfont('Arial', 'B', $tamaño_texto_titulos);
+            $pdf->cell(45, $altura_celdas, "Rfc emisor cuenta ordenante:");
 
-            $pdf->SetFont('Arial', '', $tamaño_texto_info);
-            $pdf->Cell(60, $altura_celdas, $RFC_emisor_cuenta_ordenante);
+            $pdf->Setfont('Arial', '', $tamaño_texto_info);
+            $pdf->cell(60, $altura_celdas, $Rfc_emisor_cuenta_ordenante);
 
-            $pdf->SetFont('Arial', 'B', $tamaño_texto_titulos);
-            $pdf->Cell(30, $altura_celdas, "Moneda de pago:");
+            $pdf->Setfont('Arial', 'B', $tamaño_texto_titulos);
+            $pdf->cell(30, $altura_celdas, "Moneda de pago:");
 
-            $pdf->SetFont('Arial', '', $tamaño_texto_info);
-            $pdf->Cell(30, $altura_celdas, $moneda_de_pago);
+            $pdf->Setfont('Arial', '', $tamaño_texto_info);
+            $pdf->cell(30, $altura_celdas, $moneda_de_pago);
 
             $pdf->Ln($salto_de_linea);
         }
 
-        //Tercer Renglón I.P.
+        //Tercer Renglón I.p.
 
         if($cuenta_ordenante !='') {
-            $pdf->SetFont('Arial', 'B', $tamaño_texto_titulos);
-            $pdf->Cell(45, $altura_celdas, "Cuenta ordenante:");
+            $pdf->Setfont('Arial', 'B', $tamaño_texto_titulos);
+            $pdf->cell(45, $altura_celdas, "cuenta ordenante:");
 
-            $pdf->SetFont('Arial', '', $tamaño_texto_info);
-            $pdf->Cell(60, $altura_celdas, $cuenta_ordenante);
+            $pdf->Setfont('Arial', '', $tamaño_texto_info);
+            $pdf->cell(60, $altura_celdas, $cuenta_ordenante);
 
-            $pdf->SetFont('Arial', 'B', $tamaño_texto_titulos);
-            $pdf->Cell(30, $altura_celdas, "Monto:");
+            $pdf->Setfont('Arial', 'B', $tamaño_texto_titulos);
+            $pdf->cell(30, $altura_celdas, "Monto:");
 
-            $pdf->SetFont('Arial', '', $tamaño_texto_info);
-            $pdf->Cell(30, $altura_celdas, $monto);
+            $pdf->Setfont('Arial', '', $tamaño_texto_info);
+            $pdf->cell(30, $altura_celdas, $monto);
 
             $pdf->Ln($salto_de_linea);
         }
 
-        //Cuarto-Septimo renglon I.P.
-        $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-        $pdf->Cell(45, $altura_celdas, utf8_decode("Número operación:"));
-        $pdf->SetFont('Arial','',$tamaño_texto_info);
-        $pdf->Cell(60, $altura_celdas, $numero_operacion);
+        //cuarto-Septimo renglon I.p.
+        $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+        $pdf->cell(45, $altura_celdas, utf8_decode("Número operación:"));
+        $pdf->Setfont('Arial','',$tamaño_texto_info);
+        $pdf->cell(60, $altura_celdas, $numero_operacion);
         $pdf->Ln();
 
         if($nombre_banco_ordenante !='') {
 
-            $pdf->SetFont('Arial', 'B', $tamaño_texto_titulos);
-            $pdf->Cell(45, $altura_celdas, "Nombre banco ordenante:");
-            $pdf->SetFont('Arial', '', $tamaño_texto_info);
-            $pdf->Cell(60, $altura_celdas, $nombre_banco_ordenante);
+            $pdf->Setfont('Arial', 'B', $tamaño_texto_titulos);
+            $pdf->cell(45, $altura_celdas, "Nombre banco ordenante:");
+            $pdf->Setfont('Arial', '', $tamaño_texto_info);
+            $pdf->cell(60, $altura_celdas, $nombre_banco_ordenante);
             $pdf->Ln();
         }
 
-        if($RFC_emisor_cuenta_beneficiario !='') {
-            $pdf->SetFont('Arial', 'B', $tamaño_texto_titulos);
-            $pdf->Cell(45, $altura_celdas, "RFC emisor cuenta beneficiario:");
-            $pdf->SetFont('Arial', '', $tamaño_texto_info);
-            $pdf->Cell(60, $altura_celdas, $RFC_emisor_cuenta_beneficiario);
+        if($Rfc_emisor_cuenta_beneficiario !='') {
+            $pdf->Setfont('Arial', 'B', $tamaño_texto_titulos);
+            $pdf->cell(45, $altura_celdas, "Rfc emisor cuenta beneficiario:");
+            $pdf->Setfont('Arial', '', $tamaño_texto_info);
+            $pdf->cell(60, $altura_celdas, $Rfc_emisor_cuenta_beneficiario);
             $pdf->Ln();
         }
         if($cuenta_beneficiario !='') {
-            $pdf->SetFont('Arial', 'B', $tamaño_texto_titulos);
-            $pdf->Cell(45, $altura_celdas, "Cuenta beneficiario:");
-            $pdf->SetFont('Arial', '', $tamaño_texto_info);
-            $pdf->Cell(60, $altura_celdas, $cuenta_beneficiario);
+            $pdf->Setfont('Arial', 'B', $tamaño_texto_titulos);
+            $pdf->cell(45, $altura_celdas, "cuenta beneficiario:");
+            $pdf->Setfont('Arial', '', $tamaño_texto_info);
+            $pdf->cell(60, $altura_celdas, $cuenta_beneficiario);
             $pdf->Ln(10);
         }
 
@@ -1271,8 +1285,8 @@ class controlador_pago_cliente extends controlador_base {
 
             //print_r($documento);
             //Documento relacionado
-            $pdf->SetFont('Arial', 'B', 8);
-            $pdf->Cell(30, $altura_celdas, "Documento relacionado");
+            $pdf->Setfont('Arial', 'B', 8);
+            $pdf->cell(30, $altura_celdas, "Documento relacionado");
             $pdf->Ln($salto_de_linea);
             $id_documento = utf8_decode($documento['pago_cliente_factura_factura_uuid']);
             $moneda_documento_relacionado = utf8_decode($documento['factura_moneda_descripcion']);
@@ -1284,77 +1298,77 @@ class controlador_pago_cliente extends controlador_base {
             $importe_pagado = number_format($documento['pago_cliente_factura_monto'], 2);
             $importe_saldo_insoluto = number_format($documento['pago_cliente_factura_importe_saldo_insoluto'], 2);
 
-            //Primer renglon D.R.
-            $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-            $pdf->Cell(30, $altura_celdas, "Id Documento:");
-            $pdf->SetFont('Arial','',$tamaño_texto_info);
-            $pdf->Cell(52, $altura_celdas, $id_documento);
-            $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-            $pdf->Cell(60, $altura_celdas, "Moneda del documento relacionado:");
-            $pdf->SetFont('Arial','',$tamaño_texto_info);
-            $pdf->Cell(38, $altura_celdas, $moneda_documento_relacionado);
+            //primer renglon D.R.
+            $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+            $pdf->cell(30, $altura_celdas, "Id Documento:");
+            $pdf->Setfont('Arial','',$tamaño_texto_info);
+            $pdf->cell(52, $altura_celdas, $id_documento);
+            $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+            $pdf->cell(60, $altura_celdas, "Moneda del documento relacionado:");
+            $pdf->Setfont('Arial','',$tamaño_texto_info);
+            $pdf->cell(38, $altura_celdas, $moneda_documento_relacionado);
             $pdf->Ln($salto_de_linea);
 
             //Segundo renglon D.R.
-            $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-            $pdf->Cell(30, $altura_celdas, "Folio:");
-            $pdf->SetFont('Arial','',$tamaño_texto_info);
-            $pdf->Cell(52, $altura_celdas, $folio_documento);
-            $pdf->SetFont('Arial','B',$tamaño_texto_titulos);;
-            $pdf->Cell(60, $altura_celdas, utf8_decode("Método de pago del documento relacionado:"));
-            $pdf->SetFont('Arial','',$tamaño_texto_info);
-            $pdf->Cell(38, $altura_celdas, $metodo_pago_documento);
+            $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+            $pdf->cell(30, $altura_celdas, "folio:");
+            $pdf->Setfont('Arial','',$tamaño_texto_info);
+            $pdf->cell(52, $altura_celdas, $folio_documento);
+            $pdf->Setfont('Arial','B',$tamaño_texto_titulos);;
+            $pdf->cell(60, $altura_celdas, utf8_decode("Método de pago del documento relacionado:"));
+            $pdf->Setfont('Arial','',$tamaño_texto_info);
+            $pdf->cell(38, $altura_celdas, $metodo_pago_documento);
             $pdf->Ln($salto_de_linea);
 
             //Tercer renglon D.R.
-            $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-            $pdf->Cell(30, $altura_celdas, "Serie:");
-            $pdf->SetFont('Arial','',$tamaño_texto_info);
-            $pdf->Cell(52, $altura_celdas, $serie_documento);
-            $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-            $pdf->Cell(60, $altura_celdas, "Importe de saldo anterior:");
-            $pdf->SetFont('Arial','',$tamaño_texto_info);
-            $pdf->Cell(38, $altura_celdas, $importe_saldo_anterior);
+            $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+            $pdf->cell(30, $altura_celdas, "Serie:");
+            $pdf->Setfont('Arial','',$tamaño_texto_info);
+            $pdf->cell(52, $altura_celdas, $serie_documento);
+            $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+            $pdf->cell(60, $altura_celdas, "Importe de saldo anterior:");
+            $pdf->Setfont('Arial','',$tamaño_texto_info);
+            $pdf->cell(38, $altura_celdas, $importe_saldo_anterior);
             $pdf->Ln($salto_de_linea);
 
-            //Cuarto renglon D.R.
-            $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-            $pdf->Cell(30, $altura_celdas, utf8_decode("Número de parcialidad:"));
-            $pdf->SetFont('Arial','',$tamaño_texto_info);
-            $pdf->Cell(52, $altura_celdas, $numero_parcialidad);
-            $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-            $pdf->Cell(60, $altura_celdas, "Importe pagado:");
-            $pdf->SetFont('Arial','',$tamaño_texto_info);
-            $pdf->Cell(38, $altura_celdas, $importe_pagado);
+            //cuarto renglon D.R.
+            $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+            $pdf->cell(30, $altura_celdas, utf8_decode("Número de parcialidad:"));
+            $pdf->Setfont('Arial','',$tamaño_texto_info);
+            $pdf->cell(52, $altura_celdas, $numero_parcialidad);
+            $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+            $pdf->cell(60, $altura_celdas, "Importe pagado:");
+            $pdf->Setfont('Arial','',$tamaño_texto_info);
+            $pdf->cell(38, $altura_celdas, $importe_pagado);
             $pdf->Ln($salto_de_linea);
 
             //Quinto renglon D.R.
-            $pdf->Cell(82, $altura_celdas, "");
-            $pdf->SetFont('Arial','B',$tamaño_texto_titulos);
-            $pdf->Cell(60, $altura_celdas, "Importe de saldo insoluto:");
-            $pdf->SetFont('Arial','',$tamaño_texto_info);
-            $pdf->Cell(38, $altura_celdas, $importe_saldo_insoluto);
+            $pdf->cell(82, $altura_celdas, "");
+            $pdf->Setfont('Arial','B',$tamaño_texto_titulos);
+            $pdf->cell(60, $altura_celdas, "Importe de saldo insoluto:");
+            $pdf->Setfont('Arial','',$tamaño_texto_info);
+            $pdf->cell(38, $altura_celdas, $importe_saldo_insoluto);
             $pdf->Ln(10);
         }
 
-        $pdf->SetFillColor(51, 51, 51);
-        $pdf->Cell(190, 1, " ", 0, 1, 'C', 1);
+        $pdf->Setfillcolor(51, 51, 51);
+        $pdf->cell(190, 1, " ", 0, 1, 'c', 1);
 
-        $pdf->Output('D','P_'. $folio.'.pdf');
+        $pdf->Output('D','p_'. $folio.'.pdf');
     }
 
     public function vista_preliminar(){
         $pago_cliente_id = $_GET['pago_cliente_id'];
         $this->pago_cliente_id = $pago_cliente_id;
 
-        $pago_cliente_modelo = new Pago_Cliente($this->link);
+        $pago_cliente_modelo = new pago_cliente($this->link);
 
         $resultado = $pago_cliente_modelo->obten_por_id('pago_cliente',$pago_cliente_id);
 
         $this->pago_cliente = $resultado['registros'][0];
 
         if($this->pago_cliente['pago_cliente_uuid'] == ''){
-            $empresas = new Empresas();
+            $empresas = new empresas();
             $empresa = $empresas->empresas[$_SESSION['numero_empresa']];
             $rfc_emisor = $empresa['rfc'];
 
@@ -1369,7 +1383,7 @@ class controlador_pago_cliente extends controlador_base {
 
 
 
-        $pago_cliente_factura_modelo = new Pago_Cliente_Factura($this->link);
+        $pago_cliente_factura_modelo = new pago_cliente_factura($this->link);
 
         $filtro = array('pago_cliente_id'=>$pago_cliente_id);
         $resultado = $pago_cliente_factura_modelo->filtro_and('pago_cliente_factura',$filtro);
