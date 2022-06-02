@@ -11,6 +11,7 @@ use models\factura;
 use models\pago_cliente;
 use models\pago_cliente_factura;
 use models\regimen_fiscal;
+use repositorio;
 use Soapclient;
 use Soapfault;
 
@@ -582,7 +583,7 @@ class controlador_pago_cliente extends controlador_base {
     public function genera_xml(){
         $pago_cliente_id = $_GET['pago_cliente_id'];
         $empresa = new empresas();
-        $repositorio = New Repositorio();
+        $repositorio = New repositorio();
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
         $ruta_base = $datos_empresa['nombre_base_datos'];
 
@@ -736,6 +737,7 @@ class controlador_pago_cliente extends controlador_base {
 
         $pago_cliente['uuid_relacionado'] = $_POST['uuid_relacionado'];
         $pago_cliente['tipo_relacion_id'] = '';
+        $pago_cliente['tipo_relacion'] = ' ';
         if((string)$_POST['tipo_relacion_id'] !=='') {
             $pago_cliente['tipo_relacion'] = '0'.$_POST['tipo_relacion_id'];
         }
