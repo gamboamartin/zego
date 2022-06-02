@@ -864,11 +864,17 @@ class controlador_pago_cliente extends controlador_base {
     }
 
     private function obten_datos($tabla,$id){
+        $nombre_modelo = "models\\".$tabla;
 
-        $modelo = new $tabla($this->link);
+        $modelo = new $nombre_modelo($this->link);
         $resultado = $modelo->obten_por_id($tabla,$id);
-        $registros = $resultado['registros'][0];
-        return $registros;
+        if(errores::$error){
+            $error = $this->error_->error(mensaje:'Error al obtener registro', data: $resultado);
+            print_r($error);
+            die('Error');
+        }
+
+        return $resultado['registros'][0];
 
     }
 
