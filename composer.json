@@ -22,6 +22,7 @@
       "phpunit/phpunit": "^9.5",
       "ext-mysqli": "*",
       "ext-soap": "*",
-      "ext-simplexml": "*"
+      "ext-simplexml": "*",
+      "ext-pdo": "*"
     }
 }

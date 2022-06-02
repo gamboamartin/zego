@@ -1284,6 +1284,8 @@ class controlador_cliente extends controlador_base{
 
             $total_impuestos_trasladados = '"'.number_format(round($registro['factura_total_impuestos_trasladados'],4),4,'.','').'"';
 
+
+
             foreach($registro as $campo=>$value){
                 if(is_null($value)){
                     $registro[$campo] = '';
@@ -1360,6 +1362,7 @@ class controlador_cliente extends controlador_base{
 
 
             if($impuesto_traslado_codigo!=''){
+
                 $total_impuestos_trasladados_imp = $total_impuestos_trasladados;
                 $total_impuestos_trasladados_imp = str_replace('"', '', $total_impuestos_trasladados_imp);
                 $total_impuestos_trasladados_imp = str_replace("'", '', $total_impuestos_trasladados_imp);
@@ -1367,10 +1370,13 @@ class controlador_cliente extends controlador_base{
                 $total_impuestos_trasladados_imp = round($total_impuestos_trasladados_imp,2);
                 $total_impuestos_trasladados_imp = number_format($total_impuestos_trasladados_imp,2);
                 $total_impuestos_trasladados_imp ='"'.$total_impuestos_trasladados_imp.'"';
+                $total_impuestos_trasladados_imp = str_replace(",", '', $total_impuestos_trasladados_imp);
+
 
                 $base_total_importe_traslado = round($sub_total, 2);
                 $base_total_importe_traslado = number_format($base_total_importe_traslado,2,'.','');
                 $base_total_importe_traslado = '"'.$base_total_importe_traslado.'"';
+
 
                 $xml = str_replace('|tag_base_importe_traslado|','Base=',$xml);
                 $xml = str_replace('|base_total_importe_traslado|',$base_total_importe_traslado,$xml);

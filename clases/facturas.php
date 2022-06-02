@@ -229,6 +229,7 @@ class facturas{
         $datos_impuestos = array();
         $namespaces = $xml->getDocNamespaces();
         foreach ($xml->xpath('//cfdi:Comprobante//cfdi:Impuestos') as $impuesto){
+
             $datos_impuestos['TotalImpuestosTrasladados'] = $impuesto['TotalImpuestosTrasladados'];
             $datos_impuestos['TotalImpuestosRetenidos'] = $impuesto['TotalImpuestosRetenidos'];
 
@@ -590,6 +591,8 @@ class facturas{
         $datos_empresa = $empresa->empresas[$numero_empresa];
         $ws = $datos_empresa['ruta_pac'];
         $xml_sin_timbrar = $this->directorio_xml_sin_timbrar_completo.'/'.$folio.'.xml';
+
+
         $xml_timbrado = $this->directorio_xml_timbrado_completo.'/'.$folio.'.xml';
         $qr = $this->directorio_xml_timbrado_completo.'/'.$folio.'.jpg';
         $sello = $this->directorio_xml_timbrado_completo.'/'.$folio.'.txt';
