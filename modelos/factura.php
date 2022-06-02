@@ -186,18 +186,6 @@ class factura extends modelos{
     }
 
 
-    public function upd_factura_ins(int $factura_id): array
-    {
-        $factura_remota['insertado'] = 1;
-        $r_factura_remota = $this->modifica_bd($factura_remota, 'factura', $factura_id);
-        if(errores::$error){
-            return $this->error->error('Error al actualizar', $r_factura_remota);
-        }
-        return $r_factura_remota;
-    }
-
-
-
 
     /**
      * ERROR UNIT
@@ -206,6 +194,7 @@ class factura extends modelos{
      */
     private function asigna_cp_receptor(array $registro): array
     {
+
         $keys = array('cliente_id');
         $valida = (new validacion())->valida_existencia_keys($keys, $registro);
         if(errores::$error){

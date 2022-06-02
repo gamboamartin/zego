@@ -10,7 +10,7 @@ use gamboamartin\services\error_write\error_write;
 use gamboamartin\services\services;
 use gamboamartin\calculo\calculo;
 use config\empresas;
-use models\cliente;
+use models\insumo;
 use services_base\src;
 
 $services = new services(path: __FILE__);
@@ -19,7 +19,7 @@ $calculo = new calculo();
 $empresas = new empresas();
 $empresas_data = $empresas->empresas;
 $info = '';
-$tabla = 'cliente';
+$tabla = 'insumo';
 foreach ($empresas_data as $empresa){
 
 
@@ -31,20 +31,18 @@ foreach ($empresas_data as $empresa){
 
     var_dump($conexiones);
 
-    $cliente_modelo_remota = new cliente(link: $conexiones->remote);
-    $cliente_modelo_local = new cliente(link: $conexiones->local);
+    $insumo_modelo_remota = new insumo(link: $conexiones->remote);
+    $insumo_modelo_local = new insumo(link: $conexiones->local);
 
-    $clientes = $cliente_modelo_remota->registros_sin_insertar(limit:1000,n_dias:  5, services: $services, tabla: $tabla);
+    $insumos = $insumo_modelo_remota->registros_sin_insertar(limit:1000,n_dias:  5, services: $services, tabla: $tabla);
     if(errores::$error){
-        $error = (new errores())->error('Error al obtener registros', $clientes);
+        $error = (new errores())->error('Error al obtener registros', $insumos);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
 
-
-
-    foreach($clientes as $cliente){
-        $result = (new src())->existe_local($cliente['id'], $cliente_modelo_local,
-            $cliente_modelo_remota, $tabla);
+    foreach($insumos as $insumo){
+        $result = (new src())->existe_local($insumo['id'], $insumo_modelo_local,
+            $insumo_modelo_remota, $tabla);
         if(errores::$error){
             $error = (new errores())->error('Error al actualizar', $result);
             (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);

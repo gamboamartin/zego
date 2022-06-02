@@ -25,7 +25,7 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         ),
         's' => 
         array (
-            'services\\' => 9,
+            'services_base\\' => 14,
         ),
         'p' => 
         array (
@@ -105,7 +105,7 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         array (
             0 => __DIR__ . '/../..' . '/tests',
         ),
-        'services\\' => 
+        'services_base\\' => 
         array (
             0 => __DIR__ . '/../..' . '/services',
         ),

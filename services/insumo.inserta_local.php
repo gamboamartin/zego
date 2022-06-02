@@ -5,13 +5,13 @@ const PATH_BASE = '/var/www/html/zego/';
 
 require PATH_BASE.'vendor/autoload.php';
 
+
 use gamboamartin\errores\errores;
 use gamboamartin\services\error_write\error_write;
 use gamboamartin\services\services;
 use gamboamartin\calculo\calculo;
 use config\empresas;
-use models\cliente;
-use services_base\src;
+use models\insumo;
 
 $services = new services(path: __FILE__);
 $calculo = new calculo();
@@ -19,38 +19,35 @@ $calculo = new calculo();
 $empresas = new empresas();
 $empresas_data = $empresas->empresas;
 $info = '';
-$tabla = 'cliente';
 foreach ($empresas_data as $empresa){
-
 
     $conexiones = $services->conexiones(empresa: $empresa);
     if(errores::$error){
         $error = (new errores())->error('Error al conectar', $conexiones);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
+
     }
 
     var_dump($conexiones);
 
-    $cliente_modelo_remota = new cliente(link: $conexiones->remote);
-    $cliente_modelo_local = new cliente(link: $conexiones->local);
+    $insumo_modelo_remota = new insumo(link: $conexiones->remote);
+    $insumo_modelo_local = new insumo(link: $conexiones->local);
 
-    $clientes = $cliente_modelo_remota->registros_sin_insertar(limit:1000,n_dias:  5, services: $services, tabla: $tabla);
+
+    $insumos = $insumo_modelo_remota->registros_sin_insertar(limit:100,n_dias:  5, services: $services, tabla: 'insumo');
     if(errores::$error){
-        $error = (new errores())->error('Error al obtener registros', $clientes);
+        $error = (new errores())->error('Error al obtener registros', $insumos);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
 
 
-
-    foreach($clientes as $cliente){
-        $result = (new src())->existe_local($cliente['id'], $cliente_modelo_local,
-            $cliente_modelo_remota, $tabla);
-        if(errores::$error){
-            $error = (new errores())->error('Error al actualizar', $result);
-            (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
-        }
-        var_dump($result);
+    $keys = array();
+    $inserta = $insumo_modelo_local->servicio_insersiones($keys, $insumos, 'insumo');
+    if(errores::$error){
+        $error = (new errores())->error('Error al verificar si inserta', $inserta);
+        (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
+    var_dump($inserta);
 
 
 }

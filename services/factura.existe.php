@@ -11,6 +11,8 @@ use gamboamartin\services\services;
 use gamboamartin\calculo\calculo;
 use config\empresas;
 use models\factura;
+use services_base\src;
+
 
 $services = new services(path: __FILE__);
 $calculo = new calculo();
@@ -18,6 +20,7 @@ $calculo = new calculo();
 $empresas = new empresas();
 $empresas_data = $empresas->empresas;
 $info = '';
+$tabla = 'factura';
 foreach ($empresas_data as $empresa){
 
 
@@ -34,7 +37,7 @@ foreach ($empresas_data as $empresa){
 
 
 
-    $facturas = $factura_modelo_remota->registros_sin_insertar(limit:100,n_dias:  5, services: $services, tabla: 'factura');
+    $facturas = $factura_modelo_remota->registros_sin_insertar(limit:100,n_dias:  5, services: $services, tabla: $tabla);
     if(errores::$error){
         $error = (new errores())->error('Error al obtener registros', $facturas);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
@@ -43,19 +46,14 @@ foreach ($empresas_data as $empresa){
 
 
     foreach($facturas as $factura){
-        $existe = $factura_modelo_local->existe_por_id($factura['id'],'factura');
+
+        $result = (new src())->existe_local($factura['id'], $factura_modelo_local,
+            $factura_modelo_remota, $tabla);
         if(errores::$error){
-            $error = (new errores())->error('Error al verificar si existe', $existe);
+            $error = (new errores())->error('Error al actualizar', $result);
             (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
         }
-        if($existe){
-            $r_factura_remota = $factura_modelo_remota->upd_factura_ins($factura['id']);
-            if(errores::$error){
-                $error = (new errores())->error('Error al actualizar', $r_factura_remota);
-                (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
-            }
-            var_dump($r_factura_remota);
-        }
+        var_dump($result);
 
     }
 

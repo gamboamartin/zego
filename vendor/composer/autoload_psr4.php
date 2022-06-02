@@ -8,7 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'views\\' => array($baseDir . '/views'),
     'tests\\' => array($baseDir . '/tests'),
-    'services\\' => array($baseDir . '/services'),
+    'services_base\\' => array($baseDir . '/services'),
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src'),
     'models\\' => array($baseDir . '/modelos', $vendorDir . '/gamboa.martin/test/src/models'),
     'gamboamartin\\validacion\\' => array($vendorDir . '/gamboa.martin/validacion/src'),

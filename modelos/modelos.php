@@ -357,6 +357,19 @@ class modelos{
         return $r_ins_local;
     }
 
+    public function upd_ins_existe_remoto(int $id, string $tabla): array
+    {
+        $remota['insertado'] = 1;
+        $remota['status'] = 1;
+        $r_remota = $this->modifica_bd($remota, $tabla, $id);
+        if(errores::$error){
+            return $this->error->error('Error al actualizar', $r_remota);
+        }
+        return $r_remota;
+    }
+
+
+
     public function inserta_row_service(int $id, array $keys, array $registro, string $tabla): array
     {
         $inserta = array();
@@ -365,12 +378,12 @@ class modelos{
             return $this->error->error('Error al verificar si existe', $existe);
         }
         if(!$existe){
-
             $inserta = $this->inserta_en_service_local($keys, $registro, $tabla);
             if(errores::$error){
                 return $this->error->error('Error al verificar si inserta', $inserta);
             }
-
+        }
+        else{
 
         }
         return $inserta;
@@ -808,7 +821,7 @@ class modelos{
             if(errores::$error){
                 return $this->error->error('Error al modificar registro', $upd);
             }
-            echo 'hola';
+
 
         }
         return $data_value;
@@ -1027,6 +1040,7 @@ class modelos{
 
             return $this->error->error(mensaje: 'Error al obtener registros', data: $result);
         }
+
         return $result;
     }
 

@@ -7,7 +7,7 @@
       "base\\": "base/",
       "views\\": "views/",
       "controllers\\": "controladores/",
-      "services\\": "services/"
+      "services_base\\": "services/"
 
     }
   },
