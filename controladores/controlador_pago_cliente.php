@@ -4,6 +4,7 @@ namespace controllers;
 use config\empresas;
 use facturas;
 use Fpdf\Fpdf;
+use gamboamartin\errores\errores;
 use models\cliente;
 use models\cuenta_bancaria;
 use models\cuenta_bancaria_empresa;
@@ -62,8 +63,25 @@ class controlador_pago_cliente extends controlador_base {
             exit;
         }
 
-        $this->options_cuenta_bancaria = $this->genera_option_cuenta('cuenta_bancaria',$this->cuenta_bancaria_id,'selected');
-        $this->options_cuenta_bancaria_empresa = $this->genera_option_cuenta('cuenta_bancaria_empresa',$this->cuenta_bancaria_empresa_id,'selected');
+        $this->options_cuenta_bancaria = $this->genera_option_cuenta(cuenta: (new cuenta_bancaria($this->link)),
+            modelo: 'cuenta_bancaria', id: $this->cuenta_bancaria_id);
+        if(errores::$error){
+            $error = $this->error_->error(mensaje:'Error al generar cuenta bancaria',
+                data: $this->options_cuenta_bancaria);
+            print_r($error);
+            die('Error');
+        }
+
+        $this->options_cuenta_bancaria_empresa = $this->genera_option_cuenta(
+            cuenta: (new cuenta_bancaria_empresa($this->link)), modelo: 'cuenta_bancaria_empresa',
+            id: $this->cuenta_bancaria_empresa_id);
+        if(errores::$error){
+            $error = $this->error_->error(mensaje:'Error  al generar cuenta bancaria empresa',
+                data: $this->options_cuenta_bancaria_empresa);
+            print_r($error);
+            die('Error');
+        }
+
         $factura = new factura($this->link);
         $resultado = $factura->obten_facturas_con_saldo($this->cliente_id);
         $facturas_saldo = $resultado['registros'];
@@ -572,11 +590,22 @@ class controlador_pago_cliente extends controlador_base {
         return $options_cuenta;
     }
 
-    private function genera_option_cuenta($modelo,$id,$selected){
-        $cuenta = new $modelo($this->link);
-        $resultado = $cuenta->obten_por_id($modelo, $id);
+    private function genera_option_cuenta(cuenta_bancaria|cuenta_bancaria_empresa $cuenta, $modelo, $id){
+        $resultado = $cuenta->obten_por_id(tabla: $modelo, id:  $id);
+        if(errores::$error){
+            $error = $this->error_->error(mensaje:'Error al obtener registro', data: $resultado);
+            print_r($error);
+            die('Error');
+        }
+
         $cuentas = $resultado['registros'];
-        $options_cuenta = $this->genera_option($cuentas,$modelo,$selected);
+        $options_cuenta = $this->genera_option(cuentas: $cuentas,tabla: $modelo, selected: 'selected');
+        if(errores::$error){
+            $error = $this->error_->error(mensaje:'Error al generar option', data: $options_cuenta);
+            print_r($error);
+            die('Error');
+        }
+
         return $options_cuenta;
     }
 
