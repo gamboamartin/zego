@@ -21,7 +21,7 @@ $empresas_data = $empresas->empresas;
 $info = '';
 foreach ($empresas_data as $empresa){
 
-    $services->finaliza_servicio();
+
     $conexiones = $services->conexiones(empresa: $empresa);
     if(errores::$error){
         $error = (new errores())->error('Error al conectar', $conexiones);
@@ -51,7 +51,6 @@ foreach ($empresas_data as $empresa){
     }
 
     var_dump($datas);
-
 
 
 }

@@ -34,8 +34,8 @@ foreach ($empresas_data as $empresa){
 
     $partida_factura_modelo_remota = new partida_factura(link: $conexiones->remote);
     $partida_factura_modelo_local = new partida_factura(link: $conexiones->local);
-
-    $partida_facturas = $partida_factura_modelo_remota->registros_sin_insertar(limit:10000,n_dias:  5, services: $services, tabla: $tabla);
+    $order = 'id DESC';
+    $partida_facturas = $partida_factura_modelo_remota->registros_sin_insertar(limit:100,n_dias:  5, order: $order, services: $services, tabla: $tabla);
     if(errores::$error){
         $error = (new errores())->error('Error al obtener registros', $partida_facturas);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);

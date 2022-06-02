@@ -310,14 +310,14 @@ class modelos{
         return $sql_fecha_alta;
     }
 
-    public function registros_sin_insertar(int $limit, int $n_dias, services $services, string $tabla){
+    public function registros_sin_insertar(int $limit, int $n_dias, string $order, services $services, string $tabla){
         $sql_fecha_alta = $this->sql_filtro_insertado(insertado: 0, n_dias:$n_dias,services:  $services, tabla: $tabla,
             tipo_val:  'fecha_hora_min_sec_esp');
         if(errores::$error){
             return $this->error->error('Error al obtener filtro', $sql_fecha_alta);
         }
 
-        $r_ = $this->registros_puros(limit:$limit, order: '', tabla: $tabla, where: $sql_fecha_alta);
+        $r_ = $this->registros_puros(limit:$limit, order: $order, tabla: $tabla, where: $sql_fecha_alta);
         if(errores::$error){
             return $this->error->error('Error al obtener registros', $r_);
         }

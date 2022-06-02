@@ -11,7 +11,6 @@ use gamboamartin\services\services;
 use gamboamartin\calculo\calculo;
 use config\empresas;
 use models\insumo;
-use services_base\src;
 
 $services = new services(path: __FILE__);
 $calculo = new calculo();
@@ -19,7 +18,6 @@ $calculo = new calculo();
 $empresas = new empresas();
 $empresas_data = $empresas->empresas;
 $info = '';
-$tabla = 'insumo';
 foreach ($empresas_data as $empresa){
 
 
@@ -27,6 +25,7 @@ foreach ($empresas_data as $empresa){
     if(errores::$error){
         $error = (new errores())->error('Error al conectar', $conexiones);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
+
     }
 
     var_dump($conexiones);
@@ -34,22 +33,22 @@ foreach ($empresas_data as $empresa){
     $insumo_modelo_remota = new insumo(link: $conexiones->remote);
     $insumo_modelo_local = new insumo(link: $conexiones->local);
 
-    $order = 'id DESC';
-    $insumos = $insumo_modelo_remota->registros_sin_insertar(limit:1000,n_dias:  5, order: $order, services: $services, tabla: $tabla);
+    $order = ' fecha_modifica DESC ';
+    $insumos = $insumo_modelo_remota->registros_modificados(limit:1000,n_dias:  5, order: $order,
+        services: $services, tabla: 'insumo');
     if(errores::$error){
         $error = (new errores())->error('Error al obtener registros', $insumos);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
 
-    foreach($insumos as $insumo){
-        $result = (new src())->existe_local($insumo['id'], $insumo_modelo_local,
-            $insumo_modelo_remota, $tabla);
-        if(errores::$error){
-            $error = (new errores())->error('Error al actualizar', $result);
-            (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
-        }
-        var_dump($result);
+    $datas = $insumo_modelo_local->servicio_actualiza_rows(registros_remotos: $insumos, tabla: 'insumo');
+    if(errores::$error){
+        $error = (new errores())->error('Error al actualizar valor', $datas);
+        (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
     }
+
+    var_dump($datas);
+
 
 
 }

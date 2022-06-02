@@ -33,8 +33,8 @@ foreach ($empresas_data as $empresa){
     $factura_modelo_remota = new factura(link: $conexiones->remote);
     $factura_modelo_local = new factura(link: $conexiones->local);
 
-
-    $facturas = $factura_modelo_remota->registros_sin_insertar(limit:100,n_dias:  5, services: $services, tabla: 'factura');
+    $order = 'id DESC';
+    $facturas = $factura_modelo_remota->registros_sin_insertar(limit:100,n_dias:  5, order: $order, services: $services, tabla: 'factura');
     if(errores::$error){
         $error = (new errores())->error('Error al obtener registros', $facturas);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);

@@ -33,8 +33,8 @@ foreach ($empresas_data as $empresa){
 
     $cliente_modelo_remota = new cliente(link: $conexiones->remote);
     $cliente_modelo_local = new cliente(link: $conexiones->local);
-
-    $clientes = $cliente_modelo_remota->registros_sin_insertar(limit:1000,n_dias:  5, services: $services, tabla: $tabla);
+    $order = 'id DESC';
+    $clientes = $cliente_modelo_remota->registros_sin_insertar(limit:1000,n_dias:  5, order: $order, services: $services, tabla: $tabla);
     if(errores::$error){
         $error = (new errores())->error('Error al obtener registros', $clientes);
         (new error_write())->out(error: $error,info:  $info,path_info:  $services->name_files->path_info);
