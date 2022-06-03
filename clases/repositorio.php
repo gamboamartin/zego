@@ -225,6 +225,7 @@ class repositorio{
         $archivo = fopen($ruta.'/'.$nombre.$extension, "w+");
         fwrite($archivo, $texto);
         fclose($archivo);
+
     }
 
 

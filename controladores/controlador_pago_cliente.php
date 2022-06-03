@@ -684,32 +684,32 @@ class controlador_pago_cliente extends controlador_base {
         $xml  = file_get_contents($plantilla);
 
         if($RfcEmisorctaOrd != ''){
-            $xml = str_replace('|RfcEmisorctaOrd|','RfcEmisorctaOrd="'.$RfcEmisorctaOrd.'"',$xml);
+            $xml = str_replace('|RfcEmisorCtaOrd|','RfcEmisorctaOrd="'.$RfcEmisorctaOrd.'"',$xml);
         }
         else{
-            $xml = str_replace('|RfcEmisorctaOrd|','',$xml);
+            $xml = str_replace('|RfcEmisorCtaOrd|','',$xml);
         }
 
 
         if($ctaOrdenante != ''){
-            $xml = str_replace('|ctaOrdenante|','ctaOrdenante="'.$ctaOrdenante.'"',$xml);
+            $xml = str_replace('|CtaOrdenante|','CtaOrdenante="'.$ctaOrdenante.'"',$xml);
         }
         else{
-            $xml = str_replace('|ctaOrdenante|','',$xml);
+            $xml = str_replace('|CtaOrdenante|','',$xml);
         }
 
         if($RfcEmisorctaBen != ''){
-            $xml = str_replace('|RfcEmisorctaBen|','RfcEmisorctaBen="'.$RfcEmisorctaBen.'"',$xml);
+            $xml = str_replace('|RfcEmisorCtaBen|','RfcEmisorCtaBen="'.$RfcEmisorctaBen.'"',$xml);
         }
         else{
-            $xml = str_replace('|RfcEmisorctaBen|','',$xml);
+            $xml = str_replace('|RfcEmisorCtaBen|','',$xml);
         }
 
         if($ctaBeneficiario != ''){
-            $xml = str_replace('|ctaBeneficiario|','ctaBeneficiario="'.$ctaBeneficiario.'"',$xml);
+            $xml = str_replace('|CtaBeneficiario|','CtaBeneficiario="'.$ctaBeneficiario.'"',$xml);
         }
         else{
-            $xml = str_replace('|ctaBeneficiario|','',$xml);
+            $xml = str_replace('|CtaBeneficiario|','',$xml);
         }
 
         $cfdis_relacionados = '';
@@ -720,17 +720,17 @@ class controlador_pago_cliente extends controlador_base {
         }
 
         $xml = str_replace('|LugarExpedicion|',$LugarExpedicion,$xml);
-        $xml = str_replace('|fecha|',$fecha,$xml);
-        $xml = str_replace('|folio|','p_'.$folio,$xml);
+        $xml = str_replace('|Fecha|',$fecha,$xml);
+        $xml = str_replace('|Folio|','p_'.$folio,$xml);
         $xml = str_replace('|Serie|',$Serie,$xml);
         $xml = str_replace('|RfcEmisor|',$RfcEmisor,$xml);
         $xml = str_replace('|NombreEmisor|',$NombreEmisor,$xml);
-        $xml = str_replace('|Regimenfiscal|',$Regimenfiscal,$xml);
+        $xml = str_replace('|RegimenFiscal|',$Regimenfiscal,$xml);
         $xml = str_replace('|RfcReceptor|',$RfcReceptor,$xml);
         $xml = str_replace('|NombreReceptor|',$NombreReceptor,$xml);
-        $xml = str_replace('|fechapago|',$fechapago,$xml);
-        $xml = str_replace('|formaDepagop|',$formaDepagop,$xml);
-        $xml = str_replace('|Monedap|',$Monedap,$xml);
+        $xml = str_replace('|FechaPago|',$fechapago,$xml);
+        $xml = str_replace('|FormaDePagoP|',$formaDepagop,$xml);
+        $xml = str_replace('|MonedaP|',$Monedap,$xml);
         $xml = str_replace('|Monto|',$Monto,$xml);
         $xml = str_replace('|NumOperacion|',$NumOperacion,$xml);
         $xml = str_replace('|cdfis_relacionados|',$cfdis_relacionados,$xml);
