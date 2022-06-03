@@ -166,27 +166,31 @@ class controlador_pago_cliente extends controlador_base {
     }
 
     public function aplica_pago(){
+
         $this->asigna_cookie();
         $this->link->query('SET AUTOcOMMIT=0');
         $this->link->query('START TRANSAcTION');
 
 
         $registro = $this->asigna_elemento_insercion();
-
+        if(errores::$error){
+            $this->link->query('ROLLBAcK');
+            $error = $this->error_->error(mensaje: 'Error al asignar elemento',data:  $registro);
+            print_r($error);
+            die('Error');
+        }
 
 
         $pago_cliente = new pago_cliente($this->link);
         $resultado = $pago_cliente->alta_bd($registro,'pago_cliente');
-
+        if(errores::$error){
+            $this->link->query('ROLLBAcK');
+            $error = $this->error_->error(mensaje: 'Error al insertar pago',data:  $resultado);
+            print_r($error);
+            die('Error');
+        }
 
         $pago_cliente_id = $resultado['registro_id'];
-
-
-        if($resultado['error']){
-            $this->link->query('ROLLBAcK');
-            header('index.php?seccion=pago_cliente&accion=alta&mensaje=Error&tipo_mensaje=error&session_id='.SESSION_ID);
-            exit;
-        }
 
 
         $facturas_id = $_POST['factura_id'];
@@ -202,7 +206,14 @@ class controlador_pago_cliente extends controlador_base {
         foreach ($montos_pagar as $monto){
             if($monto > 0){
                 $factura_id = $facturas_id[$i];
+
                 $resultado_factura = $factura->obten_por_id('factura',$factura_id);
+                if(errores::$error){
+                    $this->link->query('ROLLBAcK');
+                    $error = $this->error_->error(mensaje: 'Error al obtener factura',data:  $resultado_factura);
+                    print_r($error);
+                    die('Error');
+                }
                 $factura_registro = $resultado_factura['registros'][0];
 
 
@@ -314,7 +325,9 @@ class controlador_pago_cliente extends controlador_base {
 
     private function asigna_elemento_insercion(){
         $registro['cliente_id'] = $this->cliente_id;
+
         $cliente = $this->obten_datos('cliente',$this->cliente_id);
+
 
         $registro['cliente_rfc'] = $cliente['cliente_rfc'];
         $registro['cliente_razon_social'] = $cliente['cliente_razon_social'];
@@ -343,7 +356,14 @@ class controlador_pago_cliente extends controlador_base {
 
 
         $registro['cuenta_bancaria_id'] = $this->cuenta_bancaria_id;
-        $cuenta_bancaria = $this->obten_datos('cuenta_bancaria',$this->cuenta_bancaria_id);
+
+        if((int)$this->cuenta_bancaria_id!==-1) {
+
+            $cuenta_bancaria = $this->obten_datos('cuenta_bancaria', $this->cuenta_bancaria_id);
+            if (errores::$error) {
+                return $this->error_->error(mensaje: 'Error al obtener cuenta bancaria', data: $cuenta_bancaria);
+            }
+        }
 
         if($registro['forma_pago_id'] == 2) {
             $registro['cuenta_bancaria_cuenta'] = $cuenta_bancaria['cuenta_bancaria_cuenta'];
@@ -351,14 +371,24 @@ class controlador_pago_cliente extends controlador_base {
 
 
         if(!isset($registro['cuenta_bancaria_cuenta']) || $registro['cuenta_bancaria_cuenta'] == ''){
+            if(!isset($cuenta_bancaria['cuenta_bancaria_clabe']) ){
+                $cuenta_bancaria['cuenta_bancaria_clabe'] = '';
+            }
             $registro['cuenta_bancaria_cuenta'] = $cuenta_bancaria['cuenta_bancaria_clabe'];
         }
 
 
         if($registro['cuenta_bancaria_cuenta'] == ''){
+            if(!isset($cuenta_bancaria['cuenta_bancaria_cheque']) ){
+                $cuenta_bancaria['cuenta_bancaria_cheque'] = '';
+            }
             $registro['cuenta_bancaria_cuenta'] = $cuenta_bancaria['cuenta_bancaria_cheque'];
         }
 
+
+        if(!isset($cuenta_bancaria['banco_id']) ){
+            $cuenta_bancaria['banco_id'] = '';
+        }
 
         $registro['cuenta_bancaria_empresa_id'] = $this->cuenta_bancaria_empresa_id;
         $cuenta_bancaria_empresa = $this->obten_datos('cuenta_bancaria_empresa',$this->cuenta_bancaria_empresa_id);
@@ -872,6 +902,9 @@ class controlador_pago_cliente extends controlador_base {
             $error = $this->error_->error(mensaje:'Error al obtener registro', data: $resultado);
             print_r($error);
             die('Error');
+        }
+        if(!isset($resultado['registros'][0])){
+            return $this->error_->error(mensaje: 'Error al obtener registro no existe '.$tabla.' Id: '.$id, data: $resultado);
         }
 
         return $resultado['registros'][0];

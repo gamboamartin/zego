@@ -43,7 +43,6 @@ foreach ($empresas_data as $empresa){
     }
 
 
-
     $datas = $factura_modelo_local->servicio_actualiza_rows(registros_remotos: $facturas, tabla: 'factura');
     if(errores::$error){
         $error = (new errores())->error('Error al actualizar valor', $datas);
