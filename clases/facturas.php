@@ -471,17 +471,19 @@ class facturas{
     }
     public function timbra_cfdi_pago($folio){
         $numero_empresa = $_SESSION['numero_empresa'];
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $datos_empresa = $empresa->empresas[$numero_empresa];
         $ws = $datos_empresa['ruta_pac'];
         $xml_sin_timbrar = $this->directorio_xml_sin_timbrar_completo.'/'.'P_'.$folio.'.xml';
+
+
+
         $xml_timbrado = $this->directorio_xml_timbrado_completo.'/'.'P_'.$folio.'.xml';
         $qr = $this->directorio_xml_timbrado_completo.'/'.'P_'.$folio.'.jpg';
         $sello = $this->directorio_xml_timbrado_completo.'/'.'P_'.$folio.'.txt';
         $response = '';
         $rutaArchivo = $xml_sin_timbrar;
         $base64Comprobante = file_get_contents($rutaArchivo);
-
 
 
         $base64Comprobante = base64_encode($base64Comprobante);
@@ -494,6 +496,7 @@ class facturas{
             $response = $client->__soapCall('TimbraCFDI', array('parameters' => $params));
         }
         catch (SoapFault $fault) {
+
             echo "SOAPFault: ".$fault->faultcode."-".$fault->faultstring."\n";
             return false;
         }

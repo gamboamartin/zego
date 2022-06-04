@@ -738,7 +738,7 @@ class controlador_pago_cliente extends controlador_base {
 
         $partida='';
         foreach($pago_cliente_factura as $pago){
-            $pago_base_xml = '<pago10:DoctoRelacionado IdDocumento="|IdDocumento|" Serie="|Serie|" folio="|folio|" MonedaDR="|MonedaDR|" MetodoDepagoDR="|MetodoDepagoDR|" Numparcialidad="|Numparcialidad|" ImpSaldoAnt="|ImpSaldoAnt|" Imppagado="|Imppagado|" ImpSaldoInsoluto="|ImpSaldoInsoluto|"></pago10:DoctoRelacionado>';
+            $pago_base_xml = '<pago10:DoctoRelacionado IdDocumento="|IdDocumento|" Serie="|Serie|" Folio="|folio|" MonedaDR="|MonedaDR|" MetodoDePagoDR="|MetodoDepagoDR|" NumParcialidad="|Numparcialidad|" ImpSaldoAnt="|ImpSaldoAnt|" ImpPagado="|Imppagado|" ImpSaldoInsoluto="|ImpSaldoInsoluto|"></pago10:DoctoRelacionado>';
             $IdDocumento = $pago['pago_cliente_factura_factura_uuid'];
             $Serie = $pago['factura_serie'];
             $foliofacturapago = $pago['factura_folio'];
@@ -763,10 +763,11 @@ class controlador_pago_cliente extends controlador_base {
             $partida = $partida.$pago_base_xml;
         }
 
-        $xml = str_replace('|pagos|',$partida,$xml);
+        $xml = str_replace('|Pagos|',$partida,$xml);
 
 
-        $repositorio->guarda_archivo($xml,'p_'.$folio, $repositorio->directorio_xml_sin_timbrar_completo, '.xml');
+        $repositorio->guarda_archivo($xml,'P_'.$folio, $repositorio->directorio_xml_sin_timbrar_completo, '.xml');
+
 
         $factura = New facturas($this->link);
         $resultado = $factura->timbra_cfdi_pago($folio);
