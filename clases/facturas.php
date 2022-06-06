@@ -765,7 +765,6 @@ class facturas{
                 $client = new SoapClient($ws,$params);
                 $response = $client->__soapCall('ObtieneCFDI', array('parameters' => $params));
 
-
                 $ejecucion = 'ObtieneCFDIResult';
                 $tipoExcepcion = $response->$ejecucion->anyType[0];
                 $numeroExcepcion = $response->$ejecucion->anyType[1];
@@ -779,7 +778,6 @@ class facturas{
                     'tipo_excepcion'=>'Error de conexion');
             }
         }
-
 
 
         if($status == '') {
