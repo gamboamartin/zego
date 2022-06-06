@@ -786,7 +786,7 @@ class facturas{
             file_put_contents($sello, $cadenaOriginal);
 
             $nota_credito_modelo = new nota_credito($this->link);
-            $filtro_nota_credito = array('folio'=>$folio);
+            $filtro_nota_credito = array('nota_credito.folio'=>$folio);
             $resultado = $nota_credito_modelo->filtro_and('nota_credito',$filtro_nota_credito);
             $registro = $resultado['registros'][0];
             $this->nota_credito_id = $registro['nota_credito_id'];
@@ -808,9 +808,7 @@ class facturas{
             $nota_credito['xml'] = base64_encode($response->TimbraCFDIResult->anyType[3]);
             $nota_credito['qr'] = base64_encode($response->TimbraCFDIResult->anyType[4]);
 
-
             $nota_credito_modelo = new nota_credito($this->link);
-
             $nota_credito_modelo->modifica_bd($nota_credito,'nota_credito',$this->nota_credito_id);
 
             return true;
