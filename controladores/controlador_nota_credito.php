@@ -1,5 +1,14 @@
 <?php
 namespace controllers;
+use config\empresas;
+use FPDF;
+use models\factura;
+use models\nota_credito;
+use NumeroTexto;
+use repositorio;
+use SoapClient;
+use xml_cfdi;
+
 class controlador_nota_credito extends controlador_base {
     public $notas_credito = false;
     public $nota_credito = false;
@@ -51,7 +60,7 @@ class controlador_nota_credito extends controlador_base {
 
     public function aplica_nota_credito_factura(){
         $factura_id = $_GET['factura_id'];
-        $factura_modelo = new Factura($this->link);
+        $factura_modelo = new factura($this->link);
         $r_factura = $factura_modelo->obten_por_id('factura',$factura_id);
 
         $this->factura = $r_factura['registros'][0];
@@ -103,7 +112,7 @@ class controlador_nota_credito extends controlador_base {
 
 
         $numero_empresa = $_SESSION['numero_empresa'];
-        $empresas = new Empresas();
+        $empresas = new empresas();
         $datos_empresa = $empresas->empresas[$numero_empresa];
 
         $ruta_base = $datos_empresa['nombre_base_datos'];
@@ -136,7 +145,7 @@ class controlador_nota_credito extends controlador_base {
         $r_nota_credito = $nota_credito_modelo->obten_por_id('nota_credito',$this->nota_credito_id);
         $this->nota_credito = $r_nota_credito['registros'][0];
 
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
         $this->nota_credito['uso_cfdi_codigo'] = 'P01';
         $this->nota_credito['uso_cfdi_descripcion'] = 'Por Definir';
@@ -159,9 +168,9 @@ class controlador_nota_credito extends controlador_base {
         $this->nota_credito_id = $_GET['nota_credito_id'];
         $this->genera_datos_nota_credito();
 
-        $repositorio = New Repositorio();
+        $repositorio = New repositorio();
 
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
         $ruta_base = $datos_empresa['nombre_base_datos'];
 

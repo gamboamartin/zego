@@ -1,7 +1,4 @@
 <?php
-
-
-
 require 'vendor/autoload.php';
 
 use config\conexion;
@@ -11,7 +8,6 @@ use config\init;
 use models\accion;
 use views\directivas\directivas;
 use views\templates;
-
 
 require_once ('clases/numero_texto.php');
 require_once('config/seguridad.php');
