@@ -7,11 +7,12 @@ use models\nota_credito;
 use NumeroTexto;
 use repositorio;
 use SoapClient;
+use SoapFault;
 use xml_cfdi;
 
 class controlador_nota_credito extends controlador_base {
     public $notas_credito = false;
-    public $nota_credito = false;
+    public $nota_credito = array();
     public $nota_credito_id = false;
     public $directorio_xml_sin_timbrar_completo;
     public $directorio_xml_timbrado_completo;
@@ -347,10 +348,8 @@ class controlador_nota_credito extends controlador_base {
 
     public function timbra_cfdi($xml, $folio){
         $numero_empresa = $_SESSION['numero_empresa'];
-        $empresa = new Empresas();
+        $empresa = new empresas();
         $datos_empresa = $empresa->empresas[$numero_empresa];
-
-
 
         $ws = $datos_empresa['ruta_pac'];
 
@@ -369,7 +368,6 @@ class controlador_nota_credito extends controlador_base {
             echo "SOAPFault: ".$fault->faultcode."-".$fault->faultstring."\n";
             return false;
         }
-
 
         return $response;
     }

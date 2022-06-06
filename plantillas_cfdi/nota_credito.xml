@@ -5,8 +5,8 @@
                   Fecha="|Fecha|" Folio="|Folio|" Serie="|Serie|" Version="3.3"
                   xmlns:cfdi="http://www.sat.gob.mx/cfd/3" TipoCambio="|TipoCambio|">
   |cdfis_relacionados|
-<cfdi:Emisor Rfc="|RfcEmisor|" Nombre="|NombreEmisor|" RegimenFiscal="|RegimenFiscal|"></cfdi:Emisor>
-<cfdi:Receptor Rfc="|RfcReceptor|" Nombre="|NombreReceptor|" UsoCFDI="|UsoCFDI|"></cfdi:Receptor>
+  <cfdi:Emisor Rfc="|RfcEmisor|" Nombre="|NombreEmisor|" RegimenFiscal="|RegimenFiscal|"/>
+  <cfdi:Receptor Rfc="|RfcReceptor|" Nombre="|NombreReceptor|" UsoCFDI="|UsoCFDI|"/>
 <cfdi:Conceptos>
   <cfdi:Concepto ClaveProdServ="|ClaveProdServ|" Cantidad="|Cantidad|" ClaveUnidad="|ClaveUnidad|"
                  Descripcion="|Descripcion|" ValorUnitario="|ValorUnitario|" Importe="|Importe|">
