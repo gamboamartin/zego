@@ -1,6 +1,7 @@
 <?php
 namespace controllers;
 use config\empresas;
+use facturas;
 use FPDF;
 use models\factura;
 use models\nota_credito;
@@ -253,7 +254,8 @@ class controlador_nota_credito extends controlador_base {
 
         $repositorio->guarda_archivo($xml,'NC_'.$Folio, $repositorio->directorio_xml_sin_timbrar_completo, '.xml');
 
-        $response = $this->timbra_cfdi($xml,$Folio);
+        $factura = new facturas($this->link);
+        $response = $factura->timbra_cfdi_nota_credito($Folio);
 
         $mensaje = 'Exito';
         $tipo_mensaje='exito';
@@ -263,7 +265,7 @@ class controlador_nota_credito extends controlador_base {
                 $mensaje = $response['mensaje'];
             }
         }
-        
+
         header("Location: index.php?seccion=nota_credito&accion=vista_preliminar_nota_credito&mensaje=$mensaje&tipo_mensaje=$tipo_mensaje&nota_credito_id=$this->nota_credito_id&session_id=".SESSION_ID);
         exit;
     }
