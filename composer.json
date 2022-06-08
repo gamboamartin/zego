@@ -23,6 +23,7 @@
       "ext-mysqli": "*",
       "ext-soap": "*",
       "ext-simplexml": "*",
-      "ext-pdo": "*"
+      "ext-pdo": "*",
+      "ext-curl": "*"
     }
 }
