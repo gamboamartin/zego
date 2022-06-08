@@ -1,9 +1,11 @@
 <?php
 namespace controllers;
 use config\empresas;
+use facturas;
 use FPDF;
 use models\factura;
 use models\nota_credito;
+use my_pdf;
 use NumeroTexto;
 use repositorio;
 use SoapClient;
@@ -251,54 +253,21 @@ class controlador_nota_credito extends controlador_base {
         $xml = str_replace('|MetodoPago|',$MetodoPago,$xml);
         $xml = str_replace('|cdfis_relacionados|',$cfdis_relacionados,$xml);
 
+        $repositorio->guarda_archivo($xml,'NC_'.$Folio, $repositorio->directorio_xml_sin_timbrar_completo, '.xml');
 
+        $factura = new facturas($this->link);
+        $response = $factura->timbra_cfdi_nota_credito($Folio);
 
-
-
-        $response = $this->timbra_cfdi($xml,$Folio);
-        $error = $response->TimbraCFDIResult->anyType[1];
-
-
-
-        if($error!='0'){
-            print_r($response);
-            echo $xml;
-            echo $error;
-            exit;
+        $mensaje = 'Exito';
+        $tipo_mensaje='exito';
+        if(isset($response['error'])){
+            if($response['error'] == 1){
+                $tipo_mensaje = "error";
+                $mensaje = $response['mensaje'];
+            }
         }
 
-        $r_xml_timbrado = $response->TimbraCFDIResult->anyType[3];
-        $qr = $response->TimbraCFDIResult->anyType[4];
-
-        $xml_timbrado = new xml_cfdi($r_xml_timbrado,$this->link,'I');
-
-        $nota_credito['uuid'] = $xml_timbrado->get_folio_fiscal();
-        $nota_credito['status'] = '1';
-        $nota_credito['status_nota_credito'] = 'timbrado';
-        $nota_credito['sello_cfd'] = $xml_timbrado->get_sello_cfdi();
-        $nota_credito['sello_sat'] = $xml_timbrado->get_sello_sat();
-        $nota_credito['serie_csd'] = $xml_timbrado->get_no_serie_csd();
-        $nota_credito['serie_sat'] = $xml_timbrado->get_no_serie_sat();
-        $nota_credito['fecha_hora_certificacion'] = $xml_timbrado->get_fecha_timbrado();
-        $nota_credito['metodo_pago_codigo'] = $xml_timbrado->get_codigo_metodo_pago();
-        $nota_credito['ruta'] = $repositorio->directorio_xml_timbrado_completo;
-
-        $nota_credito['cadena_original'] = $response->TimbraCFDIResult->anyType[5];
-        $nota_credito['xml'] = base64_encode($response->TimbraCFDIResult->anyType[3]);
-        $nota_credito['qr'] = base64_encode($response->TimbraCFDIResult->anyType[4]);
-
-
-        $nota_credito_modelo = new nota_credito($this->link);
-
-        $nota_credito_modelo->modifica_bd($nota_credito,'nota_credito',$this->nota_credito_id);
-
-
-        $repositorio->guarda_archivo($r_xml_timbrado,'NC_'.$Folio, $repositorio->directorio_xml_timbrado_completo, '.xml');
-        $repositorio->guarda_archivo($qr,'NC_'.$Folio, $repositorio->directorio_xml_timbrado_completo, '.jpg');
-
-
-
-        header("Location: index.php?seccion=nota_credito&accion=vista_preliminar_nota_credito&mensaje=a&tipo_mensaje=exito&nota_credito_id=$this->nota_credito_id&session_id=".SESSION_ID);
+        header("Location: index.php?seccion=nota_credito&accion=vista_preliminar_nota_credito&mensaje=$mensaje&tipo_mensaje=$tipo_mensaje&nota_credito_id=$this->nota_credito_id&session_id=".SESSION_ID);
         exit;
     }
 
@@ -349,6 +318,7 @@ class controlador_nota_credito extends controlador_base {
     public function timbra_cfdi($xml, $folio){
         $numero_empresa = $_SESSION['numero_empresa'];
         $empresa = new empresas();
+        $repositorio = New repositorio();
         $datos_empresa = $empresa->empresas[$numero_empresa];
 
         $ws = $datos_empresa['ruta_pac'];
@@ -368,6 +338,42 @@ class controlador_nota_credito extends controlador_base {
             echo "SOAPFault: ".$fault->faultcode."-".$fault->faultstring."\n";
             return false;
         }
+
+        $error = $response->TimbraCFDIResult->anyType[1];
+
+        if($error!='0'){
+            print_r($response);
+            echo $xml;
+            echo $error;
+            exit;
+        }
+
+        $r_xml_timbrado = $response->TimbraCFDIResult->anyType[3];
+        $qr = $response->TimbraCFDIResult->anyType[4];
+
+        $xml_timbrado = new xml_cfdi($r_xml_timbrado,$this->link,'I');
+
+        $nota_credito['uuid'] = $xml_timbrado->get_folio_fiscal();
+        $nota_credito['status'] = '1';
+        $nota_credito['status_nota_credito'] = 'timbrado';
+        $nota_credito['sello_cfd'] = $xml_timbrado->get_sello_cfdi();
+        $nota_credito['sello_sat'] = $xml_timbrado->get_sello_sat();
+        $nota_credito['serie_csd'] = $xml_timbrado->get_no_serie_csd();
+        $nota_credito['serie_sat'] = $xml_timbrado->get_no_serie_sat();
+        $nota_credito['fecha_hora_certificacion'] = $xml_timbrado->get_fecha_timbrado();
+        $nota_credito['metodo_pago_codigo'] = $xml_timbrado->get_codigo_metodo_pago();
+        $nota_credito['ruta'] = $repositorio->directorio_xml_timbrado_completo;
+
+        $nota_credito['cadena_original'] = $response->TimbraCFDIResult->anyType[5];
+        $nota_credito['xml'] = base64_encode($response->TimbraCFDIResult->anyType[3]);
+        $nota_credito['qr'] = base64_encode($response->TimbraCFDIResult->anyType[4]);
+
+
+        $nota_credito_modelo = new nota_credito($this->link);
+
+        $nota_credito_modelo->modifica_bd($nota_credito,'nota_credito',$this->nota_credito_id);
+
+        $repositorio->guarda_archivo($qr,'NC_'.$folio, $repositorio->directorio_xml_timbrado_completo, '.jpg');
 
         return $response;
     }
@@ -440,7 +446,7 @@ class controlador_nota_credito extends controlador_base {
 
 
         //Comienza el PDF
-        $pdf = new FPDF();
+        $pdf = new my_pdf();
         $pdf->AliasNbPages();
         $pdf->AddPage();
 

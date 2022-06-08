@@ -1,4 +1,7 @@
 <?php
+
+use config\empresas;
+
 class xml_cfdi{
     private $link;
     private $comprobante = false;
@@ -9,7 +12,7 @@ class xml_cfdi{
     private $datos_receptor = false;
     private $datos_nomina = false;
     private $datos_comprobante_receptor = false;
-    private $cfdi_nomina = false;
+    private $cfdi_nomina = array();
     private $cfdi_factura = false;
     private $datos_percepciones = false;
     private $datos_deducciones = false;

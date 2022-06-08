@@ -7,6 +7,7 @@ use models\forma_pago;
 use models\impuesto;
 use models\metodo_pago;
 use models\moneda;
+use models\nota_credito;
 use models\pago_cliente;
 use models\producto_sat;
 use models\regimen_fiscal;
@@ -699,5 +700,124 @@ class facturas{
             return array('mensaje'=>$descripcionResultado.' '.$tipoExcepcion.' '.$numeroExcepcion, 'error'=>True);
         }
 
+    }
+
+    public function timbra_cfdi_nota_credito($folio){
+        $numero_empresa = $_SESSION['numero_empresa'];
+        $empresa = new empresas();
+        $datos_empresa = $empresa->empresas[$numero_empresa];
+        $ws = $datos_empresa['ruta_pac'];
+        $xml_sin_timbrar = $this->directorio_xml_sin_timbrar_completo.'/'.'NC_'.$folio.'.xml';
+
+
+
+        $xml_timbrado = $this->directorio_xml_timbrado_completo.'/'.'NC_'.$folio.'.xml';
+        $qr = $this->directorio_xml_timbrado_completo.'/'.'NC_'.$folio.'.jpg';
+        $sello = $this->directorio_xml_timbrado_completo.'/'.'NC_'.$folio.'.txt';
+        $response = '';
+        $rutaArchivo = $xml_sin_timbrar;
+        $base64Comprobante = file_get_contents($rutaArchivo);
+
+
+        $base64Comprobante = base64_encode($base64Comprobante);
+        try {
+            $params = array();
+            $params['usuarioIntegrador'] = $datos_empresa['usuario_integrador'];
+            $params['xmlComprobanteBase64'] = $base64Comprobante;
+            $params['idComprobante'] = $folio;
+            $client = new SoapClient($ws,$params);
+            $response = $client->__soapCall('TimbraCFDI', array('parameters' => $params));
+        }
+        catch (SoapFault $fault) {
+
+            echo "SOAPFault: ".$fault->faultcode."-".$fault->faultstring."\n";
+            return false;
+        }
+        $tipoExcepcion = $response->TimbraCFDIResult->anyType[0];
+        $numeroExcepcion = $response->TimbraCFDIResult->anyType[1];
+        $descripcionResultado = $response->TimbraCFDIResult->anyType[2];
+        $xmlTimbrado = $response->TimbraCFDIResult->anyType[3];
+        $codigoQr = $response->TimbraCFDIResult->anyType[4];
+        $cadenaOriginal = $response->TimbraCFDIResult->anyType[5];
+
+        $status = $response->TimbraCFDIResult->anyType[2];
+
+
+
+        $ejecucion = 'TimbraCFDIResult';
+        $uuid = false;
+
+        if(strpos($status,"ya ha sido timbrado con UUID")){
+            try {
+                $elementos = explode(':',$status);
+                $uuid = trim($elementos[1]);
+                $empresa = new empresas();
+                $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
+
+                $rfc_emisor = $datos_empresa['rfc'];
+
+                $ws = $datos_empresa['ruta_pac'];
+                $usuario_int = $datos_empresa['usuario_integrador'];
+                $params = array();
+                $params['usuarioIntegrador'] = $usuario_int;
+                $params['rfcEmisor'] = $rfc_emisor;
+                $params['folioUUID'] = $uuid;
+                $client = new SoapClient($ws,$params);
+                $response = $client->__soapCall('ObtieneCFDI', array('parameters' => $params));
+
+                $ejecucion = 'ObtieneCFDIResult';
+                $tipoExcepcion = $response->$ejecucion->anyType[0];
+                $numeroExcepcion = $response->$ejecucion->anyType[1];
+                $descripcionResultado = $response->$ejecucion->anyType[2];
+                $xmlTimbrado = $response->$ejecucion->anyType[3];
+                $codigoQr = $response->$ejecucion->anyType[4];
+                $cadenaOriginal = $response->$ejecucion->anyType[5];
+            }
+            catch (SoapFault $fault) {
+                return array('numero_excepcion'=>-1, 'descripcion'=>'Error de conexion PAC',
+                    'tipo_excepcion'=>'Error de conexion');
+            }
+        }
+
+
+        if($status == '') {
+            file_put_contents($xml_timbrado, $xmlTimbrado);
+            file_put_contents($qr, $codigoQr);
+            file_put_contents($sello, $cadenaOriginal);
+
+            $nota_credito_modelo = new nota_credito($this->link);
+            $filtro_nota_credito = array('nota_credito.folio'=>$folio);
+            $resultado = $nota_credito_modelo->filtro_and('nota_credito',$filtro_nota_credito);
+            $registro = $resultado['registros'][0];
+            $this->nota_credito_id = $registro['nota_credito_id'];
+
+            $xml_timbrado = new xml_cfdi($xmlTimbrado,$this->link,'I');
+
+            $nota_credito['uuid'] = $xml_timbrado->get_folio_fiscal();
+            $nota_credito['status'] = '1';
+            $nota_credito['status_nota_credito'] = 'timbrado';
+            $nota_credito['sello_cfd'] = $xml_timbrado->get_sello_cfdi();
+            $nota_credito['sello_sat'] = $xml_timbrado->get_sello_sat();
+            $nota_credito['serie_csd'] = $xml_timbrado->get_no_serie_csd();
+            $nota_credito['serie_sat'] = $xml_timbrado->get_no_serie_sat();
+            $nota_credito['fecha_hora_certificacion'] = $xml_timbrado->get_fecha_timbrado();
+            $nota_credito['metodo_pago_codigo'] = $xml_timbrado->get_codigo_metodo_pago();
+            $nota_credito['ruta'] = $this->directorio_xml_timbrado_completo;
+
+            $nota_credito['cadena_original'] = $response->TimbraCFDIResult->anyType[5];
+            $nota_credito['xml'] = base64_encode($response->TimbraCFDIResult->anyType[3]);
+            $nota_credito['qr'] = base64_encode($response->TimbraCFDIResult->anyType[4]);
+
+            $nota_credito_modelo = new nota_credito($this->link);
+            $nota_credito_modelo->modifica_bd($nota_credito,'nota_credito',$this->nota_credito_id);
+
+            return true;
+        }
+        else{
+            $msj_detalle = $response->$ejecucion->anyType[8];
+            return array(
+                'mensaje'=>$descripcionResultado.' '.$tipoExcepcion.' '.$numeroExcepcion.' '.$msj_detalle, 'error'=>True,
+                'response'=>serialize($response));
+        }
     }
 }
