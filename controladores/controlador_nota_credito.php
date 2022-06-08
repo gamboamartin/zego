@@ -5,6 +5,7 @@ use facturas;
 use FPDF;
 use models\factura;
 use models\nota_credito;
+use my_pdf;
 use NumeroTexto;
 use repositorio;
 use SoapClient;
@@ -445,7 +446,7 @@ class controlador_nota_credito extends controlador_base {
 
 
         //Comienza el PDF
-        $pdf = new FPDF();
+        $pdf = new my_pdf();
         $pdf->AliasNbPages();
         $pdf->AddPage();
 
