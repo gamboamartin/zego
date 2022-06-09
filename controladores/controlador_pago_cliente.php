@@ -531,7 +531,7 @@ class controlador_pago_cliente extends controlador_base {
 
         $folio = $pago['pago_cliente_folio'];
 
-        $name_file = 'p_'.$pago['pago_cliente_folio'];
+        $name_file = 'P_'.$pago['pago_cliente_folio'];
 
 
         $numero_empresa = $_SESSION['numero_empresa'];
@@ -540,7 +540,7 @@ class controlador_pago_cliente extends controlador_base {
 
         $ruta_base = $datos_empresa['nombre_base_datos'];
 
-        $ruta_xml = $ruta_base.'/xml_timbrado/p_'.$folio.'.xml';
+        $ruta_xml = $ruta_base.'/xml_timbrado/P_'.$folio.'.xml';
 
         header("content-disposition: attachment; filename=$name_file.xml");
         header('content-type: "text/xml"; charset="utf8"');
@@ -673,6 +673,8 @@ class controlador_pago_cliente extends controlador_base {
         $Monto = number_format(round($pago_cliente['pago_cliente_monto'],2),2,'.','');
         $NumOperacion = $pago_cliente['pago_cliente_numero_operacion'];
 
+
+
         $RfcEmisorctaOrd = $pago_cliente['pago_cliente_cliente_banco_rfc'];
 
         $ctaOrdenante = $pago_cliente['pago_cliente_cuenta_bancaria_cuenta'];
@@ -680,64 +682,35 @@ class controlador_pago_cliente extends controlador_base {
         $ctaBeneficiario = $pago_cliente['pago_cliente_cuenta_bancaria_empresa_cuenta'];
 
 
-        $plantilla = './plantillas_cfdi/pago.xml';
-        $xml  = file_get_contents($plantilla);
-
-        if($RfcEmisorctaOrd != ''){
-            $xml = str_replace('|RfcEmisorCtaOrd|','RfcEmisorctaOrd="'.$RfcEmisorctaOrd.'"',$xml);
-        }
-        else{
-            $xml = str_replace('|RfcEmisorCtaOrd|','',$xml);
-        }
 
 
-        if($ctaOrdenante != ''){
-            $xml = str_replace('|CtaOrdenante|','CtaOrdenante="'.$ctaOrdenante.'"',$xml);
-        }
-        else{
-            $xml = str_replace('|CtaOrdenante|','',$xml);
-        }
-
-        if($RfcEmisorctaBen != ''){
-            $xml = str_replace('|RfcEmisorCtaBen|','RfcEmisorCtaBen="'.$RfcEmisorctaBen.'"',$xml);
-        }
-        else{
-            $xml = str_replace('|RfcEmisorCtaBen|','',$xml);
-        }
-
-        if($ctaBeneficiario != ''){
-            $xml = str_replace('|CtaBeneficiario|','CtaBeneficiario="'.$ctaBeneficiario.'"',$xml);
-        }
-        else{
-            $xml = str_replace('|CtaBeneficiario|','',$xml);
-        }
-
-        $cfdis_relacionados = '';
-        if((string)$pago_cliente['pago_cliente_uuid_relacionado']!==''){
-            $cfdis_relacionados = '<cfdi:cfdiRelacionados TipoRelacion="'.$pago_cliente['pago_cliente_tipo_relacion'].'">
-        <cfdi:cfdiRelacionado UUID="'.$pago_cliente['pago_cliente_uuid_relacionado'].'" />
-    </cfdi:cfdiRelacionados>';
-        }
-
-        $xml = str_replace('|LugarExpedicion|',$LugarExpedicion,$xml);
-        $xml = str_replace('|Fecha|',$fecha,$xml);
-        $xml = str_replace('|Folio|','p_'.$folio,$xml);
-        $xml = str_replace('|Serie|',$Serie,$xml);
-        $xml = str_replace('|RfcEmisor|',$RfcEmisor,$xml);
-        $xml = str_replace('|NombreEmisor|',$NombreEmisor,$xml);
-        $xml = str_replace('|RegimenFiscal|',$Regimenfiscal,$xml);
-        $xml = str_replace('|RfcReceptor|',$RfcReceptor,$xml);
-        $xml = str_replace('|NombreReceptor|',$NombreReceptor,$xml);
-        $xml = str_replace('|FechaPago|',$fechapago,$xml);
-        $xml = str_replace('|FormaDePagoP|',$formaDepagop,$xml);
-        $xml = str_replace('|MonedaP|',$Monedap,$xml);
-        $xml = str_replace('|Monto|',$Monto,$xml);
-        $xml = str_replace('|NumOperacion|',$NumOperacion,$xml);
-        $xml = str_replace('|cdfis_relacionados|',$cfdis_relacionados,$xml);
-
-
-        $partida='';
+        $total_traslados_impuesto_iva_16 = 0;
+        $impuesto_p = '';
+        $tipo_factor_p = '';
+        $tasa_o_cuota_p = 0;
+        $total_traslados_base_iva_16 = 0;
         foreach($pago_cliente_factura as $pago){
+            $aplica_traslado_iva_16 = false;
+            if((float)$pago['factura_total_impuestos_trasladados']>0.0){
+
+                $aplica_traslado_iva_16 = true;
+
+                $pago['pago_cliente_factura_monto'] = round($pago['pago_cliente_factura_monto'],2);
+
+                $iva = $pago['pago_cliente_factura_monto'] - round(($pago['pago_cliente_factura_monto'] / 1.16),2);
+                $iva = round($iva,2);
+                $sub_total_pagado = round($pago['pago_cliente_factura_monto'] - $iva,2);
+                $sub_total_pagado = round($sub_total_pagado,2);
+                $total_traslados_impuesto_iva_16 +=$iva;
+                $impuesto_p = '002';
+                $tipo_factor_p = 'Tasa';
+                $tasa_o_cuota_p = '0.160000';
+
+                $total_traslados_base_iva_16+=$sub_total_pagado;
+
+
+            }
+
             $pago_base_xml = '<pago10:DoctoRelacionado IdDocumento="|IdDocumento|" Serie="|Serie|" Folio="|folio|" MonedaDR="|MonedaDR|" MetodoDePagoDR="|MetodoDepagoDR|" NumParcialidad="|Numparcialidad|" ImpSaldoAnt="|ImpSaldoAnt|" ImpPagado="|Imppagado|" ImpSaldoInsoluto="|ImpSaldoInsoluto|"></pago10:DoctoRelacionado>';
             $IdDocumento = $pago['pago_cliente_factura_factura_uuid'];
             $Serie = $pago['factura_serie'];
@@ -750,20 +723,128 @@ class controlador_pago_cliente extends controlador_base {
             $ImpSaldoInsoluto = round($pago['pago_cliente_factura_importe_saldo_insoluto'],2);
 
 
-            $pago_base_xml = str_replace('|IdDocumento|',$IdDocumento,$pago_base_xml);
-            $pago_base_xml = str_replace('|Serie|',$Serie,$pago_base_xml);
-            $pago_base_xml = str_replace('|folio|',$foliofacturapago,$pago_base_xml);
-            $pago_base_xml = str_replace('|MonedaDR|',$MonedaDR,$pago_base_xml);
-            $pago_base_xml = str_replace('|MetodoDepagoDR|',$MetodoDepagoDR,$pago_base_xml);
-            $pago_base_xml = str_replace('|Numparcialidad|',$Numparcialidad,$pago_base_xml);
-            $pago_base_xml = str_replace('|ImpSaldoAnt|',$ImpSaldoAnt,$pago_base_xml);
-            $pago_base_xml = str_replace('|Imppagado|',$Imppagado,$pago_base_xml);
-            $pago_base_xml = str_replace('|ImpSaldoInsoluto|',$ImpSaldoInsoluto,$pago_base_xml);
 
-            $partida = $partida.$pago_base_xml;
+
         }
 
-        $xml = str_replace('|Pagos|',$partida,$xml);
+
+
+
+        $url = 'https://xml-cfdi-4.ivitec.com.mx/index.php?tipo_de_comprobante=P';
+
+        $curl = curl_init();
+
+        $data_comprobante['lugar_expedicion'] = $LugarExpedicion;
+        $data_comprobante['folio'] = 'P_'.$folio;
+
+        $data_emisor['rfc'] = $RfcEmisor;
+        $data_emisor['nombre'] = $NombreEmisor;
+        $data_emisor['regimen_fiscal'] = $Regimenfiscal;
+
+        $data_receptor['rfc'] = $RfcReceptor;
+        $data_receptor['nombre'] = $NombreReceptor;
+        $data_receptor['domicilio_fiscal_receptor'] = $pago_cliente['cliente_cp'];
+        $data_receptor['regimen_fiscal_receptor'] = $pago_cliente['regimen_fiscal_codigo'];
+
+
+        $data_pagos['total_traslados_base_iva_16'] = $total_traslados_base_iva_16;
+        $data_pagos['total_traslados_impuesto_iva_16'] = $total_traslados_impuesto_iva_16;
+        $data_pagos['monto_total_pagos'] = $Monto;
+
+        $data_pagos['pagos'][0]['fecha_pago'] = $fechapago;
+        $data_pagos['pagos'][0]['forma_de_pago_p'] = $formaDepagop;
+        $data_pagos['pagos'][0]['moneda_p'] = $Monedap;
+        $data_pagos['pagos'][0]['tipo_cambio_p'] = $pago_cliente['pago_cliente_tipo_cambio'];
+        $data_pagos['pagos'][0]['monto'] = $Monto;
+
+        $indice = 0;
+        $base_p = 0;
+        $importe_p = 0;
+
+        foreach($pago_cliente_factura as $pago){
+
+            //print_r($pago);exit;
+
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['id_documento'] = $pago['pago_cliente_factura_factura_uuid'];
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['folio'] = $pago['factura_folio'];
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['moneda_dr'] = $MonedaDR;
+
+            $tipo_cambio_factura = $pago['factura_tipo_cambio'];
+            if((float)$tipo_cambio_factura === 0.0){
+                $tipo_cambio_factura = 1;
+            }
+            $equivalencia_dr = $pago['pago_cliente_tipo_cambio'] / $tipo_cambio_factura;
+
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['equivalencia_dr'] = $equivalencia_dr;
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['num_parcialidad'] = $pago['pago_cliente_factura_parcialidad'];
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['imp_saldo_ant'] = $pago['pago_cliente_factura_importe_saldo_anterior'];
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['imp_pagado'] = $pago['pago_cliente_factura_monto'];
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['imp_saldo_insoluto'] = $pago['pago_cliente_factura_importe_saldo_insoluto'];
+
+            $aplica_traslado_iva_16 = false;
+            if((float)$pago['factura_total_impuestos_trasladados']>0.0){
+                $aplica_traslado_iva_16 = true;
+            }
+            $objeto_imp_dr = '01';
+            $base_dr = 0;
+            $impuesto_dr = '0';
+            $tipo_factor_dr = '';
+            $tasa_o_cuota_dr = 0;
+            $importe_dr = 0;
+            if($aplica_traslado_iva_16){
+                $objeto_imp_dr = '02';
+
+                $pago['pago_cliente_factura_monto'] = round($pago['pago_cliente_factura_monto'],2);
+
+                $iva = $pago['pago_cliente_factura_monto'] - round($pago['pago_cliente_factura_monto'] / 1.16,2);
+                $base_dr = $pago['pago_cliente_factura_monto'] - round($iva,2);
+                $impuesto_dr = '002';
+                $tipo_factor_dr = 'Tasa';
+                $tasa_o_cuota_dr = '0.160000';
+                $importe_dr = $iva;
+                $base_p+=$base_dr;
+                $base_p = round($base_p,2);
+                $importe_p+=$importe_dr;
+            }
+
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['objeto_imp_dr'] = $objeto_imp_dr;
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['impuestos_dr'][0]['traslados_dr'][0]['traslado_dr'][0]['base_dr'] = $base_dr ;
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['impuestos_dr'][0]['traslados_dr'][0]['traslado_dr'][0]['impuesto_dr'] = $impuesto_dr ;
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['impuestos_dr'][0]['traslados_dr'][0]['traslado_dr'][0]['tipo_factor_dr'] = $tipo_factor_dr ;
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['impuestos_dr'][0]['traslados_dr'][0]['traslado_dr'][0]['tasa_o_cuota_dr'] = $tasa_o_cuota_dr ;
+            $data_pagos['pagos'][0]['docto_relacionado'][$indice]['impuestos_dr'][0]['traslados_dr'][0]['traslado_dr'][0]['importe_dr'] = $importe_dr ;
+
+            $indice++;
+        }
+
+
+        $data_pagos['pagos'][0]['impuestos_p'][0]['traslados_p'][0]['traslado_p'][0]['base_p'] = $base_p;
+        $data_pagos['pagos'][0]['impuestos_p'][0]['traslados_p'][0]['traslado_p'][0]['impuesto_p'] = $impuesto_p;
+        $data_pagos['pagos'][0]['impuestos_p'][0]['traslados_p'][0]['traslado_p'][0]['tipo_factor_p'] = $tipo_factor_p;
+        $data_pagos['pagos'][0]['impuestos_p'][0]['traslados_p'][0]['traslado_p'][0]['tasa_o_cuota_p'] = $tasa_o_cuota_p;
+        $data_pagos['pagos'][0]['impuestos_p'][0]['traslados_p'][0]['traslado_p'][0]['importe_p'] = $importe_p;
+
+
+
+        $fields['comprobante'] = $data_comprobante;
+        $fields['pagos'] = $data_pagos;
+        $fields['emisor'] = $data_emisor;
+        $fields['receptor'] = $data_receptor;
+
+        $fields_string = http_build_query($fields);
+
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_POST, TRUE);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $fields_string);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+
+        $data = curl_exec($curl);
+        curl_close($curl);
+        $data = json_decode($data,true);
+
+        $xml = $data['xml'];
 
 
         $repositorio->guarda_archivo($xml,'P_'.$folio, $repositorio->directorio_xml_sin_timbrar_completo, '.xml');

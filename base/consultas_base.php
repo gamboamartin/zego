@@ -32,7 +32,7 @@ class consultas_base{
 
     public $pais_columnas = array('pais'=>false);
 
-    public $pago_cliente_columnas = array('pago_cliente'=>false,'cliente'=>'pago_cliente');
+    public $pago_cliente_columnas = array('pago_cliente'=>false,'cliente'=>'pago_cliente','regimen_fiscal'=>'cliente');
     public $pago_cliente_factura_columnas = array('pago_cliente_factura'=>false,'factura'=>'pago_cliente_factura',
         'pago_cliente'=>'pago_cliente_factura');
 
