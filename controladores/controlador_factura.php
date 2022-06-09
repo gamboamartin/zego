@@ -99,6 +99,10 @@ class controlador_factura extends controlador_base {
 
     }
 
+    public function a_cuenta_terceros(){
+
+    }
+
     public function cancela_factura(){
         $modelo_factura = new factura($this->link);
 

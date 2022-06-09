@@ -101,6 +101,7 @@
                     <?php if($status_factura != 0){ ?>
                     <?php echo $directiva->link_descarga_factura_pdf('cliente',$factura['factura_id']); ?>
                     <?php echo $directiva->link_descarga_factura_xml('cliente',$factura['factura_id'],'XML_'.$factura['factura_referencia']); ?>
+                    <?php echo $directiva->link_a_cuenta_terceros('factura',$factura['factura_id']); ?>
                     <?php } ?>
                     <?php if($status_factura != 2){ ?>
                     <?php if($status_factura == 1){ ?>

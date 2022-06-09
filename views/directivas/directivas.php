@@ -166,7 +166,7 @@ class directivas{
 				</a>
 			</h4>
      	</div>";
-     	return $html;		
+     	return $html;
 	}
 
 	public function div_titulo($titulo){
@@ -522,7 +522,7 @@ class directivas{
         $html = $this->genera_contenedor_select($tabla,$cols,$disabled,$arreglo, $partida, $required, $pattern);
         foreach ($registros as $key => $value) {
             $selected = $this->valida_selected($value,$tabla,$id);
-         
+
 
             $html = $html . "<option value='" . $value[$tabla . '_id'] . "' $selected>" . $value[$campo] . "</option>";
         }
@@ -776,7 +776,7 @@ class directivas{
 		$html = "<a href='index.php?seccion=$seccion&session_id=".SESSION_ID."&accion=asigna_accion&".$seccion."_id=$id' title='asigna accion'>
   					<span class='glyphicon glyphicon-lock' aria-hidden='true'></span>
   				</a>";
-  		return $html;		
+  		return $html;
 	}
 
     public function link_genera_factura($seccion,$id){
@@ -826,6 +826,13 @@ class directivas{
     public function link_ve_pago($seccion, $id, $status_factura, $accion){
         $html = "<a href='index.php?seccion=$seccion&accion=$accion&pago_cliente_id=$id&session_id=".SESSION_ID."' title='Ve factura PDF'>
                     <span class='glyphicon glyphicon-eye-open' aria-hidden='true'></span>
+                </a>";
+        return $html;
+    }
+
+    public function link_a_cuenta_terceros($seccion, $id){
+        $html = "<a href='index.php?seccion=$seccion&accion=a_cuenta_terceros&factura_id=$id&session_id=".SESSION_ID."' title='A Cuenta Terceros'>
+                    <span class='glyphicon glyphicon-open' aria-hidden='true'></span>
                 </a>";
         return $html;
     }
