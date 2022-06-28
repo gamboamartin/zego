@@ -512,7 +512,7 @@ class directivas{
         $resultado = $modelo->obten_registros_activos($tabla);
         $registros = $resultado['registros'];
 
-        if($tabla == 'cliente'){
+        if($tabla == 'cliente' || $tabla == 'recep_a_cuenta_tercero'){
             $campo = $tabla . '_razon_social';
         }
         else{

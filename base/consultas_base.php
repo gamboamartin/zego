@@ -84,6 +84,9 @@ class consultas_base{
             'tabla_base'=>'impuesto','tabla_renombrada'=>'impuesto_retenido','tabla_enlace'=>'insumo','obligatorio'=>false),
         array(
             'tabla_base'=>'tipo_factor','tabla_renombrada'=>'tipo_factor_retenido','tabla_enlace'=>'insumo','obligatorio'=>false));
+    public $insumo_a_cuenta_tercero_columnas = array('insumo_a_cuenta_tercero'=>false, 'impuesto'=>'insumo_a_cuenta_tercero',
+        'tipo_factor'=>'insumo_a_cuenta_tercero');
+    public $recep_a_cuenta_tercero_columnas = array('recep_a_cuenta_tercero'=>false, 'regimen_fiscal'=>'recep_a_cuenta_tercero');
     public $cuenta_bancaria_columnas = array('cuenta_bancaria'=>false,
         'cliente'=>'cuenta_bancaria', 'banco'=>'cuenta_bancaria','moneda'=>'cuenta_bancaria');
     public $elemento_lista_columnas = array('elemento_lista'=>false,'seccion_menu'=>'elemento_lista',
@@ -265,7 +268,42 @@ class consultas_base{
             'status'=>array('tipo'=>'checkbox','cols'=>12,'vista'=>array('alta','modifica')),
             'observaciones'=>array('tipo'=>'textarea','cols'=>12,'vista'=>array('alta','modifica')));
 
+        $this->estructura_bd['insumo_a_cuenta_tercero']['columnas_select'] = $this->insumo_a_cuenta_tercero_columnas;
+        $this->estructura_bd['insumo_a_cuenta_tercero']['where_filtro_or'] = true;
+        $this->estructura_bd['insumo_a_cuenta_tercero']['campos'] = array(
+            'descripcion'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
+                'vista'=>array('alta','modifica')),
+            'clave_prod_serv'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
+                'vista'=>array('alta','modifica')),
+            'no_identificacion'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
+                'vista'=>array('alta','modifica')),
+            'clave_unidad'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
+                'vista'=>array('alta','modifica')),
+            'obj_imp'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
+                'vista'=>array('alta','modifica')),
+            'impuesto_id'=>array(
+                'tipo'=>'select','cols'=>12,'requerido'=>false,
+                'tabla_foranea'=>'impuesto','vista'=>array('alta','modifica'),'externa'=>true),
+            'tipo_factor_id'=>array(
+                'tipo'=>'select','cols'=>6,'requerido'=>false,
+                'tabla_foranea'=>'tipo_factor','vista'=>array('alta','modifica'),'externa'=>true),
+            'tasa_o_cuota'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
+                'vista'=>array('alta','modifica')),
+        );
 
+        $this->estructura_bd['recep_a_cuenta_tercero']['columnas_select'] = $this->recep_a_cuenta_tercero_columnas;
+        $this->estructura_bd['recep_a_cuenta_tercero']['where_filtro_or'] = true;
+        $this->estructura_bd['recep_a_cuenta_tercero']['campos'] = array(
+            'rfc'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
+                'vista'=>array('alta','modifica')),
+            'razon_social'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
+                'vista'=>array('alta','modifica')),
+            'regimen_fiscal_id'=>array(
+                'tipo'=>'select','cols'=>6,'requerido'=>false,
+                'tabla_foranea'=>'tipo_factor','vista'=>array('alta','modifica'),'externa'=>true),
+            'domicilio_fiscal'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
+                'vista'=>array('alta','modifica')),
+        );
 
         $this->estructura_bd['impuesto']['columnas_select'] = $this->impuesto_columnas;
         $this->estructura_bd['impuesto']['where_filtro_or'] = true;
