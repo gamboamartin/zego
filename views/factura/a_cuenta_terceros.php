@@ -3,7 +3,6 @@
         <div class="panel-heading">Datos Generales</div>
         <div class="panel-body">
             <?php
-            echo $directiva->genera_input_text('folio',3, false,false,false,false,false,false);
             echo $directiva->input_select('moneda',$controlador->cliente_moneda_id,3,false,false,false,$controlador->link,false,false);
             echo $directiva->input_select('forma_pago',$controlador->cliente_forma_pago_id,3,false,false,false,$controlador->link,false,false);
             echo $directiva->input_select('metodo_pago',$controlador->cliente_metodo_pago_id,3,false,false,false,$controlador->link,false,false);
@@ -27,7 +26,7 @@
         </div>
         <div class="row col-md-10 col-md-offset-1">
             <br>
-            <button type="button" class="btn btn-primary col-md-12" id="partida_nueva">Otra Partida</button>
+            <button type="button" class="btn btn-primary col-md-12" id="partida_nueva_act">Otra Partida</button>
         </div>
     </div>
     <div class="col-md-12">

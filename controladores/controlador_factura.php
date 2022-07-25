@@ -107,18 +107,38 @@ class controlador_factura extends controlador_base {
 
     }
 
-    public function a_cuenta_terceros_bd(){
-    print_r($_POST);exit;
+    public function a_cuenta_terceros_bd()
+    {
+
         $a_cuenta_tercero_modelo = new a_cuenta_tercero($this->link);
         $datos_guardar = array();
-        $datos_guardar['folio'] = $_POST['folio'];
+
+        $ultimo_id = $a_cuenta_tercero_modelo->obten_ultimo_id('a_cuenta_tercero');
+        if(errores::$error){
+            return $this->error_->error('Error al obtener ultimo id', $ultimo_id);
+        }
+
+        $folio = 1;
+        if((int)$ultimo_id > 0){
+            $resultado = $a_cuenta_tercero_modelo->obten_por_id('a_cuenta_tercero',$ultimo_id);
+            if(errores::$error){
+                return $this->error_->error('Error al obtener registro', $resultado);
+            }
+            $folio = $resultado['registros'][0]['a_cuenta_tercero_folio'];
+        }
+
+        $fecha =  $_POST['fecha'];
+        $hora = date('H:i:s');
+        $fecha_emision = $fecha.'T'.$hora;
+
+        $datos_guardar['folio'] = $folio;
         $datos_guardar['moneda_id'] = $_POST['moneda_id'];
         $datos_guardar['forma_pago_id'] = $_POST['forma_pago_id'];
         $datos_guardar['metodo_pago_id'] = $_POST['metodo_pago_id'];
         $datos_guardar['factura_id'] = $_GET['factura_id'];
-        $datos_guardar['fecha'] = $_POST['fecha'];
+        $datos_guardar['fecha'] = $fecha_emision;
         $datos_guardar['status'] = '1';
-        $resultado = $a_cuenta_tercero_modelo->alta_bd($datos_guardar,'a_cuenta_tercero');
+        $r_a_cuenta_tercero = $a_cuenta_tercero_modelo->alta_bd($datos_guardar,'a_cuenta_tercero');
         if(errores::$error){
             return $this->error_->error('Error al dar de alta', $resultado);
         }
@@ -130,24 +150,14 @@ class controlador_factura extends controlador_base {
         $datos_partida['valor_unitario'] = $_POST['valor_unitario'];
         $datos_partida['sub_total'] = $datos_partida['cantidad'] * $datos_partida['valor_unitario'];
         $datos_partida['recep_a_cuenta_tercero_id'] = $_POST['recep_a_cuenta_tercero_id'];
-        $datos_partida['a_cuenta_tercero_id'] = $resultado['registro_id'];
+        $datos_partida['a_cuenta_tercero_id'] = $r_a_cuenta_tercero['registro_id'];
         $datos_partida['status'] = '1';
-        $resultado = $partida_a_cuenta_tercero_modelo->alta_bd($datos_partida,'partida_a_cuenta_tercero');
+        $r_partida_a_cuenta_tercero = $partida_a_cuenta_tercero_modelo->alta_bd($datos_partida,'partida_a_cuenta_tercero');
         if(errores::$error){
-            return $this->error_->error('Error al dar de alta', $resultado);
+            return $this->error_->error('Error al dar de alta', $r_partida_a_cuenta_tercero);
         }
 
-        $factura_id = $_GET['factura_id'];
-        $factura_modelo = new Factura($this->link);
-        $resultado = $factura_modelo->obten_por_id('factura',$factura_id);
-        if(errores::$error){
-            return $this->error_->error('Error al obtener registro', $resultado);
-        }
-
-        $registro = $resultado['registros'][0];
-        $folio = $registro['factura_folio'];
-        print_r($registro);exit;
-
+        return $r_a_cuenta_tercero;
     }
 
     public function cancela_factura(){
