@@ -405,6 +405,7 @@ class controlador_cliente extends controlador_base{
 
         $uso_cfdi_codigo = $factura['factura_uso_cfdi_codigo'];
         $uso_cfdi_descripcion = $factura['factura_uso_cfdi_descripcion'];
+        $cp_receptor = $factura['factura_cliente_cp'];
 
         $folio_fiscal = $factura['factura_uuid'];
         $serie_csd = $factura['factura_serie_csd'];
@@ -501,6 +502,7 @@ class controlador_cliente extends controlador_base{
         $this->imprime_dato($pdf,'RFC Emisor:', $rfc_emisor);
         $this->imprime_dato($pdf,'Nombre Receptor:', $nombre_receptor);
         $this->imprime_dato($pdf,'RFC Receptor:', $rfc_receptor);
+        $this->imprime_dato($pdf,'Domicilio Receptor:', $cp_receptor);
         $this->imprime_dato($pdf,'Uso CFDI:', $uso_cfdi_codigo.' '.$uso_cfdi_descripcion);
         $this->imprime_dato($pdf,'Folio Fiscal:', $folio_fiscal);
         $this->imprime_dato($pdf,'No. de serie del CSD:', $serie_csd);
@@ -558,6 +560,7 @@ class controlador_cliente extends controlador_base{
             $no_identificacion = $partida['partida_factura_no_identificacion'];
             $cantidad = $partida['partida_factura_cantidad'];
             $clave_unidad = $partida['partida_factura_unidad_codigo'];
+            $obj_imp = $partida['partida_factura_obj_imp'];
             $valor_unitario = $partida['partida_factura_valor_unitario'];
             $importe = $partida['partida_factura_importe'];
             $descuento = (float)$partida['partida_factura_descuento'];
@@ -591,12 +594,13 @@ class controlador_cliente extends controlador_base{
             $pdf->SetX($x);
 
 
-            $pdf->Cell(23,4,'Cve concepto SAT:',1,0,'C',true);
-            $pdf->Cell(22,4,utf8_decode('No. identificación:'),1,0,'C',true);
-            $pdf->Cell(20,4,utf8_decode('Cantidad:'),1,0,'C',true);
-            $pdf->Cell(19,4,utf8_decode('Clave Unidad:'),1,0,'C',true);
+            $pdf->Cell(22,4,'Cve SAT:',1,0,'C',true);
+            $pdf->Cell(21,4,utf8_decode('No ident:'),1,0,'C',true);
+            $pdf->Cell(17,4,utf8_decode('Cant:'),1,0,'C',true);
+            $pdf->Cell(17,4,utf8_decode('Unidad:'),1,0,'C',true);
+            $pdf->Cell(16,4,utf8_decode('Obj Imp:'),1,0,'C',true);
             $pdf->Cell(30,4,utf8_decode('Valor Unitario:'),1,0,'C',true);
-            $pdf->Cell(59,4,utf8_decode('Importe:'),1,0,'C',true);
+            $pdf->Cell(50,4,utf8_decode('Importe:'),1,0,'C',true);
             $pdf->Cell(17,4,utf8_decode('Descuento:'),1,0,'C',true);
 
             $y = $pdf->GetY()+4;
@@ -604,12 +608,13 @@ class controlador_cliente extends controlador_base{
 
 
             $pdf->SetX($x);
-            $pdf->Cell(23,4,$clave_producto_servicio,1,0,'C',False);
-            $pdf->Cell(22,4,$no_identificacion,1,0,'C',False);
-            $pdf->Cell(20,4,$cantidad,1,0,'C',False);
-            $pdf->Cell(19,4,$clave_unidad,1,0,'C',False);
-            $pdf->Cell(30,4,'$'.number_format($valor_unitario,4,'.',','),1,0,'C',False);
-            $pdf->Cell(59,4,'$'.number_format($importe,4,'.',','),1,0,'C',False);
+            $pdf->Cell(22,4,$clave_producto_servicio,1,0,'C',False);
+            $pdf->Cell(21,4,$no_identificacion,1,0,'C',False);
+            $pdf->Cell(17,4,$cantidad,1,0,'C',False);
+            $pdf->Cell(17,4,$clave_unidad,1,0,'C',False);
+            $pdf->Cell(16,4,$obj_imp,1,0,'C',False);
+            $pdf->Cell(30,4,'$'.number_format($valor_unitario,2,'.',','),1,0,'C',False);
+            $pdf->Cell(50,4,'$'.number_format($importe,2,'.',','),1,0,'C',False);
             $pdf->Cell(17,4,'$'.number_format($descuento,2,'.',','),1,0,'C',False);
 
             $pdf->SetFont('Arial','B',$this->tamano_letra);
