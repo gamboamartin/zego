@@ -172,6 +172,7 @@ class controlador_cliente extends controlador_base{
     }
 
     public function descarga_factura_pdf(){
+
         $factura_id = $_GET['factura_id'];
 
         $modelo_factura = new factura($this->link);
