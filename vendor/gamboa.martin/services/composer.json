@@ -19,11 +19,17 @@
     ],
     "require": {
         "php": " >=8.1",
-        "gamboa.martin/calculo": "dev-main",
-        "gamboa.martin/errores": "^1.0.0",
-        "gamboa.martin/test": "dev-main",
-        "gamboa.martin/validacion": "dev-main",
-        "ext-mysqli": "*"
+        "gamboa.martin/calculo": "^2.0.0",
+        "gamboa.martin/errores": "^2.0.0",
+        "gamboa.martin/test": "^2.0.0",
+        "gamboa.martin/validacion": "^2.0.0",
+        "gamboa.martin/base_modelos": "^2.0.0",
+        "gamboa.martin/compresor": "^2.0.0",
+        "gamboa.martin/configuraciones": "^1.0.0",
+        "gamboa.martin/plugins": "^2.0.0",
+        "gamboa.martin/administrador": "^10.0.0",
+        "ext-mysqli": "*",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

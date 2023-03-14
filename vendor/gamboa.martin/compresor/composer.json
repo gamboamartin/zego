@@ -1,0 +1,29 @@
+{
+    "name": "gamboa.martin/compresor",
+    "description": "Compresor de pdf tanto en calidad como en zip",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "gamboamartin\\compresor\\": "src/",
+            "tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Martin Gamboa",
+            "email": "gamboa.martin@gmail.com"
+        }
+    ],
+    "require": {
+        "php": " >=8.1",
+        "gamboa.martin/errores": "^2.0.0",
+        "gamboa.martin/test": "^2.0.0",
+        "ext-imagick": "*",
+        "mpdf/mpdf": "^8.0",
+        "ext-zip": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}

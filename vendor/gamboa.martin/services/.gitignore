@@ -60,3 +60,7 @@ composer.lock
 /config/database.php
 
 /vendor/
+*.info
+*.lock
+config/generales.php
+config/views.php

@@ -112,7 +112,7 @@ class Gnumeric extends BaseReader
         File::assertFile($filename);
 
         $xml = new XMLReader();
-        $xml->xml($this->securityScanner->scanFile('compress.zlib://' . realpath($filename)), null, Settings::getLibXmlLoaderOptions());
+        $xml->xml($this->getSecurityScannerOrThrow()->scanFile('compress.zlib://' . realpath($filename)), null, Settings::getLibXmlLoaderOptions());
         $xml->setParserProperty(2, true);
 
         $worksheetNames = [];
@@ -141,7 +141,7 @@ class Gnumeric extends BaseReader
         File::assertFile($filename);
 
         $xml = new XMLReader();
-        $xml->xml($this->securityScanner->scanFile('compress.zlib://' . realpath($filename)), null, Settings::getLibXmlLoaderOptions());
+        $xml->xml($this->getSecurityScannerOrThrow()->scanFile('compress.zlib://' . realpath($filename)), null, Settings::getLibXmlLoaderOptions());
         $xml->setParserProperty(2, true);
 
         $worksheetInfo = [];
@@ -248,7 +248,7 @@ class Gnumeric extends BaseReader
 
         $gFileData = $this->gzfileGetContents($filename);
 
-        $xml2 = simplexml_load_string($this->securityScanner->scan($gFileData), 'SimpleXMLElement', Settings::getLibXmlLoaderOptions());
+        $xml2 = simplexml_load_string($this->getSecurityScannerOrThrow()->scan($gFileData), 'SimpleXMLElement', Settings::getLibXmlLoaderOptions());
         $xml = self::testSimpleXml($xml2);
 
         $gnmXML = $xml->children(self::NAMESPACE_GNM);
@@ -271,6 +271,11 @@ class Gnumeric extends BaseReader
             //        cells... during the load, all formulae should be correct, and we're simply bringing the worksheet
             //        name in line with the formula, not the reverse
             $this->spreadsheet->getActiveSheet()->setTitle($worksheetName, false, false);
+
+            $visibility = $sheet->attributes()['Visibility'] ?? 'GNM_SHEET_VISIBILITY_VISIBLE';
+            if ((string) $visibility !== 'GNM_SHEET_VISIBILITY_VISIBLE') {
+                $this->spreadsheet->getActiveSheet()->setSheetState(Worksheet::SHEETSTATE_HIDDEN);
+            }
 
             if (!$this->readDataOnly) {
                 (new PageSetup($this->spreadsheet))
@@ -358,7 +363,7 @@ class Gnumeric extends BaseReader
         if ($sheet !== null && isset($sheet->MergedRegions)) {
             foreach ($sheet->MergedRegions->Merge as $mergeCells) {
                 if (strpos((string) $mergeCells, ':') !== false) {
-                    $this->spreadsheet->getActiveSheet()->mergeCells($mergeCells);
+                    $this->spreadsheet->getActiveSheet()->mergeCells($mergeCells, Worksheet::MERGE_CELL_CONTENT_HIDE);
                 }
             }
         }

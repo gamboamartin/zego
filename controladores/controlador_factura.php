@@ -437,16 +437,16 @@ class controlador_factura extends controlador_base {
 
 
         foreach ($partidas as $partida){
-            $valor_unitario = $partida['valor_unitario'];
-            $cantidad = $partida['cantidad'];
+            $valor_unitario = round($partida['valor_unitario'],2);
+            $cantidad = round($partida['cantidad'],2);
             $insumo_id = $partida['insumo_id'];
-            $subtotal_partida = $valor_unitario * $cantidad;
+            $subtotal_partida = round($valor_unitario * $cantidad,2);
             $insumo_modelo = new insumo($this->link);
             $resultado = $insumo_modelo->obten_por_id('insumo',$insumo_id);
             $insumo = $resultado['registros'][0];
             $impuesto_trasladado_factor = $insumo['insumo_factor'];
             $impuesto_retenido_factor = $insumo['insumo_factor_retenido'];
-            $monto_impuesto_trasladado = $impuesto_trasladado_factor * $subtotal_partida;
+            $monto_impuesto_trasladado = round($impuesto_trasladado_factor * $subtotal_partida,2);
             $monto_impuesto_retenido = $impuesto_retenido_factor * $subtotal_partida;
             $total_partida = round($subtotal_partida + $monto_impuesto_trasladado - $monto_impuesto_retenido,2);
             $total = round($total,2) + round($total_partida,2);
@@ -1508,6 +1508,7 @@ class controlador_factura extends controlador_base {
         }
         $controlador_cliente = new Controlador_Cliente($this->link);
         $controlador_cliente->genera_pdf_factura_sin_timbrar($factura_id);
+
 
         $factura = new Factura($this->link);
         $resultado = $factura->obten_por_id('factura',$factura_id);

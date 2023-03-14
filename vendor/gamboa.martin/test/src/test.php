@@ -2,6 +2,7 @@
 namespace gamboamartin\test;
 
 use config\database;
+use gamboamartin\errores\errores;
 use mysqli;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -44,6 +45,38 @@ class test extends TestCase{
         }
 
     }
+
+    public function registro(string $codigo, string $descripcion, int $id, bool $predeterminado): array
+    {
+        $registro = $this->row(predeterminado: $predeterminado);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error a integrar row',data:  $registro);
+        }
+        $registro = $this->row_base(codigo: $codigo, descripcion: $descripcion, id: $id,registro: $registro);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error a integrar registro',data:  $registro);
+        }
+        return $registro;
+    }
+
+    private function row(bool $predeterminado): array
+    {
+        $registro = array();
+        if($predeterminado){
+            $registro['predeterminado'] = 'activo';
+        }
+        return $registro;
+    }
+
+    private function row_base(string $codigo, string $descripcion, int $id, array $registro): array
+    {
+        $registro['id'] = $id;
+        $registro['descripcion'] = $descripcion;
+        $registro['codigo'] = $codigo;
+        return $registro;
+    }
+
+
 
 
 }

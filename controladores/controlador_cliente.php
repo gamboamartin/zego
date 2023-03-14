@@ -951,10 +951,10 @@ class controlador_cliente extends controlador_base{
 
         foreach ($insumos as $insumo_id){
             $descripcion = $descripciones[$i];
-            $valor_unitario = number_format(round($valores_unitarios[$i],4),4,'.','');
+            $valor_unitario = number_format(round($valores_unitarios[$i],2),2,'.','');
             $cantidad = round($cantidades[$i],2);
-            $importe = number_format(round($cantidad * $valor_unitario,4),4,'.','');
-            $base = number_format(round($importe,4),4,'.','');
+            $importe = number_format(round($cantidad * $valor_unitario,2),2,'.','');
+            $base = number_format(round($importe,2),2,'.','');
             $resultado_insumo = $modelo_insumo->obten_por_id('insumo',$insumo_id);
             $insumo_datos = $resultado_insumo['registros'][0];
 
@@ -991,10 +991,10 @@ class controlador_cliente extends controlador_base{
             $partida[$i]['producto_sat_descripcion'] = $insumo_datos['producto_sat_descripcion'];
             $partida[$i]['descripcion'] = $descripcion;
             $partida[$i]['no_identificacion'] = $insumo_id;
-            $partida[$i]['valor_unitario'] = number_format($valor_unitario,4,'.','');
+            $partida[$i]['valor_unitario'] = number_format($valor_unitario,2,'.','');
             $partida[$i]['cantidad'] = $cantidad;
-            $partida[$i]['importe'] = number_format($importe,4,'.','');
-            $partida[$i]['base'] = number_format($base,4,'.','');
+            $partida[$i]['importe'] = number_format($importe,2,'.','');
+            $partida[$i]['base'] = number_format($base,2,'.','');
             $status = 1;
             $partida[$i]['status'] = $status;
             $i++;
@@ -1255,7 +1255,7 @@ class controlador_cliente extends controlador_base{
 
             $total = number_format(round($registro['factura_sub_total'],2),2,'.','');
 
-            $total = number_format($total+round($registro['factura_total_impuestos_trasladados'],4),4,'.','');
+            $total = number_format($total+round($registro['factura_total_impuestos_trasladados'],4),2,'.','');
             $total = number_format($total-round($registro['factura_total_impuestos_retenidos'],2),2,'.','');
             $total = number_format(round($total-$registro['factura_descuento'],2),2,'.','');
 
@@ -1282,7 +1282,7 @@ class controlador_cliente extends controlador_base{
             $razon_social_cliente = str_replace('&','&amp;',$registro['factura_cliente_razon_social']);
             $uso_cfdi = $registro['factura_uso_cfdi_codigo'];
 
-            $total_impuestos_trasladados = '"'.number_format(round($registro['factura_total_impuestos_trasladados'],4),4,'.','').'"';
+            $total_impuestos_trasladados = '"'.number_format(round($registro['factura_total_impuestos_trasladados'],4),2,'.','').'"';
 
 
 
@@ -1519,7 +1519,6 @@ class controlador_cliente extends controlador_base{
 
             $xml_partida = '';
             foreach ($partidas as $partida){
-
                 if(!isset($partida['partida_factura_descuento'])){
                     $partida['partida_factura_descuento'] = 0.0;
                 }
@@ -1533,15 +1532,15 @@ class controlador_cliente extends controlador_base{
 
                 $pt  = file_get_contents($plantilla_partida);
                 $importe_base_traslado_sin_parsear = $partida['partida_factura_base'];
-                $importe_base_traslado = '"'.number_format(round($partida['partida_factura_base'],4),4,'.','').'"';
-                $partida['partida_factura_valor_unitario'] = number_format(round($partida['partida_factura_valor_unitario'],4),4,'.','');
+                $importe_base_traslado = '"'.number_format(round($partida['partida_factura_base'],2),2,'.','').'"';
+                $partida['partida_factura_valor_unitario'] = number_format(round($partida['partida_factura_valor_unitario'],2),2,'.','');
                 $impuesto_codigo = '"'.$partida['partida_factura_impuesto_codigo'].'"';
                 $tipo_factor_codigo = '"'.$partida['partida_factura_tipo_factor_codigo'].'"';
                 $tasa_cuota = '';
                 if(isset($partida['partida_factura_tasa_cuota'])) {
                     $tasa_cuota = '"' . number_format(round($partida['partida_factura_tasa_cuota'], 6), 6, '.', '') . '"';
                 }
-                $total_impuestos_trasladados = '"'.number_format(round($partida['partida_factura_total_impuestos_trasladados'],4),4,'.','').'"';
+                $total_impuestos_trasladados = '"'.number_format(round($partida['partida_factura_total_impuestos_trasladados'],2),2,'.','').'"';
 
 
                 $tags = array();
@@ -2096,7 +2095,7 @@ class controlador_cliente extends controlador_base{
 
         $tag_rmp = "|$tag|";
         $value = round($registro[$key],4);
-        $value_str = number_format($value,4,'.','');
+        $value_str = number_format($value,2,'.','');
         return str_replace($tag_rmp,$value_str,$data);
     }
 

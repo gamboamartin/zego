@@ -1,0 +1,12 @@
+{
+  "name": "gamboa.martin/configuraciones",
+  "description": "Configuraciones de ejemplo",
+  "type": "library",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Martin Gamboa",
+      "email": "gamboa.martin@gmail.com"
+    }
+  ]
+}

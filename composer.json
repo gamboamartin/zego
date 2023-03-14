@@ -12,12 +12,12 @@
     }
   },
     "require": {
-      "gamboa.martin/calculo": "dev-main",
-      "gamboa.martin/errores": "^1.0.0",
-      "gamboa.martin/test": "dev-main",
-      "gamboa.martin/validacion": "dev-main",
-      "gamboa.martin/plugins": "dev-main",
-      "gamboa.martin/services": "dev-main",
+      "gamboa.martin/calculo": "^2.0.0",
+      "gamboa.martin/errores": "^2.0.0",
+      "gamboa.martin/test": "^2.0.0",
+      "gamboa.martin/validacion": "^2.0.0",
+      "gamboa.martin/plugins": "^2.0.0",
+      "gamboa.martin/services": "^7.0.0",
         "fpdf/fpdf": "^1.84",
       "phpunit/phpunit": "^9.5",
       "ext-mysqli": "*",
