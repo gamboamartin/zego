@@ -343,17 +343,17 @@
         },
         {
             "name": "gamboa.martin/administrador",
-            "version": "v10.2.2",
-            "version_normalized": "10.2.2.0",
+            "version": "v10.4.2",
+            "version_normalized": "10.4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/administrador.git",
-                "reference": "7afcae6f666b044bb108e05019cca574e590f67d"
+                "reference": "602411e2b38ccb6a8bae4ea6ec3efbd3dbc5d337"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/administrador/zipball/7afcae6f666b044bb108e05019cca574e590f67d",
-                "reference": "7afcae6f666b044bb108e05019cca574e590f67d",
+                "url": "https://api.github.com/repos/gamboamartin/administrador/zipball/602411e2b38ccb6a8bae4ea6ec3efbd3dbc5d337",
+                "reference": "602411e2b38ccb6a8bae4ea6ec3efbd3dbc5d337",
                 "shasum": ""
             },
             "require": {
@@ -388,7 +388,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2023-03-13T20:10:24+00:00",
+            "time": "2023-03-15T21:09:16+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -417,7 +417,7 @@
             "description": "Frontend",
             "support": {
                 "issues": "https://github.com/gamboamartin/administrador/issues",
-                "source": "https://github.com/gamboamartin/administrador/tree/v10.2.2"
+                "source": "https://github.com/gamboamartin/administrador/tree/v10.4.2"
             },
             "install-path": "../gamboa.martin/administrador"
         },
@@ -712,17 +712,17 @@
         },
         {
             "name": "gamboa.martin/plugins",
-            "version": "v2.14.0",
-            "version_normalized": "2.14.0.0",
+            "version": "v2.15.0",
+            "version_normalized": "2.15.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gamboamartin/plugins.git",
-                "reference": "b4c0f55e12e02ef94862f4ff961bfcf74ca14edc"
+                "reference": "415b811bb22795c64ce2dfb5cda87bbd90595992"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gamboamartin/plugins/zipball/b4c0f55e12e02ef94862f4ff961bfcf74ca14edc",
-                "reference": "b4c0f55e12e02ef94862f4ff961bfcf74ca14edc",
+                "url": "https://api.github.com/repos/gamboamartin/plugins/zipball/415b811bb22795c64ce2dfb5cda87bbd90595992",
+                "reference": "415b811bb22795c64ce2dfb5cda87bbd90595992",
                 "shasum": ""
             },
             "require": {
@@ -733,7 +733,7 @@
                 "phpoffice/phpspreadsheet": "^1.16",
                 "phpunit/phpunit": "^9.5"
             },
-            "time": "2023-03-13T18:23:59+00:00",
+            "time": "2023-03-15T19:11:34+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -756,7 +756,7 @@
             "description": "Frontend",
             "support": {
                 "issues": "https://github.com/gamboamartin/plugins/issues",
-                "source": "https://github.com/gamboamartin/plugins/tree/v2.14.0"
+                "source": "https://github.com/gamboamartin/plugins/tree/v2.15.0"
             },
             "install-path": "../gamboa.martin/plugins"
         },
@@ -923,17 +923,17 @@
         },
         {
             "name": "graham-campbell/guzzle-factory",
-            "version": "v5.1.2",
-            "version_normalized": "5.1.2.0",
+            "version": "v6.0.0",
+            "version_normalized": "6.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GrahamCampbell/Guzzle-Factory.git",
-                "reference": "2cf8469e3ede97b62a4e8164f5cbf90b0ee58abb"
+                "reference": "cf888363ff70e47e09c1e459a032287255ecfdb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Guzzle-Factory/zipball/2cf8469e3ede97b62a4e8164f5cbf90b0ee58abb",
-                "reference": "2cf8469e3ede97b62a4e8164f5cbf90b0ee58abb",
+                "url": "https://api.github.com/repos/GrahamCampbell/Guzzle-Factory/zipball/cf888363ff70e47e09c1e459a032287255ecfdb6",
+                "reference": "cf888363ff70e47e09c1e459a032287255ecfdb6",
                 "shasum": ""
             },
             "require": {
@@ -942,10 +942,10 @@
                 "php": "^7.4.15 || ^8.0.2"
             },
             "require-dev": {
-                "graham-campbell/analyzer": "^3.1",
-                "phpunit/phpunit": "^9.5"
+                "graham-campbell/analyzer": "^4.0",
+                "phpunit/phpunit": "^9.6.3 || ^10.0.12"
             },
-            "time": "2022-11-06T17:37:38+00:00",
+            "time": "2023-02-25T20:48:53+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -975,7 +975,7 @@
             ],
             "support": {
                 "issues": "https://github.com/GrahamCampbell/Guzzle-Factory/issues",
-                "source": "https://github.com/GrahamCampbell/Guzzle-Factory/tree/v5.1.2"
+                "source": "https://github.com/GrahamCampbell/Guzzle-Factory/tree/v6.0.0"
             },
             "funding": [
                 {
@@ -4107,22 +4107,22 @@
         },
         {
             "name": "spatie/dropbox-api",
-            "version": "1.21.0",
-            "version_normalized": "1.21.0.0",
+            "version": "1.21.1",
+            "version_normalized": "1.21.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/dropbox-api.git",
-                "reference": "0fec337ca1244f21f0467f73a43893f7bd7fdcdb"
+                "reference": "d42f572e0d7fd645d41f26fa7e9ade6625a02296"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/dropbox-api/zipball/0fec337ca1244f21f0467f73a43893f7bd7fdcdb",
-                "reference": "0fec337ca1244f21f0467f73a43893f7bd7fdcdb",
+                "url": "https://api.github.com/repos/spatie/dropbox-api/zipball/d42f572e0d7fd645d41f26fa7e9ade6625a02296",
+                "reference": "d42f572e0d7fd645d41f26fa7e9ade6625a02296",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "graham-campbell/guzzle-factory": "^3.0|^4.0|^5.0",
+                "graham-campbell/guzzle-factory": "^3.0|^4.0|^5.0|^6.0",
                 "guzzlehttp/guzzle": "^6.2|^7.0",
                 "php": "^7.1|^8.0"
             },
@@ -4132,7 +4132,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.4"
             },
-            "time": "2022-09-27T13:37:04+00:00",
+            "time": "2023-03-17T14:11:20+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -4169,7 +4169,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/dropbox-api/issues",
-                "source": "https://github.com/spatie/dropbox-api/tree/1.21.0"
+                "source": "https://github.com/spatie/dropbox-api/tree/1.21.1"
             },
             "funding": [
                 {

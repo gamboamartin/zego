@@ -1,6 +1,7 @@
 <?php
 
 
+use config\empresas;
 use models\partida_factura;
 
 require 'vendor/autoload.php';

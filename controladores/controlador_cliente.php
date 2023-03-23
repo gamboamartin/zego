@@ -1237,6 +1237,7 @@ class controlador_cliente extends controlador_base{
             }
 
             if(count($update)>0){
+                //print_r($update);exit;
                 $r_upd = $factura->modifica_bd($update,'factura',$factura_id);
                 if(errores::$error){
                     return $this->error_->error('Error al modificar factura', $r_upd);
@@ -1831,16 +1832,78 @@ class controlador_cliente extends controlador_base{
      */
     private function init_update(array $datos_empresa, array $registro): array
     {
+
         if(!isset($registro['factura_interior_expedicion']) ||$registro['factura_interior_expedicion'] === '' ){
             $registro['factura_interior_expedicion'] = ' ';
         }
+
         if(!isset($datos_empresa['rfc']) ||$datos_empresa['rfc'] === '' ){
             return $this->error_->error('Error no existe rfc en $datos_empresa', $datos_empresa);
         }
+
+        if(!isset($registro['factura_lugar_expedicion']) || trim($registro['factura_lugar_expedicion']) === ''){
+            $registro['factura_lugar_expedicion'] = $datos_empresa['cp'];
+            //$update['lugar_expedicion'] = $datos_empresa['cp'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_calle_expedicion']) || trim($registro['factura_calle_expedicion']) === ''){
+            $registro['factura_calle_expedicion'] = $datos_empresa['calle'];
+            $update['calle_expedicion'] = $datos_empresa['calle'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_exterior_expedicion']) || trim($registro['factura_exterior_expedicion']) === ''){
+            $registro['factura_exterior_expedicion'] = $datos_empresa['exterior'];
+            $update['exterior_expedicion'] = $datos_empresa['exterior'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_colonia_expedicion']) || trim($registro['factura_colonia_expedicion']) === ''){
+            $registro['factura_colonia_expedicion'] = $datos_empresa['colonia'];
+            $update['colonia_expedicion'] = $datos_empresa['colonia'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_municipio_expedicion']) || trim($registro['factura_municipio_expedicion']) === ''){
+
+            $registro['factura_municipio_expedicion'] = $datos_empresa['municipio'];
+            $update['municipio_expedicion'] = $datos_empresa['municipio'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_estado_expedicion']) || trim($registro['factura_estado_expedicion']) === ''){
+
+            $registro['factura_estado_expedicion'] = $datos_empresa['estado'];
+            $update['estado_expedicion'] = $datos_empresa['estado'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_pais_expedicion']) || trim($registro['factura_pais_expedicion']) === ''){
+
+            $registro['factura_pais_expedicion'] = $datos_empresa['pais'];
+            $update['pais_expedicion'] = $datos_empresa['pais'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_nombre_emisor']) || trim($registro['factura_nombre_emisor']) === ''){
+
+            $registro['factura_nombre_emisor'] = $datos_empresa['razon_social'];
+            $update['nombre_emisor'] = $datos_empresa['razon_social'];
+            //print_r($datos_empresa);
+        }
+
+
         $update = $this->init_array_update_emisor(registro: $registro);
         if(errores::$error){
             return $this->error_->error('Error al asignar datos', $update);
         }
+
+
+        $update['lugar_expedicion'] = $datos_empresa['cp'];
+
+        $update['calle_expedicion'] = $datos_empresa['calle'];
+        $update['exterior_expedicion'] = $datos_empresa['exterior'];
+        $update['colonia_expedicion'] = $datos_empresa['colonia'];
+        $update['municipio_expedicion'] = $datos_empresa['municipio'];
+        $update['estado_expedicion'] = $datos_empresa['estado'];
+        $update['pais_expedicion'] = $datos_empresa['pais'];
+
+        $update['nombre_emisor'] = $datos_empresa['razon_social'];
+
 
         $update['rfc_emisor'] = $datos_empresa['rfc'];
         return $update;
@@ -1902,8 +1965,10 @@ class controlador_cliente extends controlador_base{
         if($campo_upd === ''){
             return $this->error_->error('Error $campo_upd esta vacio', $campo_upd);
         }
+
         $keys = array($campo_upd);
-        $valida = (new validacion())->valida_existencia_keys($keys, $registro);
+
+        $valida = (new validacion())->valida_existencia_keys(keys: $keys,registro:  $registro);
         if(errores::$error){
             return $this->error_->error('Error al validar $registro', $valida);
         }
