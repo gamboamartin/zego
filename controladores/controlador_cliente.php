@@ -1903,6 +1903,8 @@ class controlador_cliente extends controlador_base{
         $update['pais_expedicion'] = $datos_empresa['pais'];
 
         $update['nombre_emisor'] = $datos_empresa['razon_social'];
+        $update['regimen_fiscal_emisor_codigo'] = $datos_empresa['regimen_fiscal'];
+        $update['regimen_fiscal_emisor_descripcion'] = $datos_empresa['regimen_fiscal_descripcion'];
 
 
         $update['rfc_emisor'] = $datos_empresa['rfc'];
