@@ -249,6 +249,8 @@ class controlador_base{
         $this->registro_id = $_GET['registro_id'];
         $resultado = $this->modelo->obten_por_id($tabla, $this->registro_id);
 
+        //print_r($resultado);exit;
+
         if($resultado['n_registros'] == 0){
             header("Location: ./index.php?seccion=$tabla&accion=lista&mensaje=Ya no existe registro&tipo_mensaje=error");
             exit;

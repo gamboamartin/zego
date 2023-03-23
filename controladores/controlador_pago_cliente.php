@@ -173,22 +173,22 @@ class controlador_pago_cliente extends controlador_base {
 
 
         $registro = $this->asigna_elemento_insercion();
-        if(errores::$error){
+       /* if(errores::$error){
             $this->link->query('ROLLBAcK');
             $error = $this->error_->error(mensaje: 'Error al asignar elemento',data:  $registro);
             print_r($error);
             die('Error');
-        }
+        }*/
 
 
         $pago_cliente = new pago_cliente($this->link);
         $resultado = $pago_cliente->alta_bd($registro,'pago_cliente');
-        if(errores::$error){
+        /*if(errores::$error){
             $this->link->query('ROLLBAcK');
             $error = $this->error_->error(mensaje: 'Error al insertar pago',data:  $resultado);
             print_r($error);
             die('Error');
-        }
+        }*/
 
         $pago_cliente_id = $resultado['registro_id'];
 
@@ -208,12 +208,13 @@ class controlador_pago_cliente extends controlador_base {
                 $factura_id = $facturas_id[$i];
 
                 $resultado_factura = $factura->obten_por_id('factura',$factura_id);
-                if(errores::$error){
+
+                /*if(errores::$error){
                     $this->link->query('ROLLBAcK');
                     $error = $this->error_->error(mensaje: 'Error al obtener factura',data:  $resultado_factura);
                     print_r($error);
                     die('Error');
-                }
+                }*/
                 $factura_registro = $resultado_factura['registros'][0];
 
 
@@ -1065,14 +1066,16 @@ class controlador_pago_cliente extends controlador_base {
 
         $modelo = new $nombre_modelo($this->link);
         $resultado = $modelo->obten_por_id($tabla,$id);
-        if(errores::$error){
-            $error = $this->error_->error(mensaje:'Error al obtener registro', data: $resultado);
-            print_r($error);
-            die('Error');
-        }
+        //print_r($resultado);exit;
+        //if(errores::$error){
+        //    $error = $this->error_->error(mensaje:'Error al obtener registro', data: $resultado);
+        //    print_r($error);
+        //    die('Error');
+        //}
         if(!isset($resultado['registros'][0])){
             return $this->error_->error(mensaje: 'Error al obtener registro no existe '.$tabla.' Id: '.$id, data: $resultado);
         }
+       // exit;
 
         return $resultado['registros'][0];
 
@@ -1130,6 +1133,18 @@ class controlador_pago_cliente extends controlador_base {
         $uso_cfDI = utf8_decode($pago_cliente['pago_cliente_uso_cfdi_descripcion']);
         $regimen_fiscal = utf8_decode($pago_cliente['pago_cliente_regimen_fiscal_descripcion']);
 
+        if(!isset($pago_cliente['pago_cliente_forma_pago_descripcion'])){
+            $pago_cliente['pago_cliente_forma_pago_descripcion'] = '';
+        }
+        if(!isset($pago_cliente['pago_cliente_cliente_banco_rfc'])){
+            $pago_cliente['pago_cliente_cliente_banco_rfc'] = '';
+        }
+        if(!isset($pago_cliente['pago_cliente_cuenta_bancaria_cuenta'])){
+            $pago_cliente['pago_cliente_cuenta_bancaria_cuenta'] = '';
+        }
+        if(!isset($pago_cliente['pago_cliente_cliente_banco_descripcion'])){
+            $pago_cliente['pago_cliente_cliente_banco_descripcion'] = '';
+        }
 
         $forma_de_pago = utf8_decode($pago_cliente['pago_cliente_forma_pago_descripcion']);
         $fecha_de_pago = utf8_decode($pago_cliente['pago_cliente_fecha_pago']);

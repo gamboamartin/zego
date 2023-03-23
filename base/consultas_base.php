@@ -614,14 +614,13 @@ class consultas_base{
         $this->estructura_bd['cliente']['genera_or_descripcion'] = array('pais','estado','municipio');
         $this->estructura_bd['cliente']['genera_or_like'] = array('razon_social',
             'telefono','email');
+
         $this->estructura_bd['cliente']['campos'] = array(
             'razon_social'=>array(
                 'tipo'=>'text','cols'=>6,'requerido'=>'required',
                 'vista'=>array('alta','modifica')),
             'rfc'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
                 'pattern'=>$this->pattern_rfc,'vista'=>array('alta','modifica')),
-            'regimen_fiscal_id'=>array('tipo'=>'select','cols'=>6,'requerido'=>'required',
-                'tabla_foranea'=>'regimen_fiscal','vista'=>array('alta','modifica'),'externa'=>true),
             'pais_id'=>array(
                 'tipo'=>'select','cols'=>6,'requerido'=>'required',
                 'tabla_foranea'=>'pais','vista'=>array('alta','modifica'),'externa'=>true),
@@ -633,6 +632,9 @@ class consultas_base{
                 'tabla_foranea'=>'municipio','vista'=>array('alta','modifica')),
             'cp'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
                 'pattern'=>$this->pattern_cp,'vista'=>array('alta','modifica')),
+            'regimen_fiscal_id'=>array('tipo'=>'select','cols'=>6,'requerido'=>'required',
+                'tabla_foranea'=>'regimen_fiscal','vista'=>array('alta','modifica'),'externa'=>true),
+
             'colonia'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
                 'vista'=>array('alta','modifica')),
             'calle'=>array('tipo'=>'text','cols'=>6,'requerido'=>'required',
