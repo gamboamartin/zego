@@ -688,6 +688,8 @@ class controlador_factura extends controlador_base {
         $cliente_direccion = $factura['cliente_direccion'];
         $cliente_rfc = $factura['cliente_rfc'];
         $cliente_colonia = $factura['cliente_colonia'];
+        $cliente_exterior = $factura['cliente_exterior'];
+        $cliente_interior = $factura['cliente_interior'];
         $cliente_cp = $factura['cliente_cp'];
         $cliente_zica_ciudad = $factura['cliente_zica_cuidad'];
         $marcas = $factura['factura_marcas'];
@@ -774,7 +776,7 @@ class controlador_factura extends controlador_base {
 
         $pdf->SetFont('Courier','',$tamano_letra_normal);
         $txt = 'Razón Social: '.$cliente_razon_social;
-        $txt = $txt.' | Dirección: '.$cliente_direccion.' '.$cliente_colonia.', '.$cliente_cp;
+        $txt = $txt.' | Dirección: '.$cliente_direccion.' '.$cliente_exterior.' '.$cliente_interior.' '.$cliente_colonia.', '.$cliente_cp;
         $txt = $txt.', '.$cliente_zica_ciudad;
         $txt = $txt.' | RFC: '.$cliente_rfc;
         $pdf->MultiCell(190,5,utf8_decode($txt),0,'L');
