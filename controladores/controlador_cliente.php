@@ -1165,6 +1165,71 @@ class controlador_cliente extends controlador_base{
         	}
 
         }
+
+        $factura_modelo = new factura($this->link);
+        $factura = $factura_modelo->obten_por_id('factura',$this->factura_id);
+        if(errores::$error){
+            $error = $this->error_->error('Error al obtener registro', $factura);
+            print_r($error);
+            die('Error');
+        }
+        $factura = $factura['registros'][0];
+
+        if($factura['factura_status_factura'] === 'sin timbrar') {
+            $empresa = new Empresas();
+            $upd = array();
+            $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
+
+            if (!isset($factura['factura_lugar_expedicion']) || trim($factura['factura_lugar_expedicion'] === '')) {
+                $upd['lugar_expedicion'] = $datos_empresa['cp'];
+            }
+            if (!isset($factura['factura_calle_expedicion']) || trim($factura['factura_calle_expedicion'] === '')) {
+                $upd['calle_expedicion'] = $datos_empresa['calle'];
+            }
+            if (!isset($factura['factura_exterior_expedicion']) || trim($factura['factura_exterior_expedicion'] === '')) {
+                $upd['exterior_expedicion'] = $datos_empresa['exterior'];
+            }
+            if (!isset($factura['factura_interior_expedicion']) || trim($factura['factura_interior_expedicion'] === '')) {
+                $upd['interior_expedicion'] = $datos_empresa['interior'];
+            }
+            if (!isset($factura['factura_colonia_expedicion']) || trim($factura['factura_colonia_expedicion'] === '')) {
+                $upd['colonia_expedicion'] = $datos_empresa['colonia'];
+            }
+            if (!isset($factura['factura_municipio_expedicion']) || trim($factura['factura_municipio_expedicion'] === '')) {
+                $upd['municipio_expedicion'] = $datos_empresa['municipio'];
+            }
+            if (!isset($factura['factura_estado_expedicion']) || trim($factura['factura_estado_expedicion'] === '')) {
+                $upd['estado_expedicion'] = $datos_empresa['estado'];
+            }
+            if (!isset($factura['factura_pais_expedicion']) || trim($factura['factura_pais_expedicion'] === '')) {
+                $upd['pais_expedicion'] = $datos_empresa['pais'];
+            }
+            if (!isset($factura['factura_rfc_emisor']) || trim($factura['factura_rfc_emisor'] === '')) {
+                $upd['rfc_emisor'] = $datos_empresa['rfc'];
+            }
+            if (!isset($factura['factura_nombre_emisor']) || trim($factura['factura_nombre_emisor'] === '')) {
+                $upd['nombre_emisor'] = $datos_empresa['razon_social'];
+            }
+            if (!isset($factura['factura_regimen_fiscal_emisor_codigo']) || trim($factura['factura_regimen_fiscal_emisor_codigo'] === '')) {
+                $upd['regimen_fiscal_emisor_codigo'] = $datos_empresa['regimen_fiscal'];
+            }
+            if (!isset($factura['factura_regimen_fiscal_emisor_descripcion']) || trim($factura['factura_regimen_fiscal_emisor_descripcion'] === '')) {
+                $upd['regimen_fiscal_emisor_descripcion'] = $datos_empresa['regimen_fiscal_descripcion'];
+            }
+
+            if(count($upd)>0){
+                //print_r($update);exit;
+                $r_upd = $factura_modelo->modifica_bd($upd,'factura',$this->factura_id);
+                if(errores::$error){
+                    return $this->error_->error('Error al modificar factura', $r_upd);
+                }
+            }
+
+
+        }
+
+
+
         $pdf = $this->genera_pdf_factura_sin_timbrar(factura_id: $this->factura_id);
         if(errores::$error){
             $error = $this->error_->error('Error al generar pdf', $pdf);
@@ -1173,7 +1238,6 @@ class controlador_cliente extends controlador_base{
         }
 
 
-        $factura_modelo = new factura($this->link);
         $resultado = $factura_modelo->obten_por_id('factura',$this->factura_id);
         if(errores::$error){
             $error = $this->error_->error('Error al obtener registro', $resultado);
