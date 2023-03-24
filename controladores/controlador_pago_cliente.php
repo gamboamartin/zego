@@ -100,9 +100,10 @@ class controlador_pago_cliente extends controlador_base {
                 $monto_restante = 0;
             }
             else{
-                $factura['monto_pagar'] = $factura['factura_saldo'];
+                $factura['monto_pagar'] = 0;
                 $monto_restante = 0;
             }
+
 
             $filtro = array('factura.id'=>$factura['factura_id'], 'pago_cliente_factura.status'=>1);
             $resultado_pagos = $pago_cliente_factura_modelo->filtro_and('pago_cliente_factura',$filtro);
@@ -172,6 +173,7 @@ class controlador_pago_cliente extends controlador_base {
         $this->link->query('START TRANSAcTION');
 
 
+
         $registro = $this->asigna_elemento_insercion();
        /* if(errores::$error){
             $this->link->query('ROLLBAcK');
@@ -190,6 +192,8 @@ class controlador_pago_cliente extends controlador_base {
             die('Error');
         }*/
 
+
+
         $pago_cliente_id = $resultado['registro_id'];
 
 
@@ -197,13 +201,18 @@ class controlador_pago_cliente extends controlador_base {
         $montos_pagar = $_POST['monto_pagar'];
         $parcialidades = $_POST['parcialidad'];
 
+        //print_r($montos_pagar);exit;
+
         $i = 0;
 
         $pago_cliente_factura = new pago_cliente_factura($this->link);
         $factura = new factura($this->link);
 
+
+
         $facturas_a_pagar = array();
         foreach ($montos_pagar as $monto){
+
             if($monto > 0){
                 $factura_id = $facturas_id[$i];
 
@@ -229,6 +238,7 @@ class controlador_pago_cliente extends controlador_base {
                 $factura_insertar['parcialidad'] = $parcialidades[$i];
 
                 $resultado_insercion = $pago_cliente_factura->alta_bd($factura_insertar,'pago_cliente_factura');
+
 
 
                 if($resultado_insercion['error']){
@@ -390,6 +400,17 @@ class controlador_pago_cliente extends controlador_base {
         if(!isset($cuenta_bancaria['banco_id']) ){
             $cuenta_bancaria['banco_id'] = '';
         }
+
+        if(!isset($cuenta_bancaria['banco_rfc']) ){
+            $cuenta_bancaria['banco_rfc'] = '';
+        }
+
+        if(!isset($cuenta_bancaria['banco_descripcion']) ){
+            $cuenta_bancaria['banco_descripcion'] = '';
+        }
+
+
+
 
         $registro['cuenta_bancaria_empresa_id'] = $this->cuenta_bancaria_empresa_id;
         $cuenta_bancaria_empresa = $this->obten_datos('cuenta_bancaria_empresa',$this->cuenta_bancaria_empresa_id);
