@@ -89,19 +89,19 @@ class controlador_pago_cliente extends controlador_base {
         $pago_cliente_factura_modelo = new pago_cliente_factura($this->link);
 
 
-
+        //print_r($this->monto);exit;
         $monto_restante = $this->monto;
         $this->facturas_saldo = array();
         $saldo_actual_total = 0;
         foreach ($facturas_saldo as $factura){
             $saldo_actual_total = $saldo_actual_total + $factura['factura_saldo'];
             if($monto_restante<$factura['factura_saldo']){
-                $factura['monto_pagar'] = $monto_restante;
+                $factura['monto_pagar'] = 0;
                 $monto_restante = 0;
             }
             else{
                 $factura['monto_pagar'] = $factura['factura_saldo'];
-                $monto_restante = $monto_restante-$factura['factura_saldo'];
+                $monto_restante = 0;
             }
 
             $filtro = array('factura.id'=>$factura['factura_id'], 'pago_cliente_factura.status'=>1);
@@ -209,12 +209,12 @@ class controlador_pago_cliente extends controlador_base {
 
                 $resultado_factura = $factura->obten_por_id('factura',$factura_id);
 
-                /*if(errores::$error){
-                    $this->link->query('ROLLBAcK');
-                    $error = $this->error_->error(mensaje: 'Error al obtener factura',data:  $resultado_factura);
-                    print_r($error);
-                    die('Error');
-                }*/
+                //if($resultado_factura['error']){
+                //    $this->link->query('ROLLBAcK');
+                //    $error = $this->error_->error(mensaje: 'Error al obtener factura',data:  $resultado_factura);
+                //    print_r($error);
+                //    die('Error');
+                //}
                 $factura_registro = $resultado_factura['registros'][0];
 
 
