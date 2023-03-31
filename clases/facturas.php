@@ -393,7 +393,8 @@ class facturas{
     {
         $relaciones = '';
         foreach($facturas_relacionadas as $fac_rel) {
-            $relacion = $this->relacion_factura_uuid(uuid: $fac_rel['factura_uuid']);
+           // print_r($fac_rel);exit;
+            $relacion = $this->relacion_factura_uuid(uuid: $fac_rel['factura_rel_uuid']);
             if(errores::$error){
                 return $this->error->error(mensaje:  'Error al asignar relacion',data: $relacion,
                     params: get_defined_vars());
