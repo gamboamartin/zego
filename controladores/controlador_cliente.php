@@ -1150,6 +1150,16 @@ class controlador_cliente extends controlador_base{
             die('Error');
         }
 
+        $factura_modelo = new factura($this->link);
+        $factura = $factura_modelo->obten_por_id('factura',$this->factura_id);
+        if(errores::$error){
+            $error = $this->error_->error('Error al obtener registro', $factura);
+            print_r($error);
+            die('Error');
+        }
+        $factura = $factura['registros'][0];
+
+
         $partidas = $resultado['registros'];
 
         foreach ($partidas as $partida) {
@@ -1163,6 +1173,22 @@ class controlador_cliente extends controlador_base{
                     die('Error');
                 }
         	}
+
+            if($factura['factura_cliente_rfc'] === 'HME850910RF1' && $factura['factura_status_factura'] === 'sin timbrar'){
+                if((int)$partida['partida_factura_insumo_id'] === 82){
+                    $upd = array();
+                    $upd['factura_id'] = $this->factura_id;
+                    $upd['cantidad'] = $factura['factura_bultos'];
+                    $upd['valor_unitario'] = $partida['partida_factura_valor_unitario'] / $factura['factura_bultos'];
+                    $partida_factura_id = $partida['partida_factura_id'];
+                    $r_pf = $partida_factura_modelo->modifica_bd($upd,'partida_factura',$partida_factura_id);
+                    if(errores::$error){
+                        $error = $this->error_->error('Error al modificar partidas', $r_pf);
+                        print_r($error);
+                        die('Error');
+                    }
+                }
+            }
 
         }
 
