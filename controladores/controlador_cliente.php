@@ -1175,7 +1175,7 @@ class controlador_cliente extends controlador_base{
         	}
 
             if($factura['factura_cliente_rfc'] === 'HME850910RF1' && $factura['factura_status_factura'] === 'sin timbrar'){
-                if((int)$partida['partida_factura_insumo_id'] === 82){
+                if((int)$partida['partida_factura_insumo_id'] === 82 && (int)$partida['partida_factura_cantidad'] === 1){
                     $upd = array();
                     $upd['factura_id'] = $this->factura_id;
                     $upd['cantidad'] = $factura['factura_bultos'];
