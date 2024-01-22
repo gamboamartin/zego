@@ -9,7 +9,7 @@
   <cfdi:Receptor Rfc="|RfcReceptor|" Nombre="|NombreReceptor|" DomicilioFiscalReceptor="|ClienteCP|" RegimenFiscalReceptor="|ClienteRF|" UsoCFDI="|UsoCFDI|"/>
 <cfdi:Conceptos>
   <cfdi:Concepto ClaveProdServ="|ClaveProdServ|" Cantidad="|Cantidad|" ClaveUnidad="|ClaveUnidad|"
-                 Descripcion="|Descripcion|" ValorUnitario="|ValorUnitario|" Importe="|Importe|">
+                 Descripcion="|Descripcion|" ValorUnitario="|ValorUnitario|" Importe="|Importe|" ObjetoImp="|ObjImp|">
 
     <cfdi:Impuestos>
       <cfdi:Traslados>
