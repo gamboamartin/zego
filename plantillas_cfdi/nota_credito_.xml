@@ -1,9 +1,9 @@
 <cfdi:Comprobante xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd"
+                  xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd"
                   LugarExpedicion="|LugarExpedicion|" TipoDeComprobante="|TipoComprobante|" Total="|Total|"
                   Moneda="|Moneda|" SubTotal="|SubTotal|" FormaPago="|FormaPago|" MetodoPago="|MetodoPago|"
-                  Fecha="|Fecha|" Folio="|Folio|" Serie="|Serie|" Version="4.0"
-                  xmlns:cfdi="http://www.sat.gob.mx/cfd/4" TipoCambio="|TipoCambio|">
+                  Fecha="|Fecha|" Folio="|Folio|" Serie="|Serie|" Version="3.3"
+                  xmlns:cfdi="http://www.sat.gob.mx/cfd/3" TipoCambio="|TipoCambio|">
   |cdfis_relacionados|
   <cfdi:Emisor Rfc="|RfcEmisor|" Nombre="|NombreEmisor|" RegimenFiscal="|RegimenFiscal|"/>
   <cfdi:Receptor Rfc="|RfcReceptor|" Nombre="|NombreReceptor|" UsoCFDI="|UsoCFDI|"/>
