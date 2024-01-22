@@ -1,6 +1,6 @@
 <cfdi:Comprobante xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd"
-                  LugarExpedicion="|LugarExpedicion|" TipoDeComprobante="|TipoComprobante|" Total="|Total|"
+                  Exportacion="01" LugarExpedicion="|LugarExpedicion|" TipoDeComprobante="|TipoComprobante|" Total="|Total|"
                   Moneda="|Moneda|" SubTotal="|SubTotal|" FormaPago="|FormaPago|" MetodoPago="|MetodoPago|"
                   Fecha="|Fecha|" Folio="|Folio|" Serie="|Serie|" Version="4.0"
                   xmlns:cfdi="http://www.sat.gob.mx/cfd/4" TipoCambio="|TipoCambio|">
