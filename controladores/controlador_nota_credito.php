@@ -169,7 +169,7 @@ class controlador_nota_credito extends controlador_base {
         $this->nota_credito['tipo_comprobante_codigo'] = 'E';
         $this->nota_credito['impuesto_codigo'] = '002';
         $this->nota_credito['metodo_pago_codigo'] = 'PUE';
-        $this->nota_credito['obj_imp'] = '01';
+        $this->nota_credito['obj_imp'] = '02';
         $this->nota_credito['cliente_rf'] = $registro_rf['cliente_rf'];
         $cliente_rfc = $this->nota_credito['cliente_rfc'];
         $this->nota_credito = array_merge($datos_empresa, $this->nota_credito);
