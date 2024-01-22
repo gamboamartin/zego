@@ -21,7 +21,7 @@
 
 <cfdi:Impuestos TotalImpuestosTrasladados="|ImporteIVA|">
   <cfdi:Traslados>
-    <cfdi:Traslado Importe="|ImporteIVA|" Impuesto="|Impuesto|" TasaOCuota="|Tasa|" TipoFactor="|TipoFactor|"/>
+    <cfdi:Traslado Base="|Base|" Importe="|ImporteIVA|" Impuesto="|Impuesto|" TasaOCuota="|Tasa|" TipoFactor="|TipoFactor|"/>
   </cfdi:Traslados>
 </cfdi:Impuestos>
 </cfdi:Comprobante>
