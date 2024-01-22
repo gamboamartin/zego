@@ -50,7 +50,7 @@ class factura extends modelos{
      * @param array $registro
      * @return array
      */
-    private function regimen_fiscal_receptor(array $registro): array
+    public function regimen_fiscal_receptor(array $registro): array
     {
         if(isset($registro['cliente_id'])){
             $cliente_id = $registro['cliente_id'];

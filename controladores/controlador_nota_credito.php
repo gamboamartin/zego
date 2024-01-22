@@ -3,6 +3,8 @@ namespace controllers;
 use config\empresas;
 use facturas;
 use FPDF;
+use gamboamartin\errores\errores;
+use models\cliente;
 use models\factura;
 use models\nota_credito;
 use my_pdf;
@@ -148,6 +150,11 @@ class controlador_nota_credito extends controlador_base {
         $r_nota_credito = $nota_credito_modelo->obten_por_id('nota_credito',$this->nota_credito_id);
         $this->nota_credito = $r_nota_credito['registros'][0];
 
+        $cliente_modelo = new factura($this->link);
+        $registro_cl['cliente_id'] =  $this->nota_credito['cliente_id'];
+        $registro_rf = $cliente_modelo->regimen_fiscal_receptor(registro: $registro_cl);
+
+
         $empresa = new empresas();
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
         $this->nota_credito['uso_cfdi_codigo'] = 'P01';
@@ -162,6 +169,7 @@ class controlador_nota_credito extends controlador_base {
         $this->nota_credito['tipo_comprobante_codigo'] = 'E';
         $this->nota_credito['impuesto_codigo'] = '002';
         $this->nota_credito['metodo_pago_codigo'] = 'PUE';
+        $this->nota_credito['cliente_rf'] = $registro_rf['cliente_rf'];
         $cliente_rfc = $this->nota_credito['cliente_rfc'];
         $this->nota_credito = array_merge($datos_empresa, $this->nota_credito);
     }
@@ -194,6 +202,8 @@ class controlador_nota_credito extends controlador_base {
         $RegimenFiscal = $this->nota_credito['regimen_fiscal'];
         $RfcReceptor = trim($this->nota_credito['cliente_rfc']);
         $NombreReceptor = $this->nota_credito['cliente_razon_social'];
+        $ClienteCP = trim($this->nota_credito['cliente_cp']);
+        $ClienteRF = trim($this->nota_credito['cliente_rf']);
         $ClaveProdServ = $this->nota_credito['producto_codigo'];
         $Cantidad = $this->nota_credito['producto_cantidad'];
         $ClaveUnidad = $this->nota_credito['unidad_codigo'];
@@ -236,6 +246,10 @@ class controlador_nota_credito extends controlador_base {
         $xml = str_replace('|NombreEmisor|',$NombreEmisor,$xml);
         $xml = str_replace('|RegimenFiscal|',$RegimenFiscal,$xml);
         $xml = str_replace('|RfcReceptor|',$RfcReceptor,$xml);
+
+        $xml = str_replace('|ClienteCP|',$ClienteCP,$xml);
+        $xml = str_replace('|ClienteRF|',$ClienteRF,$xml);
+
         $xml = str_replace('|ClaveProdServ|',$ClaveProdServ,$xml);
         $xml = str_replace('|Cantidad|',$Cantidad,$xml);
         $xml = str_replace('|ClaveUnidad|',$ClaveUnidad,$xml);
