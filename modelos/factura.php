@@ -63,6 +63,19 @@ class factura extends modelos{
         return $registro;
     }
 
+    public function uso_cfdi(array $registro): array
+    {
+        if(isset($registro['cliente_id'])){
+            $cliente_id = $registro['cliente_id'];
+            $registro = $this->aplica_uso_cfdi_cte(cliente_id: $cliente_id, registro: $registro);
+            if(errores::$error){
+                return $this->error->error('Error al asignar regimen fiscal', $registro);
+            }
+        }
+
+        return $registro;
+    }
+
     public function facturas_relacionadas(int $factura_id){
         $factura_relacionada_modelo = new factura_relacionada($this->link);
 
@@ -98,6 +111,27 @@ class factura extends modelos{
         return $registro;
     }
 
+    private function aplica_uso_cfdi_cte(int $cliente_id, array $registro): array
+    {
+
+        $cliente = (new cliente($this->link))->cliente(cliente_id: $cliente_id);
+        if(errores::$error){
+            return $this->error->error('Error al al obtener cliente', $cliente);
+        }
+
+        if(!isset($cliente['cliente_uso_cfdi_id']) || trim($cliente['cliente_uso_cfdi_id']) === ''){
+            return $this->error->error('Error no existe regimen fiscal en cliente', $cliente);
+        }
+
+        $uso_cfdi_id = $cliente['cliente_uso_cfdi_id'];
+
+        $registro = $this->asigna_uso_cfdi_rec(uso_cfdi_id: $uso_cfdi_id, registro: $registro);
+        if(errores::$error){
+            return $this->error->error('Error al asignar regimen fiscal', $registro);
+        }
+        return $registro;
+    }
+
     /**
      * ERROR UNIT
      * @param int $regimen_fiscal_id
@@ -113,6 +147,19 @@ class factura extends modelos{
             return $this->error->error('Error al al obtener regimen_fiscal', array($regimen_fiscal, $registro));
         }
         $registro['cliente_rf'] = $regimen_fiscal['regimen_fiscal_codigo'];
+        return $registro;
+    }
+
+    private function asigna_uso_cfdi_rec(int $uso_cfdi_id, array $registro): array
+    {
+
+        $uso_cfdi = (new uso_cfdi($this->link))->get_uso_cfdi(
+            uso_cfdi_id: $uso_cfdi_id);
+        if(errores::$error){
+            return $this->error->error('Error al al obtener uso_cfdi', array($uso_cfdi, $registro));
+        }
+        $registro['uso_cfdi_codigo'] = $uso_cfdi['uso_cfdi_codigo'];
+        $registro['uso_cfdi_descripcion'] = $uso_cfdi['uso_cfdi_descripcion'];
         return $registro;
     }
 

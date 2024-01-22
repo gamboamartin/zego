@@ -6,6 +6,7 @@ use FPDF;
 use gamboamartin\errores\errores;
 use models\cliente;
 use models\factura;
+use models\metodo_pago;
 use models\nota_credito;
 use my_pdf;
 use NumeroTexto;
@@ -154,11 +155,13 @@ class controlador_nota_credito extends controlador_base {
         $registro_cl['cliente_id'] =  $this->nota_credito['cliente_id'];
         $registro_rf = $cliente_modelo->regimen_fiscal_receptor(registro: $registro_cl);
 
+        $resultado_uso_cfdi = $cliente_modelo->uso_cfdi(registro: $registro_cl);
 
         $empresa = new empresas();
         $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
-        $this->nota_credito['uso_cfdi_codigo'] = 'P01';
-        $this->nota_credito['uso_cfdi_descripcion'] = 'Por Definir';
+        $this->nota_credito['uso_cfdi_codigo'] = $resultado_uso_cfdi['uso_cfdi_codigo'];
+        $this->nota_credito['uso_cfdi_descripcion'] = $resultado_uso_cfdi['uso_cfdi_descripcion'];
+
         $this->nota_credito['producto_codigo'] = '84111506';
         $this->nota_credito['producto_cantidad'] = '1';
         $this->nota_credito['unidad_codigo'] = 'ACT';
@@ -171,6 +174,7 @@ class controlador_nota_credito extends controlador_base {
         $this->nota_credito['metodo_pago_codigo'] = 'PUE';
         $this->nota_credito['obj_imp'] = '02';
         $this->nota_credito['cliente_rf'] = $registro_rf['cliente_rf'];
+
         $cliente_rfc = $this->nota_credito['cliente_rfc'];
         $this->nota_credito = array_merge($datos_empresa, $this->nota_credito);
     }
