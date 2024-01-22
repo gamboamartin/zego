@@ -5,7 +5,7 @@ A composer wrapper around the great php FPDF class. All credit to them.
 
 [FPDF Website](http://www.fpdf.org/)
 
-Currently uses FPDF 1.84.
+Currently uses FPDF 1.85.
 
 
 
@@ -14,7 +14,7 @@ Currently uses FPDF 1.84.
 Add to your "__composer.json__" file under the "__require__" section:
 
 ```
-"fpdf/fpdf": "^1.84"
+"fpdf/fpdf": "^1.85"
 ```
 
 
@@ -34,7 +34,7 @@ In your php file that you want to use the class add a use statement.
 use Fpdf\Fpdf;
 ```
 
-Then use as per the FPDF documantation.
+Then use as per the FPDF documentation.
 
 ``` php
 $pdf = new Fpdf();

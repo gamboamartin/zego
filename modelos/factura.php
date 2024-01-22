@@ -212,7 +212,7 @@ class factura extends modelos{
 
     public function obten_facturas_con_saldo($cliente_id){
         $consulta = $this->genera_consulta_base('factura');
-        $where = " WHERE cliente.id = $cliente_id AND factura.saldo > 0 ";
+        $where = " WHERE cliente.id = $cliente_id AND factura.saldo > 0.01 ORDER BY factura.folio DESC";
         $consulta = $consulta.$where;
 
         $resultado = $this->ejecuta_consulta($consulta);

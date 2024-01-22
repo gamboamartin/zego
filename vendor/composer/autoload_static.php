@@ -8,16 +8,19 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
 {
     public static $files = array (
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
-        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'v' => 
         array (
             'views\\' => 6,
+            'validacion\\' => 11,
         ),
         't' => 
         array (
@@ -25,11 +28,13 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         ),
         's' => 
         array (
+            'src\\' => 4,
+            'setasign\\Fpdi\\' => 14,
             'services_base\\' => 14,
         ),
-        'p' => 
+        'o' => 
         array (
-            'phpDocumentor\\Reflection\\' => 25,
+            'orm\\' => 4,
         ),
         'm' => 
         array (
@@ -43,12 +48,22 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
             'gamboamartin\\services\\' => 22,
             'gamboamartin\\plugins\\' => 21,
             'gamboamartin\\errores\\' => 21,
+            'gamboamartin\\encripta\\' => 22,
+            'gamboamartin\\controllers\\' => 25,
+            'gamboamartin\\compresor\\' => 23,
             'gamboamartin\\calculo\\' => 21,
+            'gamboamartin\\base_modelos\\' => 26,
+            'gamboamartin\\administrador\\tests\\' => 33,
+            'gamboamartin\\administrador\\models\\' => 34,
+            'gamboamartin\\administrador\\modelado\\' => 36,
+            'gamboamartin\\administrador\\ctl\\' => 31,
         ),
         'c' => 
         array (
             'controllers\\' => 12,
             'config\\' => 7,
+            'chillerlan\\Settings\\' => 20,
+            'chillerlan\\QRCode\\' => 18,
         ),
         'b' => 
         array (
@@ -58,28 +73,40 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         array (
             'ZipStream\\' => 10,
         ),
-        'W' => 
+        'T' => 
         array (
-            'Webmozart\\Assert\\' => 17,
+            'Tomsgu\\PdfMerger\\' => 17,
         ),
         'S' => 
         array (
-            'Symfony\\Polyfill\\Mbstring\\' => 26,
-            'Symfony\\Polyfill\\Ctype\\' => 23,
+            'Spatie\\Dropbox\\' => 15,
         ),
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
+            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
-            'Prophecy\\' => 9,
             'PhpParser\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'M' => 
         array (
             'MyCLabs\\Enum\\' => 13,
+            'Mpdf\\' => 5,
             'Matrix\\' => 7,
+        ),
+        'H' => 
+        array (
+            'Http\\Message\\' => 13,
+        ),
+        'G' => 
+        array (
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\' => 11,
+            'GrahamCampbell\\GuzzleFactory\\' => 29,
         ),
         'F' => 
         array (
@@ -101,19 +128,31 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         array (
             0 => __DIR__ . '/../..' . '/views',
         ),
+        'validacion\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/administrador/validacion',
+        ),
         'tests\\' => 
         array (
             0 => __DIR__ . '/../..' . '/tests',
+            1 => __DIR__ . '/..' . '/gamboa.martin/compresor/tests',
+            2 => __DIR__ . '/..' . '/gamboa.martin/encripta/tests',
+        ),
+        'src\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/encripta/src',
+        ),
+        'setasign\\Fpdi\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/setasign/fpdi/src',
         ),
         'services_base\\' => 
         array (
             0 => __DIR__ . '/../..' . '/services',
         ),
-        'phpDocumentor\\Reflection\\' => 
+        'orm\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            0 => __DIR__ . '/..' . '/gamboa.martin/administrador/orm/base',
         ),
         'models\\' => 
         array (
@@ -126,12 +165,13 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         ),
         'gamboamartin\\test\\' => 
         array (
-            0 => __DIR__ . '/..' . '/gamboa.martin/calculo/tests',
-            1 => __DIR__ . '/..' . '/gamboa.martin/errores/tests',
-            2 => __DIR__ . '/..' . '/gamboa.martin/plugins/tests',
+            0 => __DIR__ . '/..' . '/gamboa.martin/base_modelos/tests',
+            1 => __DIR__ . '/..' . '/gamboa.martin/calculo/tests',
+            2 => __DIR__ . '/..' . '/gamboa.martin/errores/tests',
             3 => __DIR__ . '/..' . '/gamboa.martin/services/tests',
             4 => __DIR__ . '/..' . '/gamboa.martin/test/src',
             5 => __DIR__ . '/..' . '/gamboa.martin/validacion/tests',
+            6 => __DIR__ . '/..' . '/gamboa.martin/plugins/tests',
         ),
         'gamboamartin\\services\\error_write\\' => 
         array (
@@ -149,9 +189,41 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         array (
             0 => __DIR__ . '/..' . '/gamboa.martin/errores/src',
         ),
+        'gamboamartin\\encripta\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/encripta/src',
+        ),
+        'gamboamartin\\controllers\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/administrador/controllers',
+        ),
+        'gamboamartin\\compresor\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/compresor/src',
+        ),
         'gamboamartin\\calculo\\' => 
         array (
             0 => __DIR__ . '/..' . '/gamboa.martin/calculo/src',
+        ),
+        'gamboamartin\\base_modelos\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/base_modelos/src',
+        ),
+        'gamboamartin\\administrador\\tests\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/administrador/tests',
+        ),
+        'gamboamartin\\administrador\\models\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/administrador/orm',
+        ),
+        'gamboamartin\\administrador\\modelado\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/administrador/modelado',
+        ),
+        'gamboamartin\\administrador\\ctl\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gamboa.martin/administrador/base/ctl',
         ),
         'controllers\\' => 
         array (
@@ -161,34 +233,47 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         'config\\' => 
         array (
             0 => __DIR__ . '/../..' . '/config',
-            1 => __DIR__ . '/..' . '/gamboa.martin/calculo/config',
-            2 => __DIR__ . '/..' . '/gamboa.martin/plugins/config',
-            3 => __DIR__ . '/..' . '/gamboa.martin/services/config',
-            4 => __DIR__ . '/..' . '/gamboa.martin/validacion/config',
+            1 => __DIR__ . '/..' . '/gamboa.martin/base_modelos/config',
+            2 => __DIR__ . '/..' . '/gamboa.martin/calculo/config',
+            3 => __DIR__ . '/..' . '/gamboa.martin/encripta/config',
+            4 => __DIR__ . '/..' . '/gamboa.martin/errores/config',
+            5 => __DIR__ . '/..' . '/gamboa.martin/services/config',
+            6 => __DIR__ . '/..' . '/gamboa.martin/validacion/config',
+            7 => __DIR__ . '/..' . '/gamboa.martin/plugins/config',
+            8 => __DIR__ . '/..' . '/gamboa.martin/administrador/config',
+        ),
+        'chillerlan\\Settings\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/chillerlan/php-settings-container/src',
+        ),
+        'chillerlan\\QRCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/chillerlan/php-qrcode/src',
         ),
         'base\\' => 
         array (
             0 => __DIR__ . '/../..' . '/base',
+            1 => __DIR__ . '/..' . '/gamboa.martin/administrador/base',
         ),
         'ZipStream\\' => 
         array (
             0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
         ),
-        'Webmozart\\Assert\\' => 
+        'Tomsgu\\PdfMerger\\' => 
         array (
-            0 => __DIR__ . '/..' . '/webmozart/assert/src',
+            0 => __DIR__ . '/..' . '/tomsgu/pdf-merger/src',
         ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
+        'Spatie\\Dropbox\\' => 
         array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
-        ),
-        'Symfony\\Polyfill\\Ctype\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+            0 => __DIR__ . '/..' . '/spatie/dropbox-api/src',
         ),
         'Psr\\SimpleCache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
+        ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/src',
         ),
         'Psr\\Http\\Message\\' => 
         array (
@@ -199,10 +284,6 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
-        'Prophecy\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
-        ),
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
@@ -211,13 +292,41 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
         ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
         'MyCLabs\\Enum\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
         ),
+        'Mpdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mpdf/mpdf/src',
+        ),
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
+        ),
+        'Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-http/message-factory/src',
+        ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'GuzzleHttp\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'GrahamCampbell\\GuzzleFactory\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/graham-campbell/guzzle-factory/src',
         ),
         'Fpdf\\' => 
         array (
@@ -249,6 +358,7 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'FPDF' => __DIR__ . '/..' . '/setasign/fpdf/fpdf.php',
         'PHPUnit\\Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/Exception.php',
         'PHPUnit\\Framework\\ActualValueIsNotAnObjectException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Exception/ActualValueIsNotAnObjectException.php',
         'PHPUnit\\Framework\\Assert' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert.php',
@@ -344,6 +454,7 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         'PHPUnit\\Framework\\MockObject\\CannotUseOnlyMethodsException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Exception/CannotUseOnlyMethodsException.php',
         'PHPUnit\\Framework\\MockObject\\ClassAlreadyExistsException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Exception/ClassAlreadyExistsException.php',
         'PHPUnit\\Framework\\MockObject\\ClassIsFinalException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Exception/ClassIsFinalException.php',
+        'PHPUnit\\Framework\\MockObject\\ClassIsReadonlyException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Exception/ClassIsReadonlyException.php',
         'PHPUnit\\Framework\\MockObject\\ConfigurableMethod' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/ConfigurableMethod.php',
         'PHPUnit\\Framework\\MockObject\\ConfigurableMethodsAlreadyInitializedException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Exception/ConfigurableMethodsAlreadyInitializedException.php',
         'PHPUnit\\Framework\\MockObject\\DuplicateMethodException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Exception/DuplicateMethodException.php',
@@ -553,6 +664,7 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         'PHPUnit\\Util\\Annotation\\DocBlock' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Annotation/DocBlock.php',
         'PHPUnit\\Util\\Annotation\\Registry' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Annotation/Registry.php',
         'PHPUnit\\Util\\Blacklist' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Blacklist.php',
+        'PHPUnit\\Util\\Cloner' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Cloner.php',
         'PHPUnit\\Util\\Color' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Color.php',
         'PHPUnit\\Util\\ErrorHandler' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/ErrorHandler.php',
         'PHPUnit\\Util\\Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Exception.php',
@@ -569,6 +681,7 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         'PHPUnit\\Util\\PHP\\DefaultPhpProcess' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/PHP/DefaultPhpProcess.php',
         'PHPUnit\\Util\\PHP\\WindowsPhpProcess' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/PHP/WindowsPhpProcess.php',
         'PHPUnit\\Util\\Printer' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Printer.php',
+        'PHPUnit\\Util\\Reflection' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Reflection.php',
         'PHPUnit\\Util\\RegularExpression' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/RegularExpression.php',
         'PHPUnit\\Util\\Test' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Test.php',
         'PHPUnit\\Util\\TestDox\\CliTestDoxPrinter' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/TestDox/CliTestDoxPrinter.php',
@@ -853,16 +966,19 @@ class ComposerStaticInit2f7bc697681efcfc6d3a058c48b77bfd
         'SebastianBergmann\\Type\\NeverType' => __DIR__ . '/..' . '/sebastian/type/src/type/NeverType.php',
         'SebastianBergmann\\Type\\NullType' => __DIR__ . '/..' . '/sebastian/type/src/type/NullType.php',
         'SebastianBergmann\\Type\\ObjectType' => __DIR__ . '/..' . '/sebastian/type/src/type/ObjectType.php',
+        'SebastianBergmann\\Type\\Parameter' => __DIR__ . '/..' . '/sebastian/type/src/Parameter.php',
         'SebastianBergmann\\Type\\ReflectionMapper' => __DIR__ . '/..' . '/sebastian/type/src/ReflectionMapper.php',
         'SebastianBergmann\\Type\\RuntimeException' => __DIR__ . '/..' . '/sebastian/type/src/exception/RuntimeException.php',
         'SebastianBergmann\\Type\\SimpleType' => __DIR__ . '/..' . '/sebastian/type/src/type/SimpleType.php',
         'SebastianBergmann\\Type\\StaticType' => __DIR__ . '/..' . '/sebastian/type/src/type/StaticType.php',
+        'SebastianBergmann\\Type\\TrueType' => __DIR__ . '/..' . '/sebastian/type/src/type/TrueType.php',
         'SebastianBergmann\\Type\\Type' => __DIR__ . '/..' . '/sebastian/type/src/type/Type.php',
         'SebastianBergmann\\Type\\TypeName' => __DIR__ . '/..' . '/sebastian/type/src/TypeName.php',
         'SebastianBergmann\\Type\\UnionType' => __DIR__ . '/..' . '/sebastian/type/src/type/UnionType.php',
         'SebastianBergmann\\Type\\UnknownType' => __DIR__ . '/..' . '/sebastian/type/src/type/UnknownType.php',
         'SebastianBergmann\\Type\\VoidType' => __DIR__ . '/..' . '/sebastian/type/src/type/VoidType.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
         'TheSeer\\Tokenizer\\Exception' => __DIR__ . '/..' . '/theseer/tokenizer/src/Exception.php',
         'TheSeer\\Tokenizer\\NamespaceUri' => __DIR__ . '/..' . '/theseer/tokenizer/src/NamespaceUri.php',
         'TheSeer\\Tokenizer\\NamespaceUriException' => __DIR__ . '/..' . '/theseer/tokenizer/src/NamespaceUriException.php',

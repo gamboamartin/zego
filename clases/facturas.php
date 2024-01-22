@@ -393,7 +393,8 @@ class facturas{
     {
         $relaciones = '';
         foreach($facturas_relacionadas as $fac_rel) {
-            $relacion = $this->relacion_factura_uuid(uuid: $fac_rel['factura_uuid']);
+           // print_r($fac_rel);exit;
+            $relacion = $this->relacion_factura_uuid(uuid: $fac_rel['factura_rel_uuid']);
             if(errores::$error){
                 return $this->error->error(mensaje:  'Error al asignar relacion',data: $relacion,
                     params: get_defined_vars());
@@ -433,6 +434,17 @@ class facturas{
         $SelloSAT=False;
         foreach ($dom->getElementsByTagNameNS('http://www.sat.gob.mx/TimbreFiscalDigital', '*') as $elemento) {
             $SelloSAT    = $elemento->getAttribute('SelloSAT');
+        }
+        return $SelloSAT;
+    }
+
+    public function obten_serie_csd($folio){
+        $dom = new DOMDocument('1.0','utf-8'); // Creamos el Objeto DOM
+        $dom->load($this->directorio_xml_timbrado_completo.'/'.$folio.'.xml');
+
+        $SelloSAT=False;
+        foreach ($dom->getElementsByTagNameNS('http://www.sat.gob.mx/Comprobante', '*') as $elemento) {
+            $SelloSAT    = $elemento->getAttribute('NoCertificado');
         }
         return $SelloSAT;
     }
@@ -589,6 +601,8 @@ class facturas{
     }
 
 
+
+
     public function timbra_cfdi($folio){
         $numero_empresa = $_SESSION['numero_empresa'];
         $empresa = new Empresas();
@@ -688,11 +702,16 @@ class facturas{
             $RfcProvCertif = $this->obten_rfc_pac($folio);
 
 
+            $xml_timbrado = new xml_cfdi($xmlTimbrado,$this->link,'I');
+
+            $serie_csd = $xml_timbrado->get_no_serie_csd();
+
+
             $NoCertificadoSAT = $this->obten_no_certificado_sat($folio);
             $registro_update = array(
                 'status_factura'=>'timbrada', 'uuid'=>$UUID,'sello_cfd'=>$SelloCFD,
                 'sello_sat'=>$SelloSAT,'no_certificado_sat'=>$NoCertificadoSAT,
-                'fecha_timbrado'=>$FechaTimbrado,'rfc_proveedor_timbrado'=>$RfcProvCertif);
+                'fecha_timbrado'=>$FechaTimbrado,'rfc_proveedor_timbrado'=>$RfcProvCertif,'serie_csd'=>$serie_csd);
             $resultado_modelo = $factura_modelo->modifica_bd($registro_update,'factura',$this->factura_id);
             return true;
         }
@@ -700,6 +719,10 @@ class facturas{
             return array('mensaje'=>$descripcionResultado.' '.$tipoExcepcion.' '.$numeroExcepcion, 'error'=>True);
         }
 
+    }
+
+    public function get_no_serie_csd(){
+        return trim($this->datos_comprobante['NoCertificado']);
     }
 
     public function timbra_cfdi_nota_credito($folio){

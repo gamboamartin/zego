@@ -172,6 +172,7 @@ class controlador_cliente extends controlador_base{
     }
 
     public function descarga_factura_pdf(){
+
         $factura_id = $_GET['factura_id'];
 
         $modelo_factura = new factura($this->link);
@@ -404,6 +405,7 @@ class controlador_cliente extends controlador_base{
 
         $uso_cfdi_codigo = $factura['factura_uso_cfdi_codigo'];
         $uso_cfdi_descripcion = $factura['factura_uso_cfdi_descripcion'];
+        $cp_receptor = $factura['factura_cliente_cp'];
 
         $folio_fiscal = $factura['factura_uuid'];
         $serie_csd = $factura['factura_serie_csd'];
@@ -500,6 +502,7 @@ class controlador_cliente extends controlador_base{
         $this->imprime_dato($pdf,'RFC Emisor:', $rfc_emisor);
         $this->imprime_dato($pdf,'Nombre Receptor:', $nombre_receptor);
         $this->imprime_dato($pdf,'RFC Receptor:', $rfc_receptor);
+        $this->imprime_dato($pdf,'Domicilio Receptor:', $cp_receptor);
         $this->imprime_dato($pdf,'Uso CFDI:', $uso_cfdi_codigo.' '.$uso_cfdi_descripcion);
         $this->imprime_dato($pdf,'Folio Fiscal:', $folio_fiscal);
         $this->imprime_dato($pdf,'No. de serie del CSD:', $serie_csd);
@@ -557,6 +560,7 @@ class controlador_cliente extends controlador_base{
             $no_identificacion = $partida['partida_factura_no_identificacion'];
             $cantidad = $partida['partida_factura_cantidad'];
             $clave_unidad = $partida['partida_factura_unidad_codigo'];
+            $obj_imp = $partida['partida_factura_obj_imp'];
             $valor_unitario = $partida['partida_factura_valor_unitario'];
             $importe = $partida['partida_factura_importe'];
             $descuento = (float)$partida['partida_factura_descuento'];
@@ -590,12 +594,13 @@ class controlador_cliente extends controlador_base{
             $pdf->SetX($x);
 
 
-            $pdf->Cell(23,4,'Cve concepto SAT:',1,0,'C',true);
-            $pdf->Cell(22,4,utf8_decode('No. identificación:'),1,0,'C',true);
-            $pdf->Cell(20,4,utf8_decode('Cantidad:'),1,0,'C',true);
-            $pdf->Cell(19,4,utf8_decode('Clave Unidad:'),1,0,'C',true);
+            $pdf->Cell(22,4,'Cve SAT:',1,0,'C',true);
+            $pdf->Cell(21,4,utf8_decode('No ident:'),1,0,'C',true);
+            $pdf->Cell(17,4,utf8_decode('Cant:'),1,0,'C',true);
+            $pdf->Cell(17,4,utf8_decode('Unidad:'),1,0,'C',true);
+            $pdf->Cell(16,4,utf8_decode('Obj Imp:'),1,0,'C',true);
             $pdf->Cell(30,4,utf8_decode('Valor Unitario:'),1,0,'C',true);
-            $pdf->Cell(59,4,utf8_decode('Importe:'),1,0,'C',true);
+            $pdf->Cell(50,4,utf8_decode('Importe:'),1,0,'C',true);
             $pdf->Cell(17,4,utf8_decode('Descuento:'),1,0,'C',true);
 
             $y = $pdf->GetY()+4;
@@ -603,12 +608,13 @@ class controlador_cliente extends controlador_base{
 
 
             $pdf->SetX($x);
-            $pdf->Cell(23,4,$clave_producto_servicio,1,0,'C',False);
-            $pdf->Cell(22,4,$no_identificacion,1,0,'C',False);
-            $pdf->Cell(20,4,$cantidad,1,0,'C',False);
-            $pdf->Cell(19,4,$clave_unidad,1,0,'C',False);
-            $pdf->Cell(30,4,'$'.number_format($valor_unitario,4,'.',','),1,0,'C',False);
-            $pdf->Cell(59,4,'$'.number_format($importe,4,'.',','),1,0,'C',False);
+            $pdf->Cell(22,4,$clave_producto_servicio,1,0,'C',False);
+            $pdf->Cell(21,4,$no_identificacion,1,0,'C',False);
+            $pdf->Cell(17,4,$cantidad,1,0,'C',False);
+            $pdf->Cell(17,4,$clave_unidad,1,0,'C',False);
+            $pdf->Cell(16,4,$obj_imp,1,0,'C',False);
+            $pdf->Cell(30,4,'$'.number_format($valor_unitario,2,'.',','),1,0,'C',False);
+            $pdf->Cell(50,4,'$'.number_format($importe,2,'.',','),1,0,'C',False);
             $pdf->Cell(17,4,'$'.number_format($descuento,2,'.',','),1,0,'C',False);
 
             $pdf->SetFont('Arial','B',$this->tamano_letra);
@@ -951,10 +957,10 @@ class controlador_cliente extends controlador_base{
 
         foreach ($insumos as $insumo_id){
             $descripcion = $descripciones[$i];
-            $valor_unitario = number_format(round($valores_unitarios[$i],4),4,'.','');
+            $valor_unitario = number_format(round($valores_unitarios[$i],2),2,'.','');
             $cantidad = round($cantidades[$i],2);
-            $importe = number_format(round($cantidad * $valor_unitario,4),4,'.','');
-            $base = number_format(round($importe,4),4,'.','');
+            $importe = number_format(round($cantidad * $valor_unitario,2),2,'.','');
+            $base = number_format(round($importe,2),2,'.','');
             $resultado_insumo = $modelo_insumo->obten_por_id('insumo',$insumo_id);
             $insumo_datos = $resultado_insumo['registros'][0];
 
@@ -991,10 +997,10 @@ class controlador_cliente extends controlador_base{
             $partida[$i]['producto_sat_descripcion'] = $insumo_datos['producto_sat_descripcion'];
             $partida[$i]['descripcion'] = $descripcion;
             $partida[$i]['no_identificacion'] = $insumo_id;
-            $partida[$i]['valor_unitario'] = number_format($valor_unitario,4,'.','');
+            $partida[$i]['valor_unitario'] = number_format($valor_unitario,2,'.','');
             $partida[$i]['cantidad'] = $cantidad;
-            $partida[$i]['importe'] = number_format($importe,4,'.','');
-            $partida[$i]['base'] = number_format($base,4,'.','');
+            $partida[$i]['importe'] = number_format($importe,2,'.','');
+            $partida[$i]['base'] = number_format($base,2,'.','');
             $status = 1;
             $partida[$i]['status'] = $status;
             $i++;
@@ -1144,6 +1150,16 @@ class controlador_cliente extends controlador_base{
             die('Error');
         }
 
+        $factura_modelo = new factura($this->link);
+        $factura = $factura_modelo->obten_por_id('factura',$this->factura_id);
+        if(errores::$error){
+            $error = $this->error_->error('Error al obtener registro', $factura);
+            print_r($error);
+            die('Error');
+        }
+        $factura = $factura['registros'][0];
+
+
         $partidas = $resultado['registros'];
 
         foreach ($partidas as $partida) {
@@ -1158,7 +1174,88 @@ class controlador_cliente extends controlador_base{
                 }
         	}
 
+            if($factura['factura_cliente_rfc'] === 'HME850910RF1' && $factura['factura_status_factura'] === 'sin timbrar'){
+                if((int)$partida['partida_factura_insumo_id'] === 82 && (int)$partida['partida_factura_cantidad'] === 1){
+                    $upd = array();
+                    $upd['factura_id'] = $this->factura_id;
+                    $upd['cantidad'] = $factura['factura_bultos'];
+                    $upd['valor_unitario'] = $partida['partida_factura_valor_unitario'] / $factura['factura_bultos'];
+                    $partida_factura_id = $partida['partida_factura_id'];
+                    $r_pf = $partida_factura_modelo->modifica_bd($upd,'partida_factura',$partida_factura_id);
+                    if(errores::$error){
+                        $error = $this->error_->error('Error al modificar partidas', $r_pf);
+                        print_r($error);
+                        die('Error');
+                    }
+                }
+            }
+
         }
+
+        $factura_modelo = new factura($this->link);
+        $factura = $factura_modelo->obten_por_id('factura',$this->factura_id);
+        if(errores::$error){
+            $error = $this->error_->error('Error al obtener registro', $factura);
+            print_r($error);
+            die('Error');
+        }
+        $factura = $factura['registros'][0];
+
+        if($factura['factura_status_factura'] === 'sin timbrar') {
+            $empresa = new Empresas();
+            $upd = array();
+            $datos_empresa = $empresa->empresas[$_SESSION['numero_empresa']];
+
+            if (!isset($factura['factura_lugar_expedicion']) || trim($factura['factura_lugar_expedicion'] === '')) {
+                $upd['lugar_expedicion'] = $datos_empresa['cp'];
+            }
+            if (!isset($factura['factura_calle_expedicion']) || trim($factura['factura_calle_expedicion'] === '')) {
+                $upd['calle_expedicion'] = $datos_empresa['calle'];
+            }
+            if (!isset($factura['factura_exterior_expedicion']) || trim($factura['factura_exterior_expedicion'] === '')) {
+                $upd['exterior_expedicion'] = $datos_empresa['exterior'];
+            }
+            if (!isset($factura['factura_interior_expedicion']) || trim($factura['factura_interior_expedicion'] === '')) {
+                $upd['interior_expedicion'] = $datos_empresa['interior'];
+            }
+            if (!isset($factura['factura_colonia_expedicion']) || trim($factura['factura_colonia_expedicion'] === '')) {
+                $upd['colonia_expedicion'] = $datos_empresa['colonia'];
+            }
+            if (!isset($factura['factura_municipio_expedicion']) || trim($factura['factura_municipio_expedicion'] === '')) {
+                $upd['municipio_expedicion'] = $datos_empresa['municipio'];
+            }
+            if (!isset($factura['factura_estado_expedicion']) || trim($factura['factura_estado_expedicion'] === '')) {
+                $upd['estado_expedicion'] = $datos_empresa['estado'];
+            }
+            if (!isset($factura['factura_pais_expedicion']) || trim($factura['factura_pais_expedicion'] === '')) {
+                $upd['pais_expedicion'] = $datos_empresa['pais'];
+            }
+            if (!isset($factura['factura_rfc_emisor']) || trim($factura['factura_rfc_emisor'] === '')) {
+                $upd['rfc_emisor'] = $datos_empresa['rfc'];
+            }
+            if (!isset($factura['factura_nombre_emisor']) || trim($factura['factura_nombre_emisor'] === '')) {
+                $upd['nombre_emisor'] = $datos_empresa['razon_social'];
+            }
+            if (!isset($factura['factura_regimen_fiscal_emisor_codigo']) || trim($factura['factura_regimen_fiscal_emisor_codigo'] === '')) {
+                $upd['regimen_fiscal_emisor_codigo'] = $datos_empresa['regimen_fiscal'];
+            }
+            if (!isset($factura['factura_regimen_fiscal_emisor_descripcion']) || trim($factura['factura_regimen_fiscal_emisor_descripcion'] === '')) {
+                $upd['regimen_fiscal_emisor_descripcion'] = $datos_empresa['regimen_fiscal_descripcion'];
+            }
+
+            if(count($upd)>0){
+                //print_r($update);exit;
+                $r_upd = $factura_modelo->modifica_bd($upd,'factura',$this->factura_id);
+                if(errores::$error){
+                    return $this->error_->error('Error al modificar factura', $r_upd);
+                }
+            }
+
+
+        }
+
+
+
         $pdf = $this->genera_pdf_factura_sin_timbrar(factura_id: $this->factura_id);
         if(errores::$error){
             $error = $this->error_->error('Error al generar pdf', $pdf);
@@ -1167,7 +1264,6 @@ class controlador_cliente extends controlador_base{
         }
 
 
-        $factura_modelo = new factura($this->link);
         $resultado = $factura_modelo->obten_por_id('factura',$this->factura_id);
         if(errores::$error){
             $error = $this->error_->error('Error al obtener registro', $resultado);
@@ -1189,6 +1285,20 @@ class controlador_cliente extends controlador_base{
             header('Location: ./index.php?seccion=cliente&accion=vista_preliminar_factura&factura_id='.$this->factura_id.'&intento=1');
         }
 
+    }
+
+    public function modifica()
+    {
+        $r = parent::modifica(); // TODO: Change the autogenerated stub
+
+        $regimen_fiscal_id = $this->registro['cliente_regimen_fiscal_id'];
+        $this->registro['regimen_fiscal_id'] = $regimen_fiscal_id;
+
+        //print_r($this->registro);exit;
+
+
+
+        return $r;
     }
 
     public function genera_pdf_factura_sin_timbrar($factura_id){
@@ -1231,6 +1341,7 @@ class controlador_cliente extends controlador_base{
             }
 
             if(count($update)>0){
+                //print_r($update);exit;
                 $r_upd = $factura->modifica_bd($update,'factura',$factura_id);
                 if(errores::$error){
                     return $this->error_->error('Error al modificar factura', $r_upd);
@@ -1255,7 +1366,7 @@ class controlador_cliente extends controlador_base{
 
             $total = number_format(round($registro['factura_sub_total'],2),2,'.','');
 
-            $total = number_format($total+round($registro['factura_total_impuestos_trasladados'],4),4,'.','');
+            $total = number_format($total+round($registro['factura_total_impuestos_trasladados'],4),2,'.','');
             $total = number_format($total-round($registro['factura_total_impuestos_retenidos'],2),2,'.','');
             $total = number_format(round($total-$registro['factura_descuento'],2),2,'.','');
 
@@ -1282,7 +1393,7 @@ class controlador_cliente extends controlador_base{
             $razon_social_cliente = str_replace('&','&amp;',$registro['factura_cliente_razon_social']);
             $uso_cfdi = $registro['factura_uso_cfdi_codigo'];
 
-            $total_impuestos_trasladados = '"'.number_format(round($registro['factura_total_impuestos_trasladados'],4),4,'.','').'"';
+            $total_impuestos_trasladados = '"'.number_format(round($registro['factura_total_impuestos_trasladados'],4),2,'.','').'"';
 
 
 
@@ -1519,7 +1630,6 @@ class controlador_cliente extends controlador_base{
 
             $xml_partida = '';
             foreach ($partidas as $partida){
-
                 if(!isset($partida['partida_factura_descuento'])){
                     $partida['partida_factura_descuento'] = 0.0;
                 }
@@ -1533,15 +1643,15 @@ class controlador_cliente extends controlador_base{
 
                 $pt  = file_get_contents($plantilla_partida);
                 $importe_base_traslado_sin_parsear = $partida['partida_factura_base'];
-                $importe_base_traslado = '"'.number_format(round($partida['partida_factura_base'],4),4,'.','').'"';
-                $partida['partida_factura_valor_unitario'] = number_format(round($partida['partida_factura_valor_unitario'],4),4,'.','');
+                $importe_base_traslado = '"'.number_format(round($partida['partida_factura_base'],2),2,'.','').'"';
+                $partida['partida_factura_valor_unitario'] = number_format(round($partida['partida_factura_valor_unitario'],2),2,'.','');
                 $impuesto_codigo = '"'.$partida['partida_factura_impuesto_codigo'].'"';
                 $tipo_factor_codigo = '"'.$partida['partida_factura_tipo_factor_codigo'].'"';
                 $tasa_cuota = '';
                 if(isset($partida['partida_factura_tasa_cuota'])) {
                     $tasa_cuota = '"' . number_format(round($partida['partida_factura_tasa_cuota'], 6), 6, '.', '') . '"';
                 }
-                $total_impuestos_trasladados = '"'.number_format(round($partida['partida_factura_total_impuestos_trasladados'],4),4,'.','').'"';
+                $total_impuestos_trasladados = '"'.number_format(round($partida['partida_factura_total_impuestos_trasladados'],2),2,'.','').'"';
 
 
                 $tags = array();
@@ -1826,16 +1936,80 @@ class controlador_cliente extends controlador_base{
      */
     private function init_update(array $datos_empresa, array $registro): array
     {
+
         if(!isset($registro['factura_interior_expedicion']) ||$registro['factura_interior_expedicion'] === '' ){
             $registro['factura_interior_expedicion'] = ' ';
         }
+
         if(!isset($datos_empresa['rfc']) ||$datos_empresa['rfc'] === '' ){
             return $this->error_->error('Error no existe rfc en $datos_empresa', $datos_empresa);
         }
+
+        if(!isset($registro['factura_lugar_expedicion']) || trim($registro['factura_lugar_expedicion']) === ''){
+            $registro['factura_lugar_expedicion'] = $datos_empresa['cp'];
+            //$update['lugar_expedicion'] = $datos_empresa['cp'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_calle_expedicion']) || trim($registro['factura_calle_expedicion']) === ''){
+            $registro['factura_calle_expedicion'] = $datos_empresa['calle'];
+            $update['calle_expedicion'] = $datos_empresa['calle'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_exterior_expedicion']) || trim($registro['factura_exterior_expedicion']) === ''){
+            $registro['factura_exterior_expedicion'] = $datos_empresa['exterior'];
+            $update['exterior_expedicion'] = $datos_empresa['exterior'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_colonia_expedicion']) || trim($registro['factura_colonia_expedicion']) === ''){
+            $registro['factura_colonia_expedicion'] = $datos_empresa['colonia'];
+            $update['colonia_expedicion'] = $datos_empresa['colonia'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_municipio_expedicion']) || trim($registro['factura_municipio_expedicion']) === ''){
+
+            $registro['factura_municipio_expedicion'] = $datos_empresa['municipio'];
+            $update['municipio_expedicion'] = $datos_empresa['municipio'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_estado_expedicion']) || trim($registro['factura_estado_expedicion']) === ''){
+
+            $registro['factura_estado_expedicion'] = $datos_empresa['estado'];
+            $update['estado_expedicion'] = $datos_empresa['estado'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_pais_expedicion']) || trim($registro['factura_pais_expedicion']) === ''){
+
+            $registro['factura_pais_expedicion'] = $datos_empresa['pais'];
+            $update['pais_expedicion'] = $datos_empresa['pais'];
+            //print_r($datos_empresa);
+        }
+        if(!isset($registro['factura_nombre_emisor']) || trim($registro['factura_nombre_emisor']) === ''){
+
+            $registro['factura_nombre_emisor'] = $datos_empresa['razon_social'];
+            $update['nombre_emisor'] = $datos_empresa['razon_social'];
+            //print_r($datos_empresa);
+        }
+
+
         $update = $this->init_array_update_emisor(registro: $registro);
         if(errores::$error){
             return $this->error_->error('Error al asignar datos', $update);
         }
+
+
+        $update['lugar_expedicion'] = $datos_empresa['cp'];
+
+        $update['calle_expedicion'] = $datos_empresa['calle'];
+        $update['exterior_expedicion'] = $datos_empresa['exterior'];
+        $update['colonia_expedicion'] = $datos_empresa['colonia'];
+        $update['municipio_expedicion'] = $datos_empresa['municipio'];
+        $update['estado_expedicion'] = $datos_empresa['estado'];
+        $update['pais_expedicion'] = $datos_empresa['pais'];
+
+        $update['nombre_emisor'] = $datos_empresa['razon_social'];
+        $update['regimen_fiscal_emisor_codigo'] = $datos_empresa['regimen_fiscal'];
+        $update['regimen_fiscal_emisor_descripcion'] = $datos_empresa['regimen_fiscal_descripcion'];
+
 
         $update['rfc_emisor'] = $datos_empresa['rfc'];
         return $update;
@@ -1897,8 +2071,10 @@ class controlador_cliente extends controlador_base{
         if($campo_upd === ''){
             return $this->error_->error('Error $campo_upd esta vacio', $campo_upd);
         }
+
         $keys = array($campo_upd);
-        $valida = (new validacion())->valida_existencia_keys($keys, $registro);
+
+        $valida = (new validacion())->valida_existencia_keys(keys: $keys,registro:  $registro);
         if(errores::$error){
             return $this->error_->error('Error al validar $registro', $valida);
         }
@@ -2096,7 +2272,7 @@ class controlador_cliente extends controlador_base{
 
         $tag_rmp = "|$tag|";
         $value = round($registro[$key],4);
-        $value_str = number_format($value,4,'.','');
+        $value_str = number_format($value,2,'.','');
         return str_replace($tag_rmp,$value_str,$data);
     }
 

@@ -58,9 +58,9 @@ echo $controlador->breadcrumbs;
         <div class="col-md-12 table-responsive">
             <div class="well">
                 <label>Monto por aplicar:</label>
-                <span class="badge" id="monto-por-aplicar">$0.00</span>
+                <span class="badge" id="monto-por-aplicar"><?php echo $controlador->monto; ?></span>
                 <input type="hidden" id="total-pago" value="<?php echo $controlador->monto; ?>">
-                <input type="hidden" id="por-aplicar" value="0">
+                <input type="hidden" id="por-aplicar" value="<?php echo $controlador->monto; ?>">
             </div>
             <table class="table table-striped" id="cliente-ve-facturas">
                 <thead>

@@ -24,6 +24,7 @@ class files{
         }
         return $archivos;
     }
+
     private function asigna_data_file(string $ruta): stdClass
     {
         $data = new stdClass();
@@ -35,6 +36,7 @@ class files{
 
         return $data;
     }
+
     /**
      * Asigna los datos necesarios para verificar los archivos de un servicio
      * @version 1.0.0
@@ -343,11 +345,16 @@ class files{
 
     /**
      * @param mixed $directorio Recurso tipo opendir
+     * @version 0.2.0 Se integra UT para monitor de servicios
      * @return array retorna los servicios ajustados  $servicios[name_service][file,file_lock,file_info]
      * pueden ser varios
      */
     public function get_files_services(mixed $directorio): array
     {
+        if(is_string($directorio)){
+            return $this->error->error(mensaje:  'Error el directorio no puede ser un string',data: $directorio);
+        }
+
         $archivos = $this->files_services(directorio: $directorio);
         if(errores::$error){
             return $this->error->error(mensaje:  'Error al asignar files',data: $archivos);
@@ -521,14 +528,22 @@ class files{
     }
 
     /**
-     * P ORDER P INT
-     * @param string $dir
-     * @param array $data
-     * @param bool $mismo
+     * Elimina un carpeta con archivos de manera recursiva
+     * @param string $dir Directorio
+     * @param array $data datos previos
+     * @param bool $mismo si mismo elimina la ruta en dir
      * @return array|mixed
+     * @version 0.7.0
      */
     public function rmdir_recursive(string $dir, array $data = array(), bool $mismo = false): mixed
     {
+        $dir = trim($dir);
+        if($dir === ''){
+            return $this->error->error(mensaje: 'Error dir esta vacio',data: $dir);
+        }
+        if(!file_exists($dir)){
+            return $this->error->error(mensaje: 'Error no existe el directorio',data: $dir);
+        }
         $files = scandir($dir);
         array_shift($files);    // remove '.' from array
         array_shift($files);    // remove '..' from array
@@ -537,14 +552,29 @@ class files{
             $file = $dir . '/' . $file;
             if (is_dir($file)) {
                 $data = $this->rmdir_recursive(dir: $file, data: $data);
+                if(errores::$error){
+                    return $this->error->error(mensaje: 'Error al eliminar directorio',data: $data);
+                }
                 rmdir($file);
-            } else {
+                if(file_exists($file)){
+                    return $this->error->error(mensaje: 'Error no se elimino directorio',data: $file);
+                }
+            }
+            else {
                 unlink($file);
+
+                if(file_exists($file)){
+                    return $this->error->error(mensaje: 'Error no se elimino directorio',data: $file);
+                }
+
                 $data[] = $file;
             }
         }
         if($mismo){
             rmdir($dir);
+            if(file_exists($dir)){
+                return $this->error->error(mensaje: 'Error no se elimino directorio',data: $dir);
+            }
         }
         return $data;
     }

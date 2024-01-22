@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cfdi:Comprobante Exportacion="01" Fecha="|Fecha|" Folio="|Folio|" LugarExpedicion="|LugarExpedicion|" Moneda="XXX" Serie="|Serie|" SubTotal="0" TipoDeComprobante="P" Total="0" Version="4.0" xmlns:cfdi="http://www.sat.gob.mx/cfd/4" xmlns:pago20="http://www.sat.gob.mx/Pagos20" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd http://www.sat.gob.mx/Pagos20 http://www.sat.gob.mx/sitio_internet/cfd/Pagos/Pagos20.xsd">
+  |cdfis_relacionados|
+  <cfdi:Emisor Rfc="|RfcEmisor|" Nombre="|NombreEmisor|" RegimenFiscal="|RegimenFiscal|"></cfdi:Emisor>
+  <cfdi:Receptor DomicilioFiscalReceptor="|CPReceptor|" Rfc="|RfcReceptor|" Nombre="|NombreReceptor|" UsoCFDI="CP01" RegimenFiscalReceptor="|RFReceptor|"></cfdi:Receptor>
+  <cfdi:Conceptos>
+    <cfdi:Concepto ClaveProdServ="84111506" Cantidad="1" ClaveUnidad="ACT" Descripcion="Pago" ValorUnitario="0" Importe="0" ObjetoImp="01"></cfdi:Concepto>
+  </cfdi:Conceptos>
+  <cfdi:Complemento>
+    <pago20:Pagos Version="2.0">
+      <pago20:Totales |TotalRetencionesISR| |TotalTrasladosBaseIVA16| |TotalTrasladosImpuestoIVA16| MontoTotalPagos="|MTP|" />
+      <pago20:Pago FechaPago="|FechaPago|" FormaDePagoP="|FormaDePagoP|" MonedaP="|MonedaP|" Monto="|Monto|" TipoCambioP="1">
+      |Pagos||ImpuestosP|
+      </pago20:Pago>
+    </pago20:Pagos>
+  </cfdi:Complemento>
+</cfdi:Comprobante>

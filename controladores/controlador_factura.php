@@ -447,16 +447,16 @@ class controlador_factura extends controlador_base {
 
 
         foreach ($partidas as $partida){
-            $valor_unitario = $partida['valor_unitario'];
-            $cantidad = $partida['cantidad'];
+            $valor_unitario = round($partida['valor_unitario'],2);
+            $cantidad = round($partida['cantidad'],2);
             $insumo_id = $partida['insumo_id'];
-            $subtotal_partida = $valor_unitario * $cantidad;
+            $subtotal_partida = round($valor_unitario * $cantidad,2);
             $insumo_modelo = new insumo($this->link);
             $resultado = $insumo_modelo->obten_por_id('insumo',$insumo_id);
             $insumo = $resultado['registros'][0];
             $impuesto_trasladado_factor = $insumo['insumo_factor'];
             $impuesto_retenido_factor = $insumo['insumo_factor_retenido'];
-            $monto_impuesto_trasladado = $impuesto_trasladado_factor * $subtotal_partida;
+            $monto_impuesto_trasladado = round($impuesto_trasladado_factor * $subtotal_partida,2);
             $monto_impuesto_retenido = $impuesto_retenido_factor * $subtotal_partida;
             $total_partida = round($subtotal_partida + $monto_impuesto_trasladado - $monto_impuesto_retenido,2);
             $total = round($total,2) + round($total_partida,2);
@@ -698,6 +698,8 @@ class controlador_factura extends controlador_base {
         $cliente_direccion = $factura['cliente_direccion'];
         $cliente_rfc = $factura['cliente_rfc'];
         $cliente_colonia = $factura['cliente_colonia'];
+        $cliente_exterior = $factura['cliente_exterior'];
+        $cliente_interior = $factura['cliente_interior'];
         $cliente_cp = $factura['cliente_cp'];
         $cliente_zica_ciudad = $factura['cliente_zica_cuidad'];
         $marcas = $factura['factura_marcas'];
@@ -784,7 +786,7 @@ class controlador_factura extends controlador_base {
 
         $pdf->SetFont('Courier','',$tamano_letra_normal);
         $txt = 'Razón Social: '.$cliente_razon_social;
-        $txt = $txt.' | Dirección: '.$cliente_direccion.' '.$cliente_colonia.', '.$cliente_cp;
+        $txt = $txt.' | Dirección: '.$cliente_direccion.' '.$cliente_exterior.' '.$cliente_interior.' '.$cliente_colonia.', '.$cliente_cp;
         $txt = $txt.', '.$cliente_zica_ciudad;
         $txt = $txt.' | RFC: '.$cliente_rfc;
         $pdf->MultiCell(190,5,utf8_decode($txt),0,'L');
@@ -1518,6 +1520,7 @@ class controlador_factura extends controlador_base {
         }
         $controlador_cliente = new Controlador_Cliente($this->link);
         $controlador_cliente->genera_pdf_factura_sin_timbrar($factura_id);
+
 
         $factura = new Factura($this->link);
         $resultado = $factura->obten_por_id('factura',$factura_id);

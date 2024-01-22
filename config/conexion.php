@@ -10,7 +10,7 @@ class conexion{
     private errores $error;
 
     /** @noinspection ForgottenDebugOutputInspection */
-    public function __construct(string $host = '', string $name_bd = '', string $pass = '', string $user = ''){
+    public function __construct(string $host = '', string $name_bd = '', string $pass = '', string $user = '', string $port = '3306'){
 	    if (isset($_SESSION['numero_empresa'])) {
             $this->error = new errores();
             $empresa = new empresas();
@@ -29,7 +29,10 @@ class conexion{
             }
 
             try {
-                $this->link = mysqli_connect($host, $user, $pass);
+                if(isset($empresa_activa['port'])){
+                    $port = $empresa_activa['port'];
+                }
+                $this->link = mysqli_connect(hostname: $host,username:  $user,password:  $pass, port: $port);
                 mysqli_set_charset($this->link, 'utf8');
                 $sql = "SET sql_mode = '';";
                 $this->link->query($sql);
@@ -54,7 +57,7 @@ class conexion{
      * @param string $user
      * @return bool|array|mysqli
      */
-    public function conecta(string $host, string $name_bd, string $pass, string $user): bool|array|mysqli
+    public function conecta(string $host, string $name_bd, string $pass, string $user, string $port): bool|array|mysqli
     {
         $this->error = new errores();
 
@@ -74,9 +77,13 @@ class conexion{
         if($user === ''){
             return $this->error->error('Error el $user esta vacio', $user);
         }
+        $port = trim($port);
+        if($port === ''){
+            $port = 3306;
+        }
 
         try {
-            $link = mysqli_connect($host, $user, $pass);
+            $link = mysqli_connect(hostname: $host,username:  $user,password:  $pass, port: $port);
             mysqli_set_charset($link, 'utf8');
             $sql = "SET sql_mode = '';";
             $link->query($sql);

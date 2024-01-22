@@ -205,9 +205,10 @@ class filesTest extends test {
         errores::$error = false;
         $ruta = '/var/www/html/plugins/tests/services';
         $resultado = $fl->estructura($ruta);
+
         $this->assertIsArray($resultado);
         $this->assertNotTrue(errores::$error);
-        $this->assertEquals("service1.php.lock", $resultado[4]->name_file);
+        $this->assertEquals("service1.php.lock", $resultado[0]->name_file);
         errores::$error = false;
     }
 
@@ -265,6 +266,23 @@ class filesTest extends test {
 
         errores::$error = false;
 
+    }
+
+    public function test_get_files_services()
+    {
+        errores::$error = false;
+        $fl = new files();
+        //$fl = new liberator($fl);
+
+        //$directorio = '/var/www/html/plugins/tests/services';
+        $directorio = opendir('/var/www/html/plugins/tests/services');
+        $resultado = $fl->get_files_services($directorio);
+        //print_r($resultado);exit;
+        $this->assertIsArray($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals('service1.php',$resultado['service1']['file']);
+
+        errores::$error = false;
     }
 
     public function test_get_data_service()
@@ -367,6 +385,35 @@ class filesTest extends test {
         errores::$error = false;
 
     }
+
+    public function test_rmdir_recursive(){
+        errores::$error = false;
+        $fl = new files();
+        //$fl = new liberator($fl);
+
+        $dir = '/var/www/html/plugins/tests/del/';
+        if(!file_exists($dir)) {
+            mkdir($dir);
+        }
+
+        $dir1 = '/var/www/html/plugins/tests/del/1';
+        if(!file_exists($dir1)) {
+            mkdir($dir1);
+        }
+
+
+        $dir2 = '/var/www/html/plugins/tests/del/1/2';
+        if(!file_exists($dir2)) {
+            mkdir($dir2);
+        }
+
+        $resultado = $fl->rmdir_recursive(dir:$dir,mismo: true);
+        $this->assertIsArray($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertFileDoesNotExist($dir);
+        errores::$error = false;
+    }
+
     public function test_todo_vacio()
     {
         errores::$error = false;
