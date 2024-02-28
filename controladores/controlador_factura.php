@@ -916,7 +916,15 @@ class controlador_factura extends controlador_base {
         $moneda_letra = array('MXN'=>'PESOS','USD'=>'DOLARES');
         $moneda_letra_enviar = $moneda_letra[$moneda_codigo];
 
-        $importe_texto = $numeros->to_word(($saldo_cuenta-$descuento), $moneda_letra_enviar);
+        $numero = $saldo_cuenta-$descuento;
+        if($numero > 0){
+            $importe_texto = $numeros->to_word(($numero), $moneda_letra_enviar);
+        }else if($numero < 0){
+            $numero = abs($numero);
+            $importe_texto = "Menos ".$numeros->to_word(($numero), $moneda_letra_enviar);
+        }else{
+            $importe_texto = $numeros->to_word(($numero), $moneda_letra_enviar);
+        }
 
         $pdf->MultiCell(190,5,utf8_decode('Cantidad con letra: '.$importe_texto.' '.$moneda_codigo),'B','C');
 
