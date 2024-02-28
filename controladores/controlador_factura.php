@@ -921,7 +921,7 @@ class controlador_factura extends controlador_base {
             $importe_texto = $numeros->to_word(($numero), $moneda_letra_enviar);
         }else if($numero < 0){
             $numero = abs($numero);
-            $importe_texto = "Menos ".$numeros->to_word(($numero), $moneda_letra_enviar);
+            $importe_texto = "MENOS ".$numeros->to_word(($numero), $moneda_letra_enviar);
         }else{
             $importe_texto = $numeros->to_word(($numero), $moneda_letra_enviar);
         }
