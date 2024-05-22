@@ -494,6 +494,7 @@ class controlador_pago_cliente extends controlador_base {
         /*folio fiscal del comprobante a cancelar*/
         $params['folioUUID'] = $folioUUID;
 
+        $motivo = '04';
 
         try {
             $params = array();
@@ -503,9 +504,11 @@ class controlador_pago_cliente extends controlador_base {
             $params['rfcEmisor'] = $rfcEmisor;
             /*folio fiscal del comprobante a cancelar*/
             $params['folioUUID'] = $folioUUID;
+            /*Motivo de cancelacionr*/
+            $params['motivoCancelacion'] = $motivo;
 
             $client = new Soapclient($ws, $params);
-            $response = $client->__soapcall('cancelacfDI', array('parameters' => $params));
+            $response = $client->__soapcall('CancelaCFDI40', array('parameters' => $params));
         } catch (Soapfault $fault) {
             echo "SOApfault: " . $fault->faultcode . "-" . $fault->faultstring . "\n";
         }
