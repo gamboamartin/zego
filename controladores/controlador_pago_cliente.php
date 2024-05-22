@@ -513,14 +513,14 @@ class controlador_pago_cliente extends controlador_base {
             echo "SOApfault: " . $fault->faultcode . "-" . $fault->faultstring . "\n";
         }
         /*Obtenemos resultado del response*/
-        $tipoExcepcion = $response->cancelacfDIResult->anyType[0];
-        $numeroExcepcion = $response->cancelacfDIResult->anyType[1];
-        $descripcionResultado = $response->cancelacfDIResult->anyType[2];
-        $xmlTimbrado = $response->cancelacfDIResult->anyType[3];
-        $codigoQr = $response->cancelacfDIResult->anyType[4];
-        $cadenaOriginal = $response->cancelacfDIResult->anyType[5];
+        $tipoExcepcion = $response->CancelaCFDI40Result->anyType[0];
+        $numeroExcepcion = $response->CancelaCFDI40Result->anyType[1];
+        $descripcionResultado = $response->CancelaCFDI40Result->anyType[2];
+        $xmlTimbrado = $response->CancelaCFDI40Result->anyType[3];
+        $codigoQr = $response->CancelaCFDI40Result->anyType[4];
+        $cadenaOriginal = $response->CancelaCFDI40Result->anyType[5];
 
-        $datos_uuid = json_decode($response->cancelacfDIResult->anyType[8]);
+        $datos_uuid = json_decode($response->CancelaCFDI40Result->anyType[8]);
 
         $uuid_cancelacion = $datos_uuid[0]->Value;
 
