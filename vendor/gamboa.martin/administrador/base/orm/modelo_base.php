@@ -5,7 +5,6 @@ use config\generales;
 use gamboamartin\administrador\modelado\joins;
 use gamboamartin\base_modelos\base_modelos;
 use gamboamartin\errores\errores;
-use gamboamartin\plugins\files;
 use JetBrains\PhpStorm\Pure;
 use JsonException;
 use PDO;
@@ -14,32 +13,47 @@ use stdClass;
 use Throwable;
 
 
+/**
+ * @var bool $aplica_bitacora Si es true insertara en una bitacora de control en la base de datos en adm_bitacora
+ * @var bool $aplica_bitacora Si es true insertara solicitara y validara login y token por get session_id
+ * @var string $campos_sql Campos de la entidad en forma de SQL
+ * @var array $campos_view Campos de la entidad ajustados en un array
+ * @var string $consulta Es el query en forma de sql para ser ejecutado en el sistema
+ * @var errores $error Objeto para manejo de errores
+ * @var bool $es_sincronizable Variable que determina si modelo es sincronizable con una base de datos
+ */
 class modelo_base{ //PRUEBAS EN PROCESO //DOCUMENTACION EN PROCESO
+
+
+    public bool $aplica_bitacora = false;
+    public bool $aplica_seguridad = false;
+    public string $campos_sql = '';
+    public array $campos_view = array();
     public string $consulta = '';
     public errores $error ;
+    public array $filtro = array();
+    public array $hijo = array();
     public PDO $link ;
-    public string $transaccion = '' ;
+    public array $patterns = array();
+    public array $registro = array();
     public int $registro_id = -1 ;
     public string  $tabla = '' ;
-    public array $registro = array();
-    public array $patterns = array();
-    public array $hijo = array();
-    public array $filtro = array();
+    public string $transaccion = '' ;
     public int $usuario_id = -1;
-    public string $campos_sql = '';
+
     public array $registro_upd = array();
     public array $columnas_extra = array();
     public array $columnas = array();
     public array $sub_querys = array();
     public array $campos_obligatorios=array('status');
-    public array $campos_view = array();
+
     public array $tipo_campos = array();
 
     public base_modelos     $validacion;
     public string $status_default = 'activo';
-    public bool $aplica_bitacora = false;
+
     public array $filtro_seguridad = array();
-    public bool $aplica_seguridad = false;
+
     public array $registros = array();
     public stdClass $row;
     public int $n_registros;
@@ -61,6 +75,19 @@ class modelo_base{ //PRUEBAS EN PROCESO //DOCUMENTACION EN PROCESO
     public array $parents_data = array();
     public stdClass $atributos;
     public array $atributos_criticos = array();
+
+    protected bool $id_code = false;
+
+    public bool $valida_existe_entidad = true;
+    public bool $es_sincronizable = false;
+
+    public bool $integra_datos_base = true;
+    public string $campo_llave = "";
+
+    protected array $mes;
+    protected array $dia;
+
+    protected array $year;
 
 
     /**
@@ -89,6 +116,51 @@ class modelo_base{ //PRUEBAS EN PROCESO //DOCUMENTACION EN PROCESO
         $this->defaults = $defaults;
 
         $this->parents_data = $parents_data;
+
+        $enero = array('numero_texto'=>'01','numero'=>1,'nombre'=>'ENERO','abreviado'=>'ENE');
+        $febrero = array('numero_texto'=>'02','numero'=>2,'nombre'=>'FEBRERO','abreviado'=>'FEB');
+        $marzo = array('numero_texto'=>'03','numero'=>3,'nombre'=>'MARZO','abreviado'=>'MAR');
+        $abril = array('numero_texto'=>'04','numero'=>4,'nombre'=>'ABRIL','abreviado'=>'ABR');
+        $mayo = array('numero_texto'=>'05','numero'=>5,'nombre'=>'MAYO','abreviado'=>'MAY');
+        $junio = array('numero_texto'=>'06','numero'=>6,'nombre'=>'JUNIO','abreviado'=>'JUN');
+        $julio = array('numero_texto'=>'07','numero'=>7,'nombre'=>'JULIO','abreviado'=>'JUL');
+        $agosto = array('numero_texto'=>'08','numero'=>8,'nombre'=>'AGOSTO','abreviado'=>'AGO');
+        $septiembre = array('numero_texto'=>'09','numero'=>9,'nombre'=>'SEPTIEMBRE','abreviado'=>'SEP');
+        $octubre = array('numero_texto'=>'10','numero'=>10,'nombre'=>'OCTUBRE','abreviado'=>'OCT');
+        $noviembre = array('numero_texto'=>'11','numero'=>11,'nombre'=>'NOVIEMBRE','abreviado'=>'NOV');
+        $diciembre = array('numero_texto'=>'12','numero'=>12,'nombre'=>'DICIEMBRE','abreviado'=>'DIC');
+
+        $this->mes['espaniol'] = array('01'=>$enero,'02'=>$febrero,'03'=>$marzo,'04'=>$abril,
+            '05'=>$mayo,'06'=>$junio,'07'=>$julio,'08'=>$agosto,'09'=>$septiembre,'10'=>$octubre,
+            '11'=>$noviembre,'12'=>$diciembre);
+
+        $lunes = array('numero_texto'=>'01','numero'=>1,'nombre'=>'LUNES','abreviado'=>'LUN');
+        $martes = array('numero_texto'=>'02','numero'=>2,'nombre'=>'MARTES','abreviado'=>'MAR');
+        $miercoles = array('numero_texto'=>'03','numero'=>3,'nombre'=>'MIERCOLES','abreviado'=>'MIE');
+        $jueves = array('numero_texto'=>'04','numero'=>4,'nombre'=>'JUEVES','abreviado'=>'JUE');
+        $viernes = array('numero_texto'=>'05','numero'=>5,'nombre'=>'VIERNES','abreviado'=>'VIE');
+        $sabado = array('numero_texto'=>'06','numero'=>6,'nombre'=>'SABADO','abreviado'=>'SAB');
+        $domingo = array('numero_texto'=>'07','numero'=>7,'nombre'=>'DOMINGO','abreviado'=>'DOM');
+
+        $this->dia['espaniol'] = array('01'=>$lunes,'02'=>$martes,'03'=>$miercoles,'04'=>$jueves,
+            '05'=>$viernes,'06'=>$sabado,'07'=>$domingo);
+
+        $_2019 = array('numero_texto'=>'2019','numero'=>2019,'nombre'=>'DOS MIL DIECINUEVE','abreviado'=>19);
+        $_2020 = array('numero_texto'=>'2020','numero'=>2020,'nombre'=>'DOS MIL VEINTE','abreviado'=>20);
+        $_2021 = array('numero_texto'=>'2021','numero'=>2021,'nombre'=>'DOS MIL VIENTIUNO','abreviado'=>21);
+        $_2022 = array('numero_texto'=>'2022','numero'=>2022,'nombre'=>'DOS MIL VIENTIDOS','abreviado'=>22);
+        $_2023 = array('numero_texto'=>'2023','numero'=>2023,'nombre'=>'DOS MIL VIENTITRES','abreviado'=>23);
+        $_2024 = array('numero_texto'=>'2024','numero'=>2024,'nombre'=>'DOS MIL VIENTICUATRO','abreviado'=>24);
+        $_2025 = array('numero_texto'=>'2025','numero'=>2025,'nombre'=>'DOS MIL VIENTICINCO','abreviado'=>25);
+        $_2026 = array('numero_texto'=>'2026','numero'=>2026,'nombre'=>'DOS MIL VIENTISEIS','abreviado'=>26);
+        $_2027 = array('numero_texto'=>'2027','numero'=>2027,'nombre'=>'DOS MIL VIENTISIETE','abreviado'=>27);
+        $_2028 = array('numero_texto'=>'2028','numero'=>2028,'nombre'=>'DOS MIL VIENTIOCHO','abreviado'=>28);
+        $_2029 = array('numero_texto'=>'2029','numero'=>2029,'nombre'=>'DOS MIL VIENTINUEVE','abreviado'=>29);
+        $_2030 = array('numero_texto'=>'2023','numero'=>2023,'nombre'=>'DOS MIL TREINTA','abreviado'=>30);
+        $this->year['espaniol'] = array(2019=>$_2019,2020=>$_2020,2021=>$_2021,2022=>$_2022,2023=>$_2023,2024=>$_2024,
+            2025=>$_2025,2026=>$_2026,2027=>$_2027,2028=>$_2028,2029=>$_2029,2030=>$_2030);
+
+
     }
 
     /**
@@ -570,7 +642,8 @@ class modelo_base{ //PRUEBAS EN PROCESO //DOCUMENTACION EN PROCESO
                     'registro'=>$this->registro),aplica_bitacora: true);
         }
         if($this->transaccion ==='INSERT'){
-            $this->registro_id = $this->link->lastInsertId();
+            $this->campo_llave === "" ? $this->registro_id = $this->link->lastInsertId() :
+                $this->registro_id = $this->registro[$this->campo_llave];
         }
 
         $mensaje = 'Exito al ejecutar sql del modelo '.$this->tabla. ' transaccion '.$this->transaccion;
@@ -831,8 +904,11 @@ class modelo_base{ //PRUEBAS EN PROCESO //DOCUMENTACION EN PROCESO
         $namespaces[]  = 'gamboamartin\\nomina\\models\\';
         $namespaces[]  = 'gamboamartin\\im_registro_patronal\\models\\';
         $namespaces[]  = 'gamboamartin\\importador\\models\\';
+        $namespaces[]  = 'gamboamartin\\proceso\\models\\';
+        $namespaces[]  = 'gamboamartin\\notificaciones\\models\\';
         $namespaces[]  = 'tglobally\\tg_nomina\\models\\';
         $namespaces[]  = 'tglobally\\tg_empleado\\models\\';
+        $namespaces[]  = 'tglobally\\tg_notificacion\\models\\';
 
         $es_namespace_especial_como_mis_inges = false;
         foreach ($namespaces as $namespace) {

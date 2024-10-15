@@ -9,10 +9,13 @@ class estructuras{
     private errores  $error;
     public stdClass $estructura_bd;
     private PDO $link;
+
+    private validacion $validacion;
     public function __construct(PDO $link){
         $this->error = new errores();
         $this->estructura_bd = new stdClass();
         $this->link = $link;
+        $this->validacion = new validacion();
     }
 
     private function asigna_dato_estructura(array $campo, array $keys_no_foraneas, string $name_modelo): array|stdClass
@@ -168,6 +171,11 @@ class estructuras{
     }
 
 
+    /**
+     * Integra si el campo es autoincrement o no
+     * @param array $campo Campo a validar
+     * @return bool
+     */
     private function es_auto_increment(array $campo): bool
     {
         $es_auto_increment = false;
@@ -177,6 +185,11 @@ class estructuras{
         return $es_auto_increment;
     }
 
+    /**
+     * @param array $campo
+     * @param array $keys_no_foraneas
+     * @return bool
+     */
     private function es_foranea(array $campo, array $keys_no_foraneas): bool
     {
         $es_foranea = false;
@@ -193,13 +206,44 @@ class estructuras{
         return $es_foranea;
     }
 
-    private function es_primaria(array $campo): bool
+    /**
+     * Asigna verdadero si el campo es una llave primaria
+     * @param array $campo Campo a validar
+     * @return bool|array
+     * @version 10.97.4
+     */
+    private function es_primaria(array $campo): bool|array
     {
+        if(!isset($campo['Key'])){
+            return $this->error->error(mensaje: 'Error campo[Key] debe existir', data: $campo);
+        }
         $es_primaria = false;
         if($campo['Key'] === 'PRI'){
             $es_primaria = true;
         }
         return $es_primaria;
+    }
+
+    final public function existe_entidad(string $entidad){
+        $entidad = trim($entidad);
+        if($entidad === ''){
+            return $this->error->error(mensaje: 'Error entidad vacia', data: $entidad);
+        }
+        $sql = (new sql())->show_tables(entidad: $entidad);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener sql', data: $sql);
+        }
+
+        $result = (new modelo_base($this->link))->ejecuta_consulta(consulta: $sql, valida_tabla: false);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al ejecutar sql', data: $result);
+        }
+        $existe_entidad = false;
+        if($result->n_registros > 0){
+            $existe_entidad = true;
+        }
+
+        return $existe_entidad;
     }
 
     private function genera_estructura(array $keys_no_foraneas, array $modelos, bool $valida_tabla = true): array|stdClass
@@ -467,10 +511,15 @@ class estructuras{
     /**
      * Integra permite null
      * @param array $campo Datos del campo
-     * @return bool
+     * @return bool|array
+     * @version 10.78.3
      */
-    private function permite_null(array $campo): bool
+    private function permite_null(array $campo): bool|array
     {
+        if(!isset($campo['Null'])){
+            return $this->error->error(mensaje: 'Error campo[Null] debe existir', data: $campo);
+        }
+
         $permite_null = true;
         if($campo['Null'] === 'NO'){
             $permite_null = false;

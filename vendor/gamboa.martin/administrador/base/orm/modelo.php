@@ -100,7 +100,7 @@ class modelo extends modelo_base {
             die('Error');
         }
 
-        if(!in_array($this->tabla, $data)){
+        if(!in_array($this->tabla, $data)  && $this->valida_existe_entidad){
             $error = $this->error->error(mensaje: 'Error no existe la entidad eb db'.$this->tabla, data: $data);
             print_r($error);
             die('Error');
@@ -261,13 +261,10 @@ class modelo extends modelo_base {
      *      $entrada_modelo->registro = array('tipo_entrada_id'=>1,'almacen_id'=>1,'fecha'=>'2020-01-01',
      *          'proveedor_id'=>1,'tipo_proveedor_id'=>1,'referencia'=>1,'tipo_almacen_id'=>1);
      * $resultado = $entrada_modelo->alta_bd();
-     * @version 1.603.54
-     * @final revisada
+     * @finalrevisada
+     * @version 10.88.3
      */
     public function alta_bd(): array|stdClass{
-
-
-
         if(!isset($_SESSION['usuario_id'])){
             return $this->error->error(mensaje: 'Error SESSION no iniciada',data: array());
         }
@@ -277,10 +274,12 @@ class modelo extends modelo_base {
         }
         $this->status_default = 'activo';
         $registro = (new inicializacion())->registro_ins(campos_encriptados:$this->campos_encriptados,
-            registro: $this->registro,status_default: $this->status_default, tipo_campos: $this->tipo_campos);
+            integra_datos_base: $this->integra_datos_base,registro: $this->registro,
+            status_default: $this->status_default, tipo_campos: $this->tipo_campos);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al maquetar registro ', data: $registro);
         }
+
         $this->registro = $registro;
 
         $valida = (new val_sql())->valida_base_alta(campos_obligatorios: $this->campos_obligatorios, modelo: $this,
@@ -288,6 +287,10 @@ class modelo extends modelo_base {
             tipo_campos: $this->tipo_campos, parents: $this->parents);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al validar alta ', data: $valida);
+        }
+
+        if($this->id_code && !isset($this->registro['id'])){
+            $this->registro['id'] = $this->registro['codigo'];
         }
 
         $transacciones = (new inserts())->transacciones(modelo: $this);
@@ -299,20 +302,62 @@ class modelo extends modelo_base {
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registro', data: $registro);
         }
+        $registro_puro = $this->registro(registro_id: $this->registro_id,columnas_en_bruto: true,retorno_obj: true);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registro', data: $registro);
+        }
 
-        $data = new stdClass();
-        $data->mensaje = "Registro insertado con éxito";
-        $data->registro_id = $this->registro_id;
-        $data->sql = $transacciones->sql;
-        $data->registro = $registro;
-        $data->registro_obj = (object)$registro;
-        $data->registro_ins = $this->registro;
-        $data->campos = $this->campos_tabla;
-
-
+        $data = $this->data_result_transaccion(mensaje: 'Registro insertado con éxito', registro: $registro,
+            registro_ejecutado: $this->registro, registro_id: $this->registro_id, registro_puro: $registro_puro,
+            sql: $transacciones->sql);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al maquetar respuesta registro', data: $registro);
+        }
 
         return $data;
     }
+
+    /**
+     * Obtiene un registro existente y da salida homolagada
+     * @param array $filtro Filtro de registro
+     * @return array|stdClass
+     * @version 10.98.3
+     */
+    final protected function alta_existente(array $filtro): array|stdClass
+    {
+        if(count($filtro) === 0){
+            return $this->error->error(mensaje: 'Error filtro esta vacio',data: $filtro);
+        }
+        $result = $this->filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al verificar si existe',data: $result);
+        }
+
+        if($result->n_registros > 1){
+            return $this->error->error(mensaje: 'Error de integridad existe mas de un registro',data: $result);
+        }
+        if($result->n_registros === 0){
+            return $this->error->error(mensaje: 'Error de integridad no existe registro',data: $result);
+        }
+
+        $registro = $result->registros[0];
+
+        $registro_puro = $this->registro(registro_id: $registro[$this->key_id],columnas_en_bruto: true,
+            retorno_obj: true);
+
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registro', data: $registro);
+        }
+
+        $r_alta_bd = $this->data_result_transaccion(mensaje: "Registro existente", registro: $registro,
+            registro_ejecutado: $this->registro, registro_id: $registro[$this->key_id],
+            registro_puro: $registro_puro, sql: 'Sin ejecucion');
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al maquetar salida',data: $r_alta_bd);
+        }
+        return $r_alta_bd;
+    }
+
 
     /**
      * Inserta un registro predeterminado
@@ -341,7 +386,7 @@ class modelo extends modelo_base {
      * @version 1.534.51
      *
      */
-    final public function alta_registro(array $registro):array|stdClass{
+     public function alta_registro(array $registro):array|stdClass{
 
 
         if(!isset($_SESSION['usuario_id'])){
@@ -357,10 +402,10 @@ class modelo extends modelo_base {
 
         $r_alta  = $this->alta_bd();
         if(errores::$error) {
-            return $this->error->error(mensaje: 'Error al dar de alta registro en modelo '.$this->tabla, data: $r_alta);
+            $database = (new database())->db_name;
+            return $this->error->error(mensaje: 'Error al dar de alta registro en database '.$database.'  en modelo '
+                .$this->tabla, data: $r_alta);
         }
-
-
 
         return $r_alta;
     }
@@ -381,6 +426,13 @@ class modelo extends modelo_base {
     /**
      * Cuenta los registros de un modelo conforme al filtro en aplicacion
      * @param array $diferente_de Integra el sql para diferente de
+     * @param array $extra_join Arreglo para integrar tabla integra en la consulta
+                $extra_join[tabla] = array(); donde tabla se inicial LEFT JOIN tabla
+                $extra_join['tabla']['key'] = 'key'; donde key es el key de enlace de la tabla
+                    LEFT JOIN  tabla AS tabla  ON tabla.key
+                $extra_join['tabla']['enlace'] = 'tabla_enlace'; Es la tabla del join
+                    LEFT JOIN  tabla AS tabla  ON tabla.key = tabla_enlace.key_enlace
+                $extra_join['tabla']['key_enlace'] = 'key_enlace';
      * @param array $filtro Filtro de ejecucion basico
      * @param string $tipo_filtro validos son numeros y textos
      * @param array $filtro_especial arreglo con las condiciones $filtro_especial[0][tabla.campo]= array('operador'=>'<','valor'=>'x')
@@ -395,24 +447,35 @@ class modelo extends modelo_base {
      * @return array|int
      * @version 9.97.4
      */
-    final public function cuenta(array $diferente_de = array(), array $filtro = array(), string $tipo_filtro = 'numeros',
-                           array $filtro_especial = array(), array $filtro_rango = array(),
-                           array $filtro_fecha = array(), array $in = array(), array $not_in = array()):array|int{
+    final public function cuenta(array $diferente_de = array(), array $extra_join = array(), array $filtro = array(),
+                                 string $tipo_filtro = 'numeros', array $filtro_especial = array(),
+                                 array $filtro_rango = array(), array $filtro_fecha = array(),
+                                 array $in = array(), array $not_in = array()):array|int{
 
         $verifica_tf = (new where())->verifica_tipo_filtro(tipo_filtro: $tipo_filtro);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al validar tipo_filtro',data: $verifica_tf);
         }
 
-        $tablas = (new joins())->obten_tablas_completas(columnas_join:  $this->columnas, tabla: $this->tabla);
+        /*$tablas = (new joins())->obten_tablas_completas(columnas_join:  $this->columnas, tabla: $this->tabla);
         if(errores::$error){
             return $this->error->error(mensaje: "Error al obtener tablas", data: $tablas);
+        }*/
+
+        $extension_estructura = array();
+        $renombradas = array();
+
+        $tablas = (new joins())->tablas(columnas: $this->columnas, extension_estructura:  $extension_estructura,
+            extra_join: $extra_join, modelo_tabla: $this->tabla, renombradas: $renombradas, tabla: $this->tabla);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al generar joins e '.$this->tabla, data: $tablas);
         }
 
         $filtros = (new where())->data_filtros_full(columnas_extra: $this->columnas_extra,diferente_de: $diferente_de,
             filtro:  $filtro, filtro_especial: $filtro_especial, filtro_extra: array(), filtro_fecha: $filtro_fecha,
             filtro_rango: $filtro_rango, in:$in, keys_data_filter: $this->keys_data_filter, not_in: $not_in,
             sql_extra: '', tipo_filtro: $tipo_filtro);
+
 
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al generar filtros',data: $filtros);
@@ -458,6 +521,32 @@ class modelo extends modelo_base {
         $data = new stdClass();
         $data->where = $where;
         $data->sentencia = $sentencia_env;
+        return $data;
+    }
+
+    /**
+     * Maqueta la salida de los resultados
+     * @param string $mensaje Mensaje a integrar
+     * @param array $registro Registro resultante
+     * @param array $registro_ejecutado Registro en ejecucion
+     * @param int $registro_id Identificador resultante o en ejecucion
+     * @param stdClass $registro_puro Registro en bruto insertado completo
+     * @param string $sql Sql ejecutado
+     * @return stdClass
+     * @version 10.88.3
+     */
+    final protected function data_result_transaccion(string $mensaje, array $registro, array $registro_ejecutado,
+                                                  int $registro_id, stdClass $registro_puro, string $sql): stdClass
+    {
+        $data = new stdClass();
+        $data->mensaje = $mensaje;
+        $data->registro_id = $registro_id;
+        $data->sql = $sql;
+        $data->registro = $registro;
+        $data->registro_obj = (object)$registro;
+        $data->registro_ins = $registro_ejecutado;
+        $data->registro_puro = $registro_puro;
+        $data->campos = $this->campos_tabla;
         return $data;
     }
 
@@ -557,6 +646,11 @@ class modelo extends modelo_base {
         if(errores::$error){
             return $this->error->error(mensaje:'Error al obtener registro en '.$this->tabla, data:$registro_bitacora);
         }
+        $registro_puro = $this->registro(registro_id: $id, columnas_en_bruto: true, retorno_obj: true);
+        if(errores::$error){
+            return $this->error->error(mensaje:'Error al obtener registro en '.$this->tabla, data:$registro_puro);
+        }
+
         $tabla = $this->tabla;
         $this->consulta = /** @lang MYSQL */
             'DELETE FROM '.$tabla. ' WHERE id = '.$id;
@@ -589,7 +683,8 @@ class modelo extends modelo_base {
         $data->registro_id = $id;
         $data->sql = $this->consulta;
         $data->registro = $registro_bitacora;
-
+        $data->registro_puro = $registro_puro;
+        $data->mensaje = 'Se elimino el registro con el id '.$id;
 
 
         return $data;
@@ -830,7 +925,7 @@ class modelo extends modelo_base {
      * @param bool $columnas_en_bruto si true se trae las columnas sion renombrar y solo de la tabla seleccionada
      * @param bool $con_sq
      * @param array $diferente_de Arreglo con los elementos para integrar <> o diferente en el SQL
-     * @param array $extra_join
+     * @param array $extra_join Arreglo para integrar tabla integra en la consulta
      * @param array $filtro array('tabla.campo'=>'value'=>valor,'tabla.campo'=>'campo'=>tabla.campo);
      * @param array $filtro_especial arreglo con las condiciones $filtro_especial[0][tabla.campo]= array('operador'=>'<','valor'=>'x')
      *          arreglo con condiciones especiales $filtro_especial[0][tabla.campo]= array('operador'=>'<','valor'=>'x','comparacion'=>'AND OR')
@@ -957,7 +1052,7 @@ class modelo extends modelo_base {
      * @internal  $this->ejecuta_consulta($hijo);
      * @author mgamboa
      * @fecha 2022-08-02 16:49
-     * @version 1.575.51
+     * @version 10.53.2
      */
     final public function filtro_and(bool $aplica_seguridad = true, array $columnas =array(),
                                      array $columnas_by_table = array(), bool $columnas_en_bruto = false,
@@ -1095,7 +1190,7 @@ class modelo extends modelo_base {
      *
      * @fecha 2022-08-02 16:38
      * @author mgamboa
-     * @version 1.575.51
+     * @version 10.52.2
      */
     private function genera_sql_filtro(array $columnas, array $columnas_by_table, bool $columnas_en_bruto, bool $con_sq,
                                        array $diferente_de, array $extra_join, array $filtro, array $filtro_especial,
@@ -1117,11 +1212,18 @@ class modelo extends modelo_base {
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al validar tipo_filtro',data: $verifica_tf);
         }
+
         $consulta = $this->genera_consulta_base(columnas: $columnas, columnas_by_table: $columnas_by_table,
             columnas_en_bruto: $columnas_en_bruto, con_sq: $con_sq, extension_estructura: $this->extension_estructura,
             extra_join: $extra_join, renombradas: $this->renombres);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al generar sql',data: $consulta);
+        }
+
+
+        $in = $this->in_llave(in: $in);
+        if(errores::$error){
+            return  $this->error->error(mensaje: 'Error al integrar in',data: $in);
         }
 
         $complemento_sql = (new filtros())->complemento_sql(aplica_seguridad:false, diferente_de: $diferente_de,
@@ -1172,17 +1274,22 @@ class modelo extends modelo_base {
      * @param array $filtro_especial Filtro para get data
      * @param int $n_rows_for_page N rows
      * @param int $pagina Num pag
+     * @param array $in
+     * @param array $extra_join
+     * @param array $order
      * @return array
-     * @version 1.544.51
      */
-    final public function get_data_lista(array $filtro = array(),array $filtro_especial = array(),
+    final public function get_data_lista(array $filtro = array(), array $columnas =array(), array $filtro_especial = array(),
                                          int $n_rows_for_page = 10, int $pagina = 1, array $in = array(),
-                                         array $extra_join = array()): array
+                                         array $extra_join = array(), array $order = array()): array
     {
+        if(count($order) === 0){
+            $order[$this->tabla.'.id'] = 'DESC';
+        }
 
         $limit = $n_rows_for_page;
 
-        $n_rows = $this->cuenta(filtro_especial: $filtro_especial, in: $in);
+        $n_rows = $this->cuenta(extra_join: $extra_join, filtro: $filtro, filtro_especial: $filtro_especial, in: $in);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registros', data: $n_rows);
         }
@@ -1193,8 +1300,8 @@ class modelo extends modelo_base {
             $offset = 0;
         }
 
-        $result = $this->filtro_and(extra_join: $extra_join, filtro: $filtro, filtro_especial: $filtro_especial, in: $in,
-            limit: $limit, offset: $offset);
+        $result = $this->filtro_and(columnas: $columnas, extra_join: $extra_join, filtro: $filtro,
+            filtro_especial: $filtro_especial, in: $in, limit: $limit, offset: $offset, order: $order);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registros', data: $result);
         }
@@ -1247,6 +1354,24 @@ class modelo extends modelo_base {
 
         return (int) $r_modelo->registros[0][$this->key_id];
 
+    }
+
+    /**
+     * Genera una llave de tipo in para SQL
+     * @param array $in IN precargada
+     * @return array
+     * @version 10.51.0
+     */
+    private function in_llave(array $in): array
+    {
+        if(count($in)>0) {
+            if(isset($in['llave'])){
+                if(array_key_exists($in['llave'], $this->columnas_extra)){
+                    $in['llave'] = $this->columnas_extra[$in['llave']];
+                }
+            }
+        }
+        return $in;
     }
 
     /**
@@ -1399,7 +1524,7 @@ class modelo extends modelo_base {
      * @internal  $this->agrega_usuario_session();
      * @internal  $this->ejecuta_sql();
      * @internal  $this->bitacora($this->registro_upd,__FUNCTION__, $consulta);
-     * @final rev
+     * @finalrev
      * @version 9.120.4
      */
     public function modifica_bd(array $registro, int $id, bool $reactiva = false): array|stdClass
@@ -1618,7 +1743,9 @@ class modelo extends modelo_base {
             return $this->error->error(mensaje: 'Error al generar consulta base',data:  $consulta);
         }
 
-        $where = " WHERE $tabla".".id = $this->registro_id ";
+        $this->campo_llave === "" ? $where = " WHERE $tabla".".id = $this->registro_id " :
+            $where = " WHERE $tabla".".$this->campo_llave = $this->registro_id ";
+
         $consulta .= $where;
 
         $result = $this->ejecuta_consulta(consulta: $consulta, campos_encriptados: $this->campos_encriptados,
@@ -1843,11 +1970,19 @@ class modelo extends modelo_base {
      * @param bool $columnas_en_bruto true retorna las columnas tal cual la bd
      * @param array $extra_join joins extra
      * @param array $hijo Hijos de row
-     * @return array
+     * @param bool $retorno_obj Retorna el resultado como un objeto
+     * @return array|stdClass
+     * @version 8.86.1
      */
     final public function registro_by_codigo(string $codigo, array $columnas = array(), bool $columnas_en_bruto = false,
-                                             array $extra_join = array(), array $hijo = array()): array
+                                             array $extra_join = array(), array $hijo = array(),
+                                             bool $retorno_obj = false): array|stdClass
     {
+
+        $codigo = trim($codigo);
+        if($codigo === ''){
+            return  $this->error->error(mensaje: 'Error el codigo esta vacio',data: $codigo);
+        }
 
         $filtro[$this->tabla.'.codigo'] = $codigo;
 
@@ -1863,7 +1998,11 @@ class modelo extends modelo_base {
             return  $this->error->error(mensaje: 'Error existe mas de un registro',data: $registros);
         }
 
-        return $registros->registros[0];
+        $registro = $registros->registros[0];
+        if($retorno_obj){
+            $registro = (object)$registro;
+        }
+        return $registro;
 
     }
 

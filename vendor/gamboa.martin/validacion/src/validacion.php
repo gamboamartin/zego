@@ -44,6 +44,7 @@ class validacion {
         $this->patterns['cod_int_0_6_numbers'] = '/^[0-9]{6}$/';
         $this->patterns['cod_int_0_8_numbers'] = '/^[0-9]{8}$/';
         $this->patterns['correo_html5'] = "[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$";
+        $this->patterns['correo_html_base'] = "[^@\s]+@[^@\s]+[^.\s]";
         $this->patterns['correo'] = '/^'.$this->patterns["correo_html5"].'/';
         $this->patterns['double'] = '/^[0-9]*.[0-9]*$/';
         $this->patterns['id'] = "/^$entero_positivo$/";
@@ -53,6 +54,7 @@ class validacion {
         $this->patterns['hora_min_sec'] = "/^$hora_min_sec$/";
         $this->patterns['letra_numero_espacio'] = '/^(([a-zA-Z áéíóúÁÉÍÓÚñÑ]+[1-9]*)+(\s)?)+([a-zA-Z áéíóúÁÉÍÓÚñÑ]+[1-9]*)*$/';
         $this->patterns['nomina_antiguedad'] = "/^P[0-9]+W$/";
+        $this->patterns['rfc_html'] = "[A-Z]{3,4}[0-9]{6}([A-Z]|[0-9]){3}";
         $this->patterns['rfc'] = "/^[A-Z]{3,4}[0-9]{6}([A-Z]|[0-9]){3}$/";
         $this->patterns['url'] = "/http(s)?:\/\/(([a-z])+.)+([a-z])+/";
         $this->patterns['telefono_mx'] = "/^$telefono_mx$/";
@@ -64,6 +66,25 @@ class validacion {
         $this->patterns['file_service_lock'] = "/^$file_php\.lock$/";
         $this->patterns['file_service_info'] = "/^$file_php\.$fecha_hms_punto\.info$/";
         $this->patterns['status'] = "/^activo|inactivo$/";
+
+        $lada_html = "[0-9]{2,3}";
+        $this->patterns['lada_html'] = $lada_html;
+        $this->patterns['lada'] = "/^$lada_html$/";
+
+        $tel_sin_lada_html = "[0-9]{7,8}";
+        $this->patterns['tel_sin_lada_html'] = $tel_sin_lada_html;
+        $this->patterns['tel_sin_lada'] = "/^$tel_sin_lada_html$/";
+
+        $curp_html = "([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)";
+        $curp = "/^$curp_html$/";
+
+        $this->patterns['curp_html'] = $curp_html;
+        $this->patterns['curp'] = $curp;
+
+        $nss_html = "(\d{2})(\d{2})(\d{2})\d{5}";
+        $this->patterns['nss_html'] = $nss_html;
+        $this->patterns['nss'] = "/^$nss_html$/";;
+
 
         $this->regex_fecha[] = 'fecha';
         $this->regex_fecha[] = 'fecha_hora_min_sec_esp';
@@ -96,7 +117,8 @@ class validacion {
         $longitud_cod_0_n_numbers = 1;
         $patterns = array();
         while($longitud_cod_0_n_numbers <= $max_long){
-            $regex = $this->init_cod_int_0_n_numbers(longitud: $longitud_cod_0_n_numbers);
+            $regex = (new _codigos())->init_cod_int_0_n_numbers(
+                longitud: $longitud_cod_0_n_numbers,patterns: $this->patterns);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error al inicializar regex', data: $regex);
             }
@@ -187,6 +209,7 @@ class validacion {
      * Valida que un codigo sea numero y con 0 iniciales
      * @param int|string|null $txt Texto a validar
      * @return bool
+     * @version 2.43.0
      */
     final public function cod_int_0_2_numbers(int|string|null $txt):bool{
         return $this->valida_pattern(key:'cod_int_0_2_numbers', txt:$txt);
@@ -222,10 +245,25 @@ class validacion {
         return $this->valida_pattern(key:'cod_int_0_6_numbers', txt:$txt);
     }
 
-    final public function cod_int_0_n_numbers(int $longitud, int|string|null $txt): bool
+    /**
+     * Valida un regex con 0 inicial minimo
+     * @param int $longitud Longitud de cadena con ceros
+     * @param int|string|null $txt Texto a verificar
+     * @return bool|array
+     * @version 2.49.0
+     */
+    final public function cod_int_0_n_numbers(int $longitud, int|string|null $txt): bool|array
     {
+        if($longitud<=0){
+            return $this->error->error(mensaje: 'Error longitud debe ser mayor a 0', data: $longitud);
+        }
+        $txt = trim($txt);
+        if($txt === ''){
+            return $this->error->error(mensaje: 'Error txt esta vacio', data: $txt);
+        }
         $key = 'cod_int_0_'.$longitud.'_numbers';
-        $this->patterns[$key] = "/^[0-9]{$longitud}$/";
+        $this->patterns[$key] = "/^[0-9]{".$longitud."}$/";
+
 
         return $this->valida_pattern(key:$key, txt:$txt);
 
@@ -340,21 +378,7 @@ class validacion {
         return $this->valida_pattern(key:'id', txt:$txt);
     }
 
-    /**
-     * Integra una expresion regular del 0 al 9 repitiendo los numeros n veces = a la longittud
-     * @param int $longitud Longitud de la cadena permitida de numeros
-     * @return string|array
-     * @version 1.4.0
-     */
-    private function init_cod_int_0_n_numbers(int $longitud): string|array
-    {
-        if($longitud<=0){
-            return  $this->error->error(mensaje: 'Error longitud debe ser mayor a 0',data: $longitud);
-        }
-        $key = 'cod_int_0_'.$longitud.'_numbers';
-        $this->patterns[$key] = '/^[0-9]{'.$longitud.'}$/';
-        return $this->patterns[$key];
-    }
+
 
     /**
      * Obtiene los keys de un registro documento
@@ -390,6 +414,7 @@ class validacion {
      * Valida que un rfc
      * @param int|string|null $txt texto a validar
      * @return bool
+     * @version 2.54.0
      */
     final public function rfc(int|string|null $txt):bool{
         return $this->valida_pattern(key:'rfc', txt:$txt);
@@ -443,10 +468,12 @@ class validacion {
 
     /**
      *
-     * @param $codigo
+     * Conjunto de errores de FILES
+     * @param int|string $codigo Codigo de error de FILES
      * @return bool|array
+     * @version 2.57.0
      */
-    final public function upload($codigo): bool|array
+    final public function upload(int|string $codigo): bool|array
     {
         switch ($codigo)
         {
@@ -454,7 +481,7 @@ class validacion {
                 //$mensajeInformativo = 'El fichero se ha subido correctamente (no se ha producido errores).';
                 return true;
             case UPLOAD_ERR_INI_SIZE: //1
-                $mensajeInformativo = 'El archivo que se ha intentado subir sobrepasa el límite de tamaño permitido. Revisad la directiva de php.ini UPLOAD_MAX_FILSIZE. ';
+                $mensajeInformativo = 'El archivo que se ha intentado subir sobrepasa el límite de tamaño permitido. Revisar la directiva de php.ini UPLOAD_MAX_FILSIZE. ';
                 break;
             case UPLOAD_ERR_FORM_SIZE: //2
                 $mensajeInformativo = 'El fichero subido excede la directiva MAX_FILE_SIZE especificada en el formulario HTML. Revisa la directiva de php.ini MAX_FILE_SIZE.';
@@ -517,11 +544,15 @@ class validacion {
      * @param array $keys Conjunto de elementos a verificar
      * @param array|stdClass $row Registro en proceso
      * @return bool|array
+     * @version 2.42.0
      */
     final public function valida_arrays(array $keys, array|stdClass $row): bool|array
     {
         if(is_object($row)){
             $row = (array)$row;
+        }
+        if(count($keys) === 0){
+            return $this->error->error(mensaje: 'Error keys esta vacio', data: $keys);
         }
         $valida_existe = $this->valida_existencia_keys(keys: $keys,registro: $row);
         if(errores::$error){
@@ -662,9 +693,19 @@ class validacion {
         return true;
     }
 
-    final public function valida_cod_1_letras_mayusc(string $key, array $registro): bool|array{
+    /**
+     * Valida que in elemento que sea de una sola letra y sea mayuscula
+     * @param string $key Key de array a verificar
+     * @param array|object $registro Registro a verificar
+     * @return bool|array
+     * @version 2.58.0
+     */
+    final public function valida_cod_1_letras_mayusc(string $key, array|object $registro): bool|array{
 
-        $valida = $this->valida_base(key: $key, registro: $registro);
+        if(is_object($registro)){
+            $registro = (array)$registro;
+        }
+        $valida = $this->valida_base(key: $key, registro: $registro,valida_int: false);
         if(errores::$error){
             return $this->error->error(mensaje:'Error al validar '.$key ,data:$valida);
         }
@@ -676,9 +717,16 @@ class validacion {
         return true;
     }
 
+    /**
+     * Valida los codigos con 3 letras en mayusculas
+     * @param string $key Key a validar
+     * @param array $registro Registro donde se encuentra el campo
+     * @return bool|array
+     * @version 2.64.0
+     */
     final public function valida_cod_3_letras_mayusc(string $key, array $registro): bool|array{
 
-        $valida = $this->valida_base(key: $key, registro: $registro);
+        $valida = $this->valida_base(key: $key, registro: $registro,valida_int: false);
         if(errores::$error){
             return $this->error->error(mensaje:'Error al validar '.$key ,data:$valida);
         }
@@ -690,7 +738,13 @@ class validacion {
         return true;
     }
 
-    final public function valida_cod_int_0_numbers(string $key, array $registro): bool|array{
+    /**
+     * Valida un codigo de 3 digitos permisibles con 0 derecha
+     * @param string $key Key a validar
+     * @param array|stdClass $registro Registro donde se ubica campo a verificar
+     * @return bool|array
+     */
+    final public function valida_cod_int_0_numbers(string $key, array|stdClass $registro): bool|array{
 
         $valida = $this->valida_base(key: $key, registro: $registro);
         if(errores::$error){
@@ -704,8 +758,35 @@ class validacion {
         return true;
     }
 
-    final public function valida_cod_int_0_2_numbers(string $key, array $registro): bool|array{
+    /**
+     * Valida un entero de forma 01,02,03,0n donde n es cualquier numero del 0-9
+     * @param string $key Key a verificar en el registro
+     * @param array|stdClass $registro Registro en proceso
+     * @return bool|array
+     * @version 2.46.0
+     */
+    final public function valida_cod_int_0_2_numbers(string $key, array|stdClass $registro): bool|array{
 
+        if(is_object($registro)){
+            $registro = (array) $registro;
+        }
+        $valida = $this->valida_base(key: $key, registro: $registro);
+        if(errores::$error){
+            return $this->error->error(mensaje:'Error al validar '.$key ,data:$valida);
+        }
+
+        if(!$this->cod_int_0_2_numbers(txt:$registro[$key])){
+            return $this->error->error(mensaje:'Error el '.$key.' es invalido',data:$registro);
+        }
+
+        return true;
+    }
+
+    final public function valida_cod_int_0_3_numbers(string $key, array|stdClass $registro): bool|array{
+
+        if(is_object($registro)){
+            $registro = (array) $registro;
+        }
         $valida = $this->valida_base(key: $key, registro: $registro);
         if(errores::$error){
             return $this->error->error(mensaje:'Error al validar '.$key ,data:$valida);
@@ -718,21 +799,7 @@ class validacion {
         return true;
     }
 
-    final public function valida_cod_int_0_3_numbers(string $key, array $registro): bool|array{
-
-        $valida = $this->valida_base(key: $key, registro: $registro);
-        if(errores::$error){
-            return $this->error->error(mensaje:'Error al validar '.$key ,data:$valida);
-        }
-
-        if(!$this->cod_int_0_3_numbers(txt:$registro[$key])){
-            return $this->error->error(mensaje:'Error el '.$key.' es invalido',data:$registro);
-        }
-
-        return true;
-    }
-
-    final public function valida_cod_int_0_5_numbers(string $key, array $registro): bool|array{
+    final public function valida_cod_int_0_5_numbers(string $key, array|stdClass $registro): bool|array{
 
         $valida = $this->valida_base(key: $key, registro: $registro);
         if(errores::$error){
@@ -749,11 +816,11 @@ class validacion {
     /**
      * Valida un numero con 6 digitos con 0 iniciales
      * @param string $key Key de row a validar
-     * @param array $registro Registro a validar
+     * @param array|stdClass $registro Registro a validar
      * @return bool|array
      * @version 0.37.1
      */
-    final public function valida_cod_int_0_6_numbers(string $key, array $registro): bool|array{
+    final public function valida_cod_int_0_6_numbers(string $key, array|stdClass $registro): bool|array{
 
         $valida = $this->valida_base(key: $key, registro: $registro);
         if(errores::$error){
@@ -767,7 +834,14 @@ class validacion {
         return true;
     }
 
-    final public function valida_cod_int_0_n_numbers(string $key, int $longitud, array $registro): bool|array{
+    /**
+     * Se integra validacion cd 0 to n number con prefijos 0
+     * @param string $key Key a validar
+     * @param int $longitud Longitud
+     * @param array|stdClass $registro Registro
+     * @return bool|array
+     */
+    final public function valida_cod_int_0_n_numbers(string $key, int $longitud, array|stdClass $registro): bool|array{
 
         $valida = $this->valida_base(key: $key, registro: $registro);
         if(errores::$error){
@@ -781,6 +855,12 @@ class validacion {
         return true;
     }
 
+    /**
+     * Valida que los codigos de un conjunto de campos de un arreglo sean validos conforme a 3 letras mayusculas
+     * @param array $keys Keys de campos a validar
+     * @param array|object $registro Registro a validar
+     * @return array
+     */
     final public function valida_codigos_3_letras_mayusc(array $keys, array|object $registro):array{
         if(count($keys) === 0){
             return $this->error->error(mensaje: "Error keys vacios",data: $keys);
@@ -829,6 +909,13 @@ class validacion {
         return array('mensaje'=>'ids validos',$registro,$keys);
     }
 
+    /**
+     * Valida que un conjunto de keys cumplan con la validacion de codigos del tipo 01,02,0n donde n sea del 1-9
+     * @param array $keys Keys a validar
+     * @param array|object $registro Registro a validar
+     * @return array
+     * @version 2.47.0
+     */
     final public function valida_codigos_int_0_2_numbers(array $keys, array|object $registro):array{
         if(count($keys) === 0){
             return $this->error->error(mensaje: "Error keys vacios",data: $keys);
@@ -840,7 +927,7 @@ class validacion {
 
         foreach($keys as $key){
             if($key === ''){
-                return $this->error->error(mensaje:'Error '.$key.' Invalido',data:$registro);
+                return $this->error->error(mensaje:'Error '.$key.' Invalido esta vacio',data:$registro);
             }
             if(!isset($registro[$key])){
                 return  $this->error->error(mensaje:'Error no existe '.$key,data:$registro);
@@ -1234,10 +1321,11 @@ class validacion {
      * Funcion que valida los campos necesarios para la aplicacion de menu
      * @param int $menu_id Menu id a validar
      * @return array|bool
+     * @version 2.70.0
      */
     final public function valida_estructura_menu(int $menu_id):array|bool{
         if(!isset($_SESSION['grupo_id'])){
-            return $this->error->error(mensaje: 'Error debe existir grupo_id',data: $_SESSION);
+            return $this->error->error(mensaje: 'Error debe existir grupo_id en SESSION',data: $menu_id);
         }
         if((int)$_SESSION['grupo_id']<=0){
             return $this->error->error(mensaje: 'Error grupo_id debe ser mayor a 0',data: $_SESSION);
@@ -1249,7 +1337,7 @@ class validacion {
     }
 
     /**
-     * P INT  P ORDER
+     *
      * Valida la estructura
      * @param string $seccion
      * @param string $accion
@@ -1258,17 +1346,17 @@ class validacion {
      *        $valida = $this->valida_estructura_seccion_accion($seccion,$accion);
      * @uses directivas
      */
-    final public function valida_estructura_seccion_accion(string $accion, string $seccion):array|bool{ //FIN PROT
+    final public function valida_estructura_seccion_accion(string $accion, string $seccion):array|bool{
         $seccion = str_replace('models\\','',$seccion);
         $class_model = 'models\\'.$seccion;
         if($seccion === ''){
-            return   $this->error->error('$seccion no puede venir vacia', $seccion);
+            return   $this->error->error(mensaje: '$seccion no puede venir vacia', data: $seccion);
         }
         if($accion === ''){
-            return   $this->error->error('$accion no puede venir vacia', $accion);
+            return   $this->error->error(mensaje: '$accion no puede venir vacia',data:  $accion);
         }
         if(!class_exists($class_model)){
-            return   $this->error->error('no existe la clase '.$seccion, $seccion);
+            return   $this->error->error(mensaje: 'no existe la clase '.$seccion,data:  $seccion);
         }
         return true;
     }
@@ -1309,15 +1397,20 @@ class validacion {
     }
 
     /**
-     *
+     * Valida que un doc tenga extension
      * @param string $path ruta del documento de dropbox
      * @return bool|array
+     * @version 2.69.0
      */
     final public function valida_extension_doc(string $path): bool|array
     {
+        $path = trim($path);
+        if($path === ''){
+            return $this->error->error(mensaje: 'Error el $path esta vacio',data:  $path);
+        }
         $extension_origen = pathinfo($path, PATHINFO_EXTENSION);
         if(!$extension_origen){
-            return $this->error->error('Error el $path no tiene extension', $path);
+            return $this->error->error(mensaje: 'Error el $path no tiene extension',data:  $path);
         }
         return true;
     }
@@ -1363,7 +1456,7 @@ class validacion {
     }
 
     /**
-     * P INT P ORDER PROBADO
+     *
      * Valida los datos de entrada para un filtro especial
      *
      * @param string $campo campo de una tabla tabla.campo
@@ -1377,21 +1470,21 @@ class validacion {
      *      $filtro = array('operador'=>'x','valor'=>'x');
      *      $resultado = valida_filtro_especial($campo, $filtro);
      *      $resultado = array('operador'=>'x','valor'=>'x');
+     * @version 2.67.0
      *
-     * @uses modelo_basico->obten_filtro_especial
      */
     final public function valida_filtro_especial(string $campo, array $filtro):array|bool{ //DOC //DEBUG
         if(!isset($filtro['operador'])){
-            return $this->error->error("Error operador no existe",$filtro);
+            return $this->error->error(mensaje: "Error operador no existe",data: $filtro);
         }
         if(!isset($filtro['valor_es_campo']) &&is_numeric($campo)){
-            return $this->error->error("Error campo invalido",$filtro);
+            return $this->error->error(mensaje: "Error campo invalido",data: $filtro);
         }
         if(!isset($filtro['valor'])){
-            return $this->error->error("Error valor no existe",$filtro);
+            return $this->error->error(mensaje: "Error valor no existe",data: $filtro);
         }
         if($campo === ''){
-            return $this->error->error("Error campo vacio",$campo);
+            return $this->error->error(mensaje: "Error campo vacio",data: $campo);
         }
         return true;
     }
@@ -1497,6 +1590,29 @@ class validacion {
     }
 
     /**
+     * Valida que una lada sea correcta con formato de mexico de 2 a 3 numeros
+     * @param string $lada Lada a validar
+     * @return bool|array
+     * @version 2.60.0
+     */
+    final public function valida_lada(string $lada): bool|array
+    {
+        $lada = trim($lada);
+        if($lada === ''){
+            return $this->error->error(mensaje: 'Error lada vacia',data:  $this->patterns['lada']);
+        }
+        if(!is_numeric($lada)){
+            return $this->error->error(mensaje: 'Error lada debe ser un numero',data:  $this->patterns['lada']);
+        }
+
+        $es_valida = $this->valida_pattern(key: 'lada',txt:  $lada);
+        if(!$es_valida){
+            return $this->error->error(mensaje: 'Error lada invalida',data:  $this->patterns['lada']);
+        }
+        return true;
+    }
+
+    /**
      * Se valida que la tabla sea un modelo valido
      * @version 1.0.0
      * @param string $tabla Tabla o estructura de la base de datos y modelo
@@ -1571,6 +1687,51 @@ class validacion {
     }
 
     /**
+     * Valida un numero telefonico  mexicano a 10 numeros
+     * @param string $tel Telefono a validar
+     * @return bool|array
+     */
+    final public function valida_numero_tel_mx(string $tel): bool|array
+    {
+        $tel = trim($tel);
+        if($tel === ''){
+            return $this->error->error(mensaje: 'Error tel vacia',data:  $this->patterns['telefono_mx']);
+        }
+        if(!is_numeric($tel)){
+            return $this->error->error(mensaje: 'Error tel debe ser un numero',data:  $this->patterns['telefono_mx']);
+        }
+
+        $es_valida = $this->valida_pattern(key: 'telefono_mx',txt:  $tel);
+        if(!$es_valida){
+            return $this->error->error(mensaje: 'Error telefono invalido',data:  $this->patterns['telefono_mx']);
+        }
+        return true;
+    }
+
+    /**
+     * Valida un numero telefonico sin lada mexicano 7 a 8 numeros
+     * @param string $tel Telefono a validar
+     * @return bool|array
+     * @version 2.63.0
+     */
+    final public function valida_numero_sin_lada(string $tel): bool|array
+    {
+        $tel = trim($tel);
+        if($tel === ''){
+            return $this->error->error(mensaje: 'Error tel vacia',data:  $this->patterns['tel_sin_lada']);
+        }
+        if(!is_numeric($tel)){
+            return $this->error->error(mensaje: 'Error tel debe ser un numero',data:  $this->patterns['tel_sin_lada']);
+        }
+
+        $es_valida = $this->valida_pattern(key: 'tel_sin_lada',txt:  $tel);
+        if(!$es_valida){
+            return $this->error->error(mensaje: 'Error telefono invalido',data:  $this->patterns['tel_sin_lada']);
+        }
+        return true;
+    }
+
+    /**
      * Valida que sea la estructura correcta un json base
      * @param string $txt texto a validar
      * @return array|true
@@ -1620,7 +1781,7 @@ class validacion {
     }
 
     /**
-     * TODO Valida un rango de fechas
+     * Valida un rango de fechas
      * @param array $fechas conjunto de fechas fechas['fecha_inicial'], fechas['fecha_final']
      * @param string $tipo_val
      *          utiliza los patterns de las siguientes formas
@@ -1628,6 +1789,7 @@ class validacion {
      *          fecha_hora_min_sec_esp = yyyy-mm-dd hh-mm-ss
      *          fecha_hora_min_sec_t = yyyy-mm-ddThh-mm-ss
      * @return array|bool true si no hay error
+     * @version 2.68.0
      */
     final public function valida_rango_fecha(array $fechas, string $tipo_val = 'fecha'): array|bool
     {
@@ -1662,6 +1824,13 @@ class validacion {
         return $valida;
     }
 
+    /**
+     * Valida que la estructura de un rfc sea valida
+     * @param string $key Key a validar
+     * @param array $registro Registro en proceso
+     * @return bool|array
+     * @version 2.66.0
+     */
     final public function valida_rfc(string $key, array $registro): bool|array{
 
         $valida = $this->valida_base(key: $key, registro: $registro, valida_int: false);
@@ -1676,6 +1845,13 @@ class validacion {
         return true;
     }
 
+    /**
+     * Valida los rfc contenidos en un array
+     * @param array $keys Keys a validar
+     * @param array|object $registro Registro a validar
+     * @return array|bool
+     * @version 2.67.0
+     */
     final public function valida_rfcs(array $keys, array|object $registro):array|bool{
         if(count($keys) === 0){
             return $this->error->error(mensaje: "Error keys vacios",data: $keys);

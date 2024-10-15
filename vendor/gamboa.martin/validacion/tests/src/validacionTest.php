@@ -185,6 +185,38 @@ class validacionTest extends test {
         errores::$error = false;
     }
 
+    public function test_cod_int_0_2_numbers(): void{
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+
+
+        $txt = '22';
+        $resultado = $val->cod_int_0_2_numbers($txt);
+
+        $this->assertIsBool( $resultado);
+        $this->assertTrue($resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+
+        $txt = '00';
+        $resultado = $val->cod_int_0_2_numbers($txt);
+        $this->assertIsBool( $resultado);
+        $this->assertTrue($resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+
+
+
+        $txt = '21';
+        $resultado = $val->cod_int_0_2_numbers($txt);
+        $this->assertIsBool( $resultado);
+        $this->assertTrue($resultado);
+        $this->assertNotTrue(errores::$error);
+
+        errores::$error = false;
+    }
+
     public function test_cod_int_0_3_numbers()
     {
 
@@ -471,6 +503,29 @@ class validacionTest extends test {
         errores::$error = false;
     }
 
+    public function test_cod_int_0_n_numbers(): void{
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+
+        $longitud = 1;
+        $txt = 'a';
+        $resultado = $val->cod_int_0_n_numbers($longitud, $txt);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue($resultado);
+        $this->assertNotTrue(errores::$error);
+
+        errores::$error = false;
+        $longitud = 1;
+        $txt = '0';
+        $resultado = $val->cod_int_0_n_numbers($longitud, $txt);
+        $this->assertIsBool( $resultado);
+        $this->assertTrue($resultado);
+        $this->assertNotTrue(errores::$error);
+
+        errores::$error = false;
+    }
+
     public function test_fechas_in_array(): void
     {
         errores::$error = false;
@@ -488,18 +543,30 @@ class validacionTest extends test {
         errores::$error = false;
     }
 
-    public function test_init_cod_int_0_n_numbers(): void{
+    public function test_rfc(): void{
         errores::$error = false;
         $val = new validacion();
-        $val = new liberator($val);
+        //$val = new liberator($val);
 
-        $longitud = 1;
-        $resultado = $val->init_cod_int_0_n_numbers($longitud);
-        $this->assertIsString( $resultado);
-        $this->assertEquals("/^[0-9]{1}$/", $resultado);
+        $txt = 'a';
+        $resultado = $val->rfc($txt);
         $this->assertNotTrue(errores::$error);
+        $this->assertNotTrue($resultado);
+
+        errores::$error = false;
+        $txt = 'AAAA830930A45';
+        $resultado = $val->rfc($txt);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+
+        errores::$error = false;
+        $txt = 'AAA010101AAA';
+        $resultado = $val->rfc($txt);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
         errores::$error = false;
     }
+
 
     public function test_seccion(): void{
         errores::$error = false;
@@ -553,6 +620,27 @@ class validacionTest extends test {
         $this->assertTrue($resultado);
         $this->assertNotTrue(errores::$error);
 
+        errores::$error = false;
+    }
+
+    public function test_upload()
+    {
+
+        errores::$error = false;
+        $validacion = new validacion();
+
+        $codigo = '';
+        $resultado = $validacion->upload($codigo);
+        $this->assertIsArray( $resultado);
+        $this->assertEquals('Error sin identificar.', $resultado['mensaje_limpio']);
+        $this->assertTrue(errores::$error);
+
+        errores::$error = false;
+        $codigo = UPLOAD_ERR_INI_SIZE;
+        $resultado = $validacion->upload($codigo);
+        $this->assertIsArray( $resultado);
+        $this->assertEquals('El archivo que se ha intentado subir sobrepasa el límite de tamaño permitido. Revisar la directiva de php.ini UPLOAD_MAX_FILSIZE.', $resultado['mensaje_limpio']);
+        $this->assertTrue(errores::$error);
         errores::$error = false;
     }
 
@@ -611,6 +699,21 @@ class validacionTest extends test {
 
         $value = array();
         $resultado = $val->valida_array($value);
+        $this->assertIsBool( $resultado);
+        $this->assertTrue($resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
+    public function test_valida_arrays(): void{
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+        $row = array();
+        $keys = array();
+        $keys[] = 'a';
+        $row['a'] = array();
+        $resultado = $val->valida_arrays($keys, $row);
         $this->assertIsBool( $resultado);
         $this->assertTrue($resultado);
         $this->assertNotTrue(errores::$error);
@@ -781,6 +884,52 @@ class validacionTest extends test {
         $this->assertTrue($resultado);
         $this->assertNotTrue(errores::$error);
         errores::$error = false;
+    }
+
+    public function test_valida_cod_1_letras_mayusc(): void
+    {
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+
+        $registro = array();
+        $key = 'a';
+        $registro['a'] = 'Z';
+        $resultado = $val->valida_cod_1_letras_mayusc($key, $registro);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
+    public function test_valida_cod_3_letras_mayusc(): void{
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+        $key = 'a';
+        $registro = array();
+        $registro['a'] = 'AAA';
+        $resultado = $val->valida_cod_3_letras_mayusc($key, $registro);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
+    public function test_valida_codigos_int_0_2_numbers(): void{
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+
+
+        $keys = array();
+        $registro = array();
+        $keys[] = 'a';
+        $registro['a'] = '10';
+        $resultado = $val->valida_codigos_int_0_2_numbers($keys, $registro);
+        $this->assertIsArray( $resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+
     }
 
     public function test_valida_cols_css(): void{
@@ -1126,6 +1275,19 @@ class validacionTest extends test {
 
     }
 
+    public function test_valida_estructura_menu()
+    {
+
+        errores::$error = false;
+        $validacion = new validacion();
+        $menu_id = 1;
+        $_SESSION['grupo_id'] = 2;
+        $resultado = $validacion->valida_estructura_menu($menu_id);
+        $this->assertIsBool( $resultado);
+        $this->assertTrue($resultado);
+        $this->assertNotTrue(errores::$error);
+    }
+
     public function test_valida_existencia_key(): void
     {
         errores::$error = false;
@@ -1178,6 +1340,20 @@ class validacionTest extends test {
         $this->assertNotTrue(errores::$error);
         errores::$error = false;
 
+    }
+
+    public function test_valida_extension_doc(): void
+    {
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+
+        $path = 'a.a';
+        $resultado = $val->valida_extension_doc($path);
+        $this->assertIsBool( $resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+        errores::$error = false;
     }
 
     public function test_valida_fecha()
@@ -1461,6 +1637,20 @@ class validacionTest extends test {
 
     }
 
+    public function test_valida_lada(): void{
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+
+
+        $lada = '012';
+        $resultado = $val->valida_lada($lada);
+        $this->assertNotTrue(errores::$error);
+        $this->assertIsBool($resultado);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
     public function test_valida_modelo(){
 
         errores::$error = false;
@@ -1591,6 +1781,18 @@ class validacionTest extends test {
         $keys[] = 'a';
         $row['a'] = '1';
         $resultado = $val->valida_numerics($keys, $row);
+        $this->assertIsBool( $resultado);
+        $this->assertTrue($resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
+    public function test_valida_numero_sin_lada(): void{
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+        $tel = '12345678';
+        $resultado = $val->valida_numero_sin_lada($tel);
         $this->assertIsBool( $resultado);
         $this->assertTrue($resultado);
         $this->assertNotTrue(errores::$error);
@@ -1989,6 +2191,39 @@ class validacionTest extends test {
         $this->assertStringContainsStringIgnoringCase('Error la fecha inicial no puede ser mayor a la final',$resultado['mensaje']);
         errores::$error = false;
     }
+
+    public function test_valida_rfc(): void
+    {
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+        $key = 'a';
+        $registro = array();
+        $registro['a']  ='AAA010101BBB';
+        $resultado = $val->valida_rfc($key, $registro);
+        $this->assertNotTrue(errores::$error);
+        $this->assertIsBool($resultado);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
+    public function test_valida_rfcs(): void
+    {
+        errores::$error = false;
+        $val = new validacion();
+        //$val = new liberator($val);
+        $keys = array('a');
+        $registro = array();
+        $registro['a'] = 'ACDD120987265';
+
+        $resultado = $val->valida_rfcs($keys, $registro);
+        $this->assertNotTrue(errores::$error);
+        $this->assertIsBool($resultado);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
+
 
     public function test_valida_statuses()
     {

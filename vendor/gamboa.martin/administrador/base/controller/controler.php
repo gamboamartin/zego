@@ -5,6 +5,7 @@ use base\orm\modelo;
 use config\generales;
 use config\views;
 use gamboamartin\administrador\ctl\normalizacion_ctl;
+use gamboamartin\administrador\models\adm_accion;
 use gamboamartin\administrador\models\adm_session;
 use gamboamartin\errores\errores;
 use PDO;
@@ -93,6 +94,8 @@ class controler{
 
     public array $params_upd_get = array();
 
+    public stdClass $paths_conf;
+
     public function __construct(PDO $link){
         $this->link = $link;
         $this->buttons_parents_alta = new stdClass();
@@ -118,12 +121,12 @@ class controler{
         $this->pestanas->targets = array();
 
         if(!isset($generals->path_base)){
-            $error =  $this->errores->error('path base en generales debe existir','');
+            $error =  $this->errores->error(mensaje: 'path base en generales debe existir',data: '');
             print_r($error);
             exit;
         }
         if(!isset($generals->session_id)){
-            $error =  $this->errores->error('session_id en generales debe existir','');
+            $error =  $this->errores->error(mensaje: 'session_id en generales debe existir',data: '');
             print_r($error);
             exit;
         }
@@ -144,8 +147,54 @@ class controler{
         $this->mensaje_warning = $mensajes->warning_msj;
 
         $this->accion_titulo = str_replace('_',' ',$this->accion);
-        $this->accion_titulo = ucwords($this->accion_titulo);
         $this->seccion_titulo = str_replace('_', ' ', $this->seccion);
+
+
+        if($this->seccion !== '') {
+            $adm_accion = (new adm_accion(link: $this->link))->accion_registro(accion: $this->accion,
+                seccion: $this->seccion);
+            if (errores::$error) {
+                $error = $this->errores->error(mensaje: 'Error al obtener accion', data: $adm_accion);
+                if(isset($_GET['ws'])){
+                    if((int)$_GET['ws'] === 1){
+                        ob_clean();
+                        header('Content-Type: application/json');
+                        try {
+                            echo json_encode($error, JSON_THROW_ON_ERROR);
+                        }
+                        catch (Throwable $e){
+                            print_r($e);
+                            exit;
+                        }
+                        exit;
+                    }
+                }
+                print_r($error);
+                exit;
+            }
+
+            if (isset($adm_accion['adm_accion_titulo'])) {
+                $adm_accion_titulo = trim($adm_accion['adm_accion_titulo']);
+                if ($adm_accion_titulo !== '') {
+                    if ($adm_accion_titulo !== 'ST') {
+                        $this->accion_titulo = $adm_accion_titulo;
+                    }
+                }
+            }
+
+            if (isset($adm_accion['adm_seccion_etiqueta_label'])) {
+                $adm_seccion_titulo = trim($adm_accion['adm_seccion_etiqueta_label']);
+                if ($adm_seccion_titulo !== '') {
+                    if ($adm_seccion_titulo !== 'ST') {
+                        $this->seccion_titulo = $adm_seccion_titulo;
+                    }
+                }
+            }
+        }
+
+
+
+        $this->accion_titulo = ucwords($this->accion_titulo);
         $this->seccion_titulo = ucwords($this->seccion_titulo);
 
 
@@ -318,6 +367,23 @@ class controler{
         return $adm_session_nombre_completo;
     }
 
+    private function out_ws_error(stdClass|array $error){
+        ob_clean();
+        header('Content-Type: application/json');
+        try {
+            echo json_encode($error, JSON_THROW_ON_ERROR);
+        }
+        catch (Throwable $e){
+            $error = $this->errores->error('Error al maquetar json', $e);
+            if($header){
+                print_r($error);
+                exit;
+            }
+            return $error;
+        }
+        exit;
+    }
+
 
 
     /**
@@ -333,20 +399,7 @@ class controler{
     {
         $error = $this->errores->error(mensaje: $mensaje,data:  $data, params: $params);
         if($ws){
-            ob_clean();
-            header('Content-Type: application/json');
-            try {
-                echo json_encode($error, JSON_THROW_ON_ERROR);
-            }
-            catch (Throwable $e){
-                $error = $this->errores->error('Error al maquetar json', $e);
-                if($header){
-                    print_r($error);
-                    exit;
-                }
-                return $error;
-            }
-
+            $this->out_ws_error(error: $error);
         }
         if(!$header){
             return $error;
@@ -374,10 +427,9 @@ class controler{
     }
 
     /**
-     * PHPUNIT
-     * @return array
+     * @return array|stdClass
      */
-    final protected function resultado_filtrado(): array
+    final protected function resultado_filtrado(): array|stdClass
     {
         if(!isset($_POST['filtros'])){
             return $this->errores->error('Error no existe filtros en POST',$_POST);

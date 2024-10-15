@@ -19,7 +19,7 @@ class adm_seccion extends _modelo_children {
     public function __construct(PDO $link, array $childrens = array(), array $columnas_extra = array()){
         $tabla = 'adm_seccion';
         $columnas = array($tabla=>false, 'adm_menu'=>$tabla,'adm_namespace'=>$tabla);
-        $campos_obligatorios = array('status','descripcion','adm_menu_id', 'adm_namespace_id');
+        $campos_obligatorios = array('status','descripcion','adm_menu_id', 'adm_namespace_id','etiqueta_label');
 
         $parents_data['adm_menu'] = array();
         $parents_data['adm_menu']['namespace'] = 'gamboamartin\\administrador\\models';
@@ -143,6 +143,19 @@ class adm_seccion extends _modelo_children {
         return $r_adm_accion->registros;
     }
 
+    final public function acciones_permitidas(int $grupo_id, string $seccion): array
+    {
+        $filtro['adm_grupo.id'] = $grupo_id;
+        $filtro['adm_seccion.descripcion'] = $seccion;
+
+        $r_accion_grupo = (new adm_accion_grupo(link: $this->link))->filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener accion',data:  $r_accion_grupo);
+        }
+        return $r_accion_grupo->registros;
+
+    }
+
     public function alta_bd(): array|stdClass
     {
 
@@ -168,6 +181,10 @@ class adm_seccion extends _modelo_children {
                 return $this->error->error(mensaje: 'Error al obtener namespace predeterminado',data: $adm_namespace_id);
             }
             $registro['adm_namespace_id'] = $adm_namespace_id;
+        }
+
+        if(!isset($registro['etiqueta_label']) || trim($registro['etiqueta_label'] === '')){
+            $registro['etiqueta_label'] = $registro['descripcion'];
         }
 
         $this->registro = $registro;
@@ -421,7 +438,13 @@ class adm_seccion extends _modelo_children {
 
     }
 
-    public function secciones_sistema(): array
+
+    /**
+     * Obtiene las secciones integradas en un paquete o sistema
+     * @return array
+     * @version 10.106.3
+     */
+    final public function secciones_sistema(): array
     {
         $filtro['adm_sistema.descripcion'] = (new generales())->sistema;
         $r_seccion_pertenece = (new adm_seccion_pertenece(link: $this->link))->filtro_and(filtro: $filtro);

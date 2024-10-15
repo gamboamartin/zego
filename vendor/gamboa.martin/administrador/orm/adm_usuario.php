@@ -75,6 +75,7 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
      * @param string $adm_accion Accion a validar
      * @param string $adm_seccion Seccion a validar
      * @return array|stdClass
+     * @version 10.7.2
      */
     private function data_permiso(string $adm_accion, string $adm_seccion): array|stdClass
     {
@@ -117,8 +118,29 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
         return $r_elimina_bd;
     }
 
+    /**
+     * Genera el filtro para obtencion de permiso
+     * @param string $adm_accion Accion para integrar en filtro
+     * @param int $adm_grupo_id Grupo para integrar en filtro
+     * @param string $adm_seccion Seccion para integrar en filtro
+     * @return array
+     * @version 10.37.2
+     */
     private function filtro(string $adm_accion, int $adm_grupo_id, string $adm_seccion): array
     {
+        $adm_accion = trim($adm_accion);
+        if($adm_accion === ''){
+            return $this->error->error(mensaje: 'Error adm_accion esta vacia',data:  $adm_accion);
+        }
+        $adm_seccion = trim($adm_seccion);
+        if($adm_seccion === ''){
+            return $this->error->error(mensaje: 'Error adm_seccion esta vacia',data:  $adm_seccion);
+        }
+
+        if($adm_grupo_id <= 0){
+            return $this->error->error(mensaje: 'Error adm_grupo_id debe ser mayor a 0',data:  $adm_grupo_id);
+        }
+
         $filtro['adm_grupo.id'] = $adm_grupo_id;
         $filtro['adm_accion.descripcion'] = $adm_accion;
         $filtro['adm_grupo.status'] = 'activo';
@@ -168,7 +190,15 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
     }
 
     private function genera_session_permite(string $adm_accion, int $adm_grupo_id, string $adm_seccion){
-        $data_permiso = $this->get_data_permiso(adm_accion: $adm_accion,adm_grupo_id:  $adm_grupo_id,adm_seccion:  $adm_seccion);
+
+        $valida = $this->valida_datos_permiso(adm_accion: $adm_accion,adm_grupo_id:  $adm_grupo_id,
+            adm_seccion:  $adm_seccion);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al validar datos', data: $valida);
+        }
+
+        $data_permiso = $this->get_data_permiso(adm_accion: $adm_accion,adm_grupo_id:  $adm_grupo_id,
+            adm_seccion:  $adm_seccion);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener data_permiso', data: $data_permiso);
         }
@@ -179,7 +209,24 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
         return $data_permiso;
     }
 
-    private function get_data_permiso(string $adm_accion, int $adm_grupo_id, string $adm_seccion){
+    /**
+     * Obtiene los permisos de una interaccion el el sistema
+     * @param string $adm_accion Accion a validar
+     * @param int $adm_grupo_id Grupo de usuario a validar
+     * @param string $adm_seccion Seccion a validar
+     * @return array|stdClass
+     * @version 10.79.3
+     */
+    private function get_data_permiso(string $adm_accion, int $adm_grupo_id, string $adm_seccion): array|stdClass
+    {
+
+
+        $valida = $this->valida_datos_permiso(adm_accion: $adm_accion,adm_grupo_id:  $adm_grupo_id,
+            adm_seccion:  $adm_seccion);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al validar datos', data: $valida);
+        }
+
         $data_permiso = $this->data_permiso(adm_accion: $adm_accion, adm_seccion: $adm_seccion);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener data_permiso', data: $data_permiso);
@@ -194,7 +241,26 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
         return $data_permiso;
     }
 
-    private function get_val_session(int $adm_grupo_id, stdClass $data_permiso){
+    /**
+     * Obtiene los elementos de una session
+     * @param int $adm_grupo_id Grupo de usuario
+     * @param stdClass $data_permiso datos previos de permiso a validar
+     * @return array|stdClass
+     * @version 10.77.3
+     */
+    private function get_val_session(int $adm_grupo_id, stdClass $data_permiso): array|stdClass
+    {
+
+        $keys = array('adm_accion','adm_seccion');
+        $valida = $this->validacion->valida_existencia_keys(keys: $keys,registro:  $data_permiso);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al validar $data_permiso', data: $valida);
+        }
+
+        if($adm_grupo_id <= 0){
+            return $this->error->error(mensaje: 'Error adm_grupo_id debe ser mayor a 0',data:  $adm_grupo_id);
+        }
+
         $filtro = $this->filtro(adm_accion: $data_permiso->adm_accion,adm_grupo_id: $adm_grupo_id,
             adm_seccion: $data_permiso->adm_seccion);
         if (errores::$error) {
@@ -209,8 +275,17 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
         return $data;
     }
 
-    private function session_permite(int $adm_grupo_id, stdClass $data_permiso){
-        $_SESSION['permite'][$adm_grupo_id][$data_permiso->adm_seccion][$data_permiso->adm_accion] = $data_permiso->val_session;
+    /**
+     * Integra en un a variable de SESSION un bool de validacion de permiso
+     * @param int $adm_grupo_id Grupo a integrar
+     * @param stdClass $data_permiso Permiso obtenido
+     * @return array
+     */
+    private function session_permite(int $adm_grupo_id, stdClass $data_permiso): array
+    {
+        $_SESSION['permite'][$adm_grupo_id][$data_permiso->adm_seccion][$data_permiso->adm_accion]
+            = (int)$data_permiso->val_session;
+
         return $_SESSION['permite'][$adm_grupo_id];
     }
 
@@ -229,7 +304,7 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
         }
         $data_permiso = new stdClass();
         $data_permiso->existe = false;
-        //$existe = false;
+
         if((int)$adm_usuario_id > 0) {
 
             $adm_grupo_id = -1;
@@ -245,7 +320,13 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
                     }
                 }
                 else {
-                    $data_permiso = $this->genera_session_permite(adm_accion: $adm_accion,adm_grupo_id:  $adm_grupo_id,adm_seccion:  $adm_seccion);
+                    $valida = $this->valida_datos_permiso(adm_accion: $adm_accion,adm_grupo_id:  $adm_grupo_id,
+                        adm_seccion:  $adm_seccion);
+                    if (errores::$error) {
+                        return $this->error->error(mensaje: 'Error al validar datos', data: $valida);
+                    }
+                    $data_permiso = $this->genera_session_permite(adm_accion: $adm_accion,adm_grupo_id:  $adm_grupo_id,
+                        adm_seccion:  $adm_seccion);
                     if (errores::$error) {
                         return $this->error->error(mensaje: 'Error al asignar permite en session', data: $data_permiso);
                     }
@@ -320,6 +401,12 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
         return $r_usuario->registros;
     }
 
+    /**
+     * Valida e integra una validacion de existe para session
+     * @param bool $existe Si true val session existe
+     * @return int
+     * @version 10.41.2
+     */
     private function val_session(bool $existe): int
     {
         $val_session = 0;
@@ -329,7 +416,17 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
         return $val_session;
     }
 
-    private function val_session_existe(array $filtro){
+    /**
+     * Verifica si una session existe en base de datos asi como su permiso
+     * @param array $filtro Filtro a integrar para validacion
+     * @return array|stdClass
+     * @version 10.42.2
+     */
+    private function val_session_existe(array $filtro): array|stdClass
+    {
+        if(count($filtro) === 0){
+            return $this->error->error(mensaje: 'Error filtro esta vacio', data: $filtro);
+        }
         $existe = (new adm_accion_grupo(link: $this->link))->existe(filtro: $filtro);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al validar si existe', data: $existe);
@@ -343,6 +440,30 @@ class adm_usuario extends modelo{ //PRUEBAS en proceso
         $data->existe = $existe;
         $data->val_session = $val_session;
         return $data;
+    }
+
+    /**
+     * Valida la entrada de los parametros de u permiso
+     * @param string $adm_accion Accion a validar
+     * @param int $adm_grupo_id Grupo a validar permiso
+     * @param string $adm_seccion Seccion a validar
+     * @return array|true
+     * @version 10.95.3
+     */
+    private function valida_datos_permiso(string $adm_accion, int $adm_grupo_id, string $adm_seccion): bool|array
+    {
+        $adm_seccion = trim($adm_seccion);
+        if($adm_seccion === ''){
+            return $this->error->error(mensaje: 'Error adm_seccion esta vacia', data: $adm_seccion);
+        }
+        $adm_accion = trim($adm_accion);
+        if($adm_accion === ''){
+            return $this->error->error(mensaje: 'Error adm_accion esta vacia', data: $adm_accion);
+        }
+        if($adm_grupo_id <= 0){
+            return $this->error->error(mensaje: 'Error adm_grupo_id debe ser mayor a 0',data:  $adm_grupo_id);
+        }
+        return true;
     }
 
     /**

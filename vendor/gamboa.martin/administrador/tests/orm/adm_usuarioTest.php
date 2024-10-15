@@ -6,7 +6,9 @@ use gamboamartin\administrador\models\adm_session;
 use gamboamartin\administrador\models\adm_usuario;
 use gamboamartin\administrador\tests\base_test;
 use gamboamartin\errores\errores;
+use gamboamartin\test\liberator;
 use gamboamartin\test\test;
+use stdClass;
 
 
 class adm_usuarioTest extends test {
@@ -35,6 +37,25 @@ class adm_usuarioTest extends test {
         $this->assertEquals(2, $resultado['adm_grupo_id']);
         errores::$error = false;
 
+    }
+
+    public function test_data_permiso(): void
+    {
+
+        errores::$error = false;
+        $modelo = new adm_usuario($this->link);
+        $modelo = new liberator($modelo);
+
+        $_SESSION['usuario_id'] = -1;
+
+        $adm_accion = 'a';
+        $adm_seccion = 'v';
+        $resultado = $modelo->data_permiso($adm_accion, $adm_seccion);
+        $this->assertIsObject($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals('v',$resultado->adm_seccion);
+        $this->assertEquals('a',$resultado->adm_accion);
+        errores::$error = false;
     }
 
     public function test_elimina_bd(): void
@@ -77,6 +98,25 @@ class adm_usuarioTest extends test {
 
     }
 
+    public function test_filtro(): void
+    {
+
+        errores::$error = false;
+        $modelo = new adm_usuario($this->link);
+        $modelo = new liberator($modelo);
+
+        $_SESSION['usuario_id'] = -1;
+
+        $adm_accion = 'a';
+        $adm_seccion = 'b';
+        $adm_grupo_id = 1;
+        $resultado = $modelo->filtro($adm_accion, $adm_grupo_id, $adm_seccion);
+        $this->assertIsArray($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals(1,$resultado['adm_grupo.id']);
+        errores::$error = false;
+    }
+
     public function test_filtro_seguridad(): void
     {
 
@@ -113,6 +153,59 @@ class adm_usuarioTest extends test {
         $resultado = $modelo->filtro_seguridad('');
         $this->assertIsArray($resultado);
         $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
+    public function test_get_data_permiso(): void
+    {
+
+        errores::$error = false;
+        $modelo = new adm_usuario($this->link);
+        $modelo = new liberator($modelo);
+
+        $_SESSION['usuario_id'] = 2;
+
+        $adm_accion = 'b';
+        $adm_grupo_id = 1;
+        $adm_seccion = 'a';
+
+        $resultado = $modelo->get_data_permiso($adm_accion, $adm_grupo_id, $adm_seccion);
+        $this->assertIsObject($resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+
+    }
+
+    public function test_get_val_session(): void
+    {
+
+        errores::$error = false;
+        $modelo = new adm_usuario($this->link);
+        $modelo = new liberator($modelo);
+
+        $_SESSION['usuario_id'] = 2;
+
+        $adm_grupo_id = 1;
+        $data_permiso = new stdClass();
+        $data_permiso->adm_accion = 'a';
+        $data_permiso->adm_seccion = 'b';
+        $resultado = $modelo->get_val_session($adm_grupo_id, $data_permiso);
+        $this->assertIsObject($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertNotTrue($resultado->existe);
+        $this->assertEquals(0,$resultado->val_session);
+
+        errores::$error = false;
+
+        $adm_grupo_id = 2;
+        $data_permiso = new stdClass();
+        $data_permiso->adm_accion = 'lista';
+        $data_permiso->adm_seccion = 'adm_accion';
+        $resultado = $modelo->get_val_session($adm_grupo_id, $data_permiso);
+        $this->assertIsObject($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado->existe);
+        $this->assertEquals(1,$resultado->val_session);
         errores::$error = false;
     }
 
@@ -315,6 +408,104 @@ class adm_usuarioTest extends test {
         $this->assertIsArray($resultado);
         $this->assertNotTrue(errores::$error);
         $this->assertNotEmpty($resultado);
+
+        errores::$error = false;
+    }
+
+    public function test_val_session(): void
+    {
+
+        errores::$error = false;
+        $modelo = new adm_usuario($this->link);
+        $modelo = new liberator($modelo);
+
+        $_SESSION['usuario_id'] = 2;
+
+        $existe = false;
+        $resultado = $modelo->val_session($existe);
+        $this->assertIsInt($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals(0,$resultado);
+
+        errores::$error = false;
+
+
+
+        $existe = true;
+        $resultado = $modelo->val_session($existe);
+        $this->assertIsInt($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals(1,$resultado);
+
+        errores::$error = false;
+
+    }
+
+    public function test_val_session_existe(): void
+    {
+
+        errores::$error = false;
+        $modelo = new adm_usuario($this->link);
+        $modelo = new liberator($modelo);
+
+        $_SESSION['usuario_id'] = 2;
+
+        $filtro = array('adm_grupo.id'=>1);
+        $resultado = $modelo->val_session_existe($filtro);
+        $this->assertIsObject($resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+    }
+
+    public function test_valida_datos_permiso(): void
+    {
+
+        errores::$error = false;
+        $modelo = new adm_usuario($this->link);
+        $modelo = new liberator($modelo);
+
+        $_SESSION['usuario_id'] = 2;
+
+        $adm_accion = '';
+        $adm_grupo_id = -1;
+        $adm_seccion = '';
+
+        $resultado = $modelo->valida_datos_permiso($adm_accion, $adm_grupo_id, $adm_seccion);
+        $this->assertIsArray($resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertEquals('Error adm_seccion esta vacia',$resultado['mensaje_limpio']);
+        errores::$error = false;
+
+        $adm_accion = '';
+        $adm_grupo_id = -1;
+        $adm_seccion = 'a';
+
+        $resultado = $modelo->valida_datos_permiso($adm_accion, $adm_grupo_id, $adm_seccion);
+        $this->assertIsArray($resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertEquals('Error adm_accion esta vacia',$resultado['mensaje_limpio']);
+
+        errores::$error = false;
+
+        $adm_accion = 'b';
+        $adm_grupo_id = -1;
+        $adm_seccion = 'a';
+
+        $resultado = $modelo->valida_datos_permiso($adm_accion, $adm_grupo_id, $adm_seccion);
+        $this->assertIsArray($resultado);
+        $this->assertTrue(errores::$error);
+        $this->assertEquals('Error adm_grupo_id debe ser mayor a 0',$resultado['mensaje_limpio']);
+
+        errores::$error = false;
+
+        $adm_accion = 'b';
+        $adm_grupo_id = 1;
+        $adm_seccion = 'a';
+
+        $resultado = $modelo->valida_datos_permiso($adm_accion, $adm_grupo_id, $adm_seccion);
+        $this->assertIsBool($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
 
         errores::$error = false;
     }

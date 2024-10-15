@@ -333,6 +333,19 @@ class adm_accionTest extends test {
         errores::$error = false;
     }
 
+    public function test_cuenta_acciones(){
+
+        errores::$error = false;
+        $modelo = new adm_accion($this->link);
+        //$modelo = new liberator($modelo);
+        $_SESSION['grupo_id'] = 2;
+        $resultado = $modelo->cuenta_acciones();
+        $this->assertIsInt($resultado);
+        $this->assertNotTrue(errores::$error);
+        errores::$error = false;
+
+    }
+
     public function test_filtro_accion_seccion(){
 
         errores::$error = false;
@@ -368,7 +381,7 @@ class adm_accionTest extends test {
         $resultado = $modelo->filtro_permiso($accion, $grupo_id, $seccion);
         $this->assertIsArray($resultado);
         $this->assertTrue(errores::$error);
-        $this->assertStringContainsStringIgnoringCase('Error accion esta vacia', $resultado['mensaje']);
+        $this->assertStringContainsStringIgnoringCase('Error al validar permiso', $resultado['mensaje']);
 
         errores::$error = false;
         $accion = 'a';
@@ -377,7 +390,7 @@ class adm_accionTest extends test {
         $resultado = $modelo->filtro_permiso($accion, $grupo_id, $seccion);
         $this->assertIsArray($resultado);
         $this->assertTrue(errores::$error);
-        $this->assertStringContainsStringIgnoringCase('Error $grupo_id debe ser mayor a 0', $resultado['mensaje']);
+        $this->assertStringContainsStringIgnoringCase('Error al validar permiso', $resultado['mensaje']);
 
         errores::$error = false;
         $accion = 'a';
@@ -386,7 +399,7 @@ class adm_accionTest extends test {
         $resultado = $modelo->filtro_permiso($accion, $grupo_id, $seccion);
         $this->assertIsArray($resultado);
         $this->assertTrue(errores::$error);
-        $this->assertStringContainsStringIgnoringCase('Error $seccion esta vacia', $resultado['mensaje']);
+        $this->assertStringContainsStringIgnoringCase('Error al validar permiso', $resultado['mensaje']);
 
         errores::$error = false;
         $accion = 'a';
@@ -416,6 +429,23 @@ class adm_accionTest extends test {
         $this->assertNotTrue(errores::$error);
         $this->assertEquals(1, $resultado['adm_grupo.id']);
         errores::$error = false;
+    }
+
+    public function test_genera_permiso_valido(){
+
+        errores::$error = false;
+        $modelo = new adm_accion($this->link);
+        $modelo = new liberator($modelo);
+        $accion = 'a';
+        $grupo_id= 2;
+        $seccion= 'accion';
+        $resultado = $modelo->genera_permiso_valido($accion, $grupo_id, $seccion);
+        $this->assertIsBool($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertNotTrue( $resultado);
+
+        errores::$error = false;
+
     }
 
     public function test_grupos_id_por_accion(){
@@ -510,6 +540,68 @@ class adm_accionTest extends test {
         errores::$error = false;
     }
 
+    public function test_n_permisos(){
+
+        errores::$error = false;
+        $modelo = new adm_accion($this->link);
+        $modelo = new liberator($modelo);
+        $accion = 'a';
+        $grupo_id= 1;
+        $seccion= 'a';
+        $resultado = $modelo->n_permisos($accion, $grupo_id, $seccion);
+        $this->assertIsInt($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertEquals(0, $resultado);
+
+        errores::$error = false;
+    }
+
+    public function test_permiso(){
+
+        errores::$error = false;
+        $modelo = new adm_accion($this->link);
+        //$modelo = new liberator($modelo);
+        $accion = 'login';
+        $seccion= 'session';
+        $_SESSION['grupo_id'] = 1;
+        $resultado = $modelo->permiso($accion, $seccion);
+        $this->assertIsBool($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+
+    }
+    public function test_permiso_valido(){
+
+        errores::$error = false;
+        $modelo = new adm_accion($this->link);
+        $modelo = new liberator($modelo);
+        $accion = '';
+        $grupo_id= -1;
+        $seccion= '';
+        $n_permisos = -1;
+
+
+        $resultado = $modelo->permiso_valido($accion, $grupo_id, $n_permisos, $seccion);
+        $this->assertIsBool($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertNotTrue($resultado);
+
+        errores::$error = false;
+        $accion = '';
+        $grupo_id= -1;
+        $seccion= '';
+        $n_permisos = 1;
+
+        $resultado = $modelo->permiso_valido($accion, $grupo_id, $n_permisos, $seccion);
+        $this->assertIsBool($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+        errores::$error = false;
+    }
+
+
+
     public function test_valida_alta_bd(){
         errores::$error = false;
         $_SESSION['usuario_id'] = 2;
@@ -545,6 +637,40 @@ class adm_accionTest extends test {
         $this->assertTrue($resultado);
 
         errores::$error = false;
+    }
+
+    public function test_valida_data_permiso(){
+
+        errores::$error = false;
+        $modelo = new adm_accion($this->link);
+        $modelo = new liberator($modelo);
+        $accion = 'a';
+        $grupo_id= 1;
+        $seccion= 'a';
+        $resultado = $modelo->valida_data_permiso($accion, $grupo_id, $seccion);
+        $this->assertIsBool($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertTrue($resultado);
+
+        errores::$error = false;
+
+    }
+
+    public function test_valida_permiso(){
+
+        errores::$error = false;
+        $modelo = new adm_accion($this->link);
+        $modelo = new liberator($modelo);
+        $accion = 'v';
+        $seccion= 'a';
+        $_SESSION['grupo_id'] = 2;
+        $resultado = $modelo->valida_permiso($accion, $seccion);
+        $this->assertIsBool($resultado);
+        $this->assertNotTrue(errores::$error);
+        $this->assertNotTrue($resultado);
+
+        errores::$error = false;
+
     }
 
 

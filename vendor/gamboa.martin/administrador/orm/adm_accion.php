@@ -290,14 +290,14 @@ class adm_accion extends _modelo_children {
     /**
      * Funcion usada para registrar la cantidad de acciones realizadas por un grupo.
      *
-     * P INT P ORDER
      * @return array|int
      *
      * @functions $n_permisos = (new adm_accion_grupo($adm_accion->link))->cuenta(filtro: $filtro); Valida y maqueta la
      * cantidad de acciones realizadas
+     * @version 10.24.2
      */
     final public function cuenta_acciones(): int|array
-    { //FIN PROT
+    {
         if(!isset($_SESSION['grupo_id'])){
             return $this->error->error('Error debe existir grupo_id',array($_SESSION));
         }
@@ -361,25 +361,19 @@ class adm_accion extends _modelo_children {
 
     /**
      * Obtiene el filtro para determinar permisos de ejecucion
-     * @version 1.12.8
      * @param string $accion Accion a ejecutar
      * @param int $grupo_id Grupo a verificar si tiene permiso
      * @param string $seccion Seccion a verificar
      * @return array
+     * @version 10.15.2
      */
     private function filtro_permiso(string $accion, int $grupo_id, string $seccion): array
     {
-        $accion = trim($accion);
-        if($accion === ''){
-            return $this->error->error(mensaje:'Error accion esta vacia', data: $accion);
+        $valida = $this->valida_data_permiso(accion: $accion, grupo_id: $grupo_id,seccion:  $seccion);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al validar permiso',data: $valida);
         }
-        if($grupo_id<=0){
-            return $this->error->error(mensaje:'Error $grupo_id debe ser mayor a 0', data: $grupo_id);
-        }
-        $seccion = trim($seccion);
-        if($seccion === ''){
-            return $this->error->error(mensaje:'Error $seccion esta vacia', data: $seccion);
-        }
+
         $filtro['adm_accion.status'] = 'activo';
         $filtro['adm_grupo.status'] = 'activo';
         $filtro['adm_seccion.status'] = 'activo';
@@ -414,8 +408,21 @@ class adm_accion extends _modelo_children {
         return $filtro;
     }
 
+    /**
+     * Integra un permiso en una session si es valido
+     * @param string $accion Accion a verificar
+     * @param int $grupo_id Grupo de usuario
+     * @param string $seccion Seccion
+     * @return bool|array
+     * @version 10.20.2
+     */
     private function genera_permiso_valido(string $accion, int $grupo_id, string $seccion): bool|array
     {
+        $valida = $this->valida_data_permiso(accion: $accion, grupo_id: $grupo_id,seccion:  $seccion);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al validar permiso',data: $valida);
+        }
+
         $n_permisos = $this->n_permisos(accion: $accion, grupo_id: $grupo_id, seccion: $seccion);
         if (errores::$error) {
             return $this->error->error('Error al contar acciones', $n_permisos);
@@ -665,8 +672,21 @@ class adm_accion extends _modelo_children {
     }
 
 
+    /**
+     * Obtiene el numero de permisos de un grupo de usuarios
+     * @param string $accion Accion a validar
+     * @param int $grupo_id Grupo a validar
+     * @param string $seccion Seccion a validar
+     * @return int|array
+     * @version 10.15.2
+     */
     private function n_permisos(string $accion, int $grupo_id, string $seccion): int|array
     {
+        $valida = $this->valida_data_permiso(accion: $accion, grupo_id: $grupo_id,seccion:  $seccion);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al validar permiso',data: $valida);
+        }
+
         $filtro = $this->filtro_permiso(accion: $accion,grupo_id:  $grupo_id, seccion: $seccion);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al generar filtro',data: $filtro);
@@ -711,14 +731,16 @@ class adm_accion extends _modelo_children {
     }
 
     /**
-     * P INT
-     * @param string $accion
-     * @param string $seccion
+     * Valida si existe o no permiso para la ejecucion de una accion exepto login y loguea
+     * @param string $accion Accion a verificar
+     * @param string $seccion Seccion a verificar
      * @return array|bool
+     * @version 10.22.2
      */
     final public function permiso(string $accion, string $seccion): bool|array
     {
-        $permiso = $this->valida_permiso(seccion: $seccion,accion:  $accion);
+
+        $permiso = $this->valida_permiso(accion: $accion, seccion: $seccion);
         if(errores::$error){
             return $this->error->error('Error al validar permisos',$permiso);
         }
@@ -729,7 +751,6 @@ class adm_accion extends _modelo_children {
     }
 
     /**
-     * P ORDER P INT
      *
      * Funcion que maqueta la variable SESSION con un permiso, siendo valido o invalido.
      *
@@ -738,6 +759,7 @@ class adm_accion extends _modelo_children {
      * @param int $n_permisos Numero del permiso otorgado al grupo
      * @param string $seccion Seccion a verificar
      * @return bool
+     * @version 10.18.2
      */
     private function permiso_valido(string $accion, int $grupo_id, int $n_permisos, string $seccion): bool
     {
@@ -774,7 +796,30 @@ class adm_accion extends _modelo_children {
     }
 
     /**
-     * P INT
+     * Valida los elementos de entrada de un permiso
+     * @param string $accion Accion a validar
+     * @param int $grupo_id Grupo a validar
+     * @param string $seccion Seccion a validar
+     * @return bool|array
+     * @version 10.14.2
+     */
+    private function valida_data_permiso(string $accion, int $grupo_id, string $seccion): bool|array
+    {
+        $accion = trim($accion);
+        if($accion === ''){
+            return $this->error->error(mensaje:'Error accion esta vacia', data: $accion);
+        }
+        if($grupo_id<=0){
+            return $this->error->error(mensaje:'Error $grupo_id debe ser mayor a 0', data: $grupo_id);
+        }
+        $seccion = trim($seccion);
+        if($seccion === ''){
+            return $this->error->error(mensaje:'Error $seccion esta vacia', data: $seccion);
+        }
+        return true;
+    }
+
+    /**
      * Funcion que genera un objeto de tipo $valida_permiso. Valida que los usuarios de un grupo puedan realizar acciones.
      * En caso de error en validacion de grupo o al generar permisos, lanzará un error
      *
@@ -785,9 +830,10 @@ class adm_accion extends _modelo_children {
      * @functions $permiso_valido = $adm_accion->genera_permiso_valido(accion: $accion, grupo_id: $grupo_id,seccion:  $seccion);
      * Verifica y maqueta un "$permiso valido" en base a "$seccion" y "$accion" realizada por el usuario de un grupo. En caso de
      * error lanzará un mensaje
+     * @version 10.21.2
      *
      */
-	private function valida_permiso(string $seccion, string $accion): bool|array
+	private function valida_permiso(string $accion, string $seccion): bool|array
     {
         if(!isset($_SESSION['grupo_id'])){
             return $this->error->error('Error debe existir grupo_id',array($_SESSION));
@@ -806,6 +852,7 @@ class adm_accion extends _modelo_children {
 
         }
         else {
+
             $permiso_valido = $this->genera_permiso_valido(accion: $accion, grupo_id: $grupo_id,seccion:  $seccion);
             if (errores::$error) {
                 return $this->error->error('Error al verificar permiso', $permiso_valido);

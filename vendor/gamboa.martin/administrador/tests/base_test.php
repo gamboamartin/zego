@@ -16,8 +16,9 @@ use stdClass;
 
 class base_test{
 
-    public function alta_adm_accion(PDO $link, int $adm_seccion_id = 1, string $descripcion = 'alta',
-                                    int $id = 1, string $lista = 'inactivo', string $visible = 'inactivo'): array|stdClass
+    public function alta_adm_accion(PDO $link, string $adm_seccion_descripcion = 'adm_seccion', int $adm_seccion_id = 1,
+                                    string $descripcion = 'alta', int $id = 1, string $lista = 'inactivo',
+                                    string $visible = 'inactivo'): array|stdClass
     {
 
         $existe = (new adm_seccion($link))->existe_by_id(registro_id: $adm_seccion_id);
@@ -25,12 +26,38 @@ class base_test{
             return (new errores())->error('Error al validar', $existe);
         }
         if(!$existe){
-            $alta = $this->alta_adm_seccion(link: $link,id: $adm_seccion_id);
+            $alta = $this->alta_adm_seccion(link: $link, descripcion: $adm_seccion_descripcion, id: $adm_seccion_id);
             if(errores::$error){
                 return (new errores())->error('Error al insertar', $alta);
             }
         }
 
+        $existe = (new \gamboamartin\administrador\models\adm_accion($link))->existe_by_id(registro_id: $id);
+        if(errores::$error){
+            return (new errores())->error('Error al validar si existe', $existe);
+        }
+
+        if($existe) {
+
+            $del = (new adm_accion($link))->elimina_bd(id: $id);
+            if (errores::$error) {
+                return (new errores())->error('Error al eliminar', $del);
+            }
+        }
+
+        $filtro['adm_seccion.descripcion'] = $adm_seccion_descripcion;
+        $filtro['adm_accion.descripcion'] = $descripcion;
+        $existe = (new \gamboamartin\administrador\models\adm_accion($link))->existe(filtro: $filtro);
+        if(errores::$error){
+            return (new errores())->error('Error al validar si existe', $existe);
+        }
+
+        if($existe) {
+            $del = (new adm_accion($link))->elimina_con_filtro_and(filtro: $filtro);
+            if (errores::$error) {
+                return (new errores())->error('Error al eliminar', $del);
+            }
+        }
         $registro['id'] = $id;
         $registro['descripcion'] = $descripcion;
         $registro['adm_seccion_id'] = $adm_seccion_id;
@@ -38,7 +65,7 @@ class base_test{
         $registro['visible'] = $visible;
 
         $alta = (new adm_accion($link))->alta_registro(registro: $registro);
-        if(errores::$error){
+        if (errores::$error) {
             return (new errores())->error('Error al insertar', $alta);
         }
 
@@ -232,6 +259,15 @@ class base_test{
         $del = $model->elimina_todo();
         if(errores::$error){
             return (new errores())->error(mensaje: 'Error al eliminar '.$name_model, data: $del);
+        }
+        return $del;
+    }
+
+    public function del_adm_accion(PDO $link): array
+    {
+        $del = $this->del($link, 'gamboamartin\\administrador\\models\\adm_accion');
+        if(errores::$error){
+            return (new errores())->error('Error al eliminar', $del);
         }
         return $del;
     }

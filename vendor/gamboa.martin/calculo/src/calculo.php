@@ -30,6 +30,19 @@ class calculo{
 
     }
 
+    final public function edad_hoy(string $fecha_nacimiento): array|int
+    {
+        try {
+            $ahora = new DateTime(date("Y-m-d"));
+            $fecha_nacimiento =  new DateTime($fecha_nacimiento);
+        }
+        catch (Throwable $e){
+            return $this->error->error(mensaje: 'Error al obtener ahora',data:  $e);
+        }
+        $diferencia = $ahora->diff($fecha_nacimiento);
+        return (int)$diferencia->format("%y");
+    }
+
     /**
      * DOC UNIT
      * Obtiene las fechas restando el dia de hoy hasta el numero de dias y el formato dependiendo del tipo
