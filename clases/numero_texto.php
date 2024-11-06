@@ -52,7 +52,8 @@ class NumeroTexto {
     );
     private $MONEDAS = array('MXN'=>array('plural' => 'PESOS', 'symbol', '$'),
         'PESOS'=>array('plural' => 'PESOS', 'symbol', '$'),
-        'DOLARES'=>array('plural' => 'DOLARES', 'symbol', '$'));
+        'DOLARES'=>array('plural' => 'DOLARES', 'symbol', '$'),
+        'USD'=>array('plural' => 'DOLARES', 'symbol', '$'));
     private $separator = ',';
     private $decimal_mark = '.';
     private $glue = '  ';
