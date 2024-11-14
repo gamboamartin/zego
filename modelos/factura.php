@@ -259,8 +259,8 @@ class factura extends modelos{
 
     public function obten_facturas_con_saldo($cliente_id){
         $consulta = $this->genera_consulta_base('factura');
-        #$where = " WHERE cliente.id = $cliente_id AND factura.saldo > 0.01 ORDER BY factura.folio DESC";
-        $where = " WHERE cliente.id = $cliente_id AND factura.fecha BETWEEN '2024-08-01' AND '2024-09-15' AND factura.saldo > 0.01 ORDER BY factura.folio ASC";
+        $where = " WHERE cliente.id = $cliente_id AND factura.saldo > 0.01 ORDER BY factura.folio DESC";
+        #$where = " WHERE cliente.id = $cliente_id AND factura.fecha BETWEEN '2024-08-01' AND '2024-09-15' AND factura.saldo > 0.01 ORDER BY factura.folio ASC";
         $consulta = $consulta.$where;
 
         $resultado = $this->ejecuta_consulta($consulta);
