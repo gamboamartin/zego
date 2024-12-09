@@ -24,6 +24,7 @@
       "ext-soap": "*",
       "ext-simplexml": "*",
       "ext-pdo": "*",
-      "ext-curl": "*"
+      "ext-curl": "*",
+      "ext-dom": "*"
     }
 }
