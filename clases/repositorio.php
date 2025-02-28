@@ -8,6 +8,8 @@ class repositorio{
     public $directorio_xml_sin_timbrar;
     public $directorio_xml_timbrado;
     private errores $error;
+    private string $directorio_xml_sin_timbrar_completo;
+    private string $directorio_xml_timbrado_completo;
 
 
     public function __construct(){
@@ -237,7 +239,7 @@ class repositorio{
 
     public function obten_serie_csd($folio){
         $dom = new DOMDocument('1.0','utf-8'); // Creamos el Objeto DOM
-        $dom->load($this->directorio_xml_timbrado_completo.'/'.$folio.'.xml');
+            $dom->load($this->directorio_xml_timbrado_completo.'/'.$folio.'.xml');
 
         $NoCertificado=False;
         foreach ($dom->getElementsByTagNameNS('http://www.sat.gob.mx/cfd/3', '*') as $elemento) {
