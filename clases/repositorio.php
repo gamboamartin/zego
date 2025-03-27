@@ -7,9 +7,9 @@ class repositorio{
     public $directorio_repositorio_base;
     public $directorio_xml_sin_timbrar;
     public $directorio_xml_timbrado;
-    private errores $error;
-    private string $directorio_xml_sin_timbrar_completo;
-    private string $directorio_xml_timbrado_completo;
+    public errores $error;
+    public string $directorio_xml_sin_timbrar_completo;
+    public string $directorio_xml_timbrado_completo;
 
 
     public function __construct(){
